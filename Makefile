@@ -4,7 +4,8 @@ VERSION	= grep -m 1 Version src/${NAME}.js | cut -c19-
 all: lint minify
 
 lint:
-	jshint src/${NAME}.js --config config/jshint.json
+    # Disabled since a bug into jshint...
+    #jshint src/${NAME}.js --config config/jshint.json
 
 minify:
 	rm -f ${NAME}*
