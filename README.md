@@ -4,7 +4,7 @@ qwest 0.3.2
 Qwest is a simple ajax library based on `promises` behaviour and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob`, `Document` and `FormData`.
 
 Syntax
-======
+------
 
 ```javascript
 qwest.<method>(<url>,[data],[options],[before])
@@ -34,7 +34,7 @@ The available `options` are :
 The `before` option lets you specify a callback to modify the `XHR` object before the request occurs.
 
 Examples
-========
+--------
 
 Send a simple GET request :
 
@@ -109,11 +109,12 @@ qwest.get('example.com',{},{},function(){
 ```
 
 Some notes
-==========
+----------
+
 - won't accept arrays or objects with different levels as `data` parameter, to define an array please set value's name to "foo[]" like in HTML
 - default "Content-Type" header is "application/x-www-form-urlencoded" for basic `data`
 
 License
-=======
+-------
 
 MIT license everywhere!
