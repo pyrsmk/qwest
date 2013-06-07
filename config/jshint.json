@@ -1,0 +1,9 @@
+{
+    "browser"   : true,
+    "predef"    : ["ActiveXObject","Document"],
+    "boss"      : true,
+    "curly"     : true,
+    "eqnull"    : true,
+    "undef"     : true,
+    "evil"      : true
+}
