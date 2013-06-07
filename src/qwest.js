@@ -1,28 +1,15 @@
 /*
-    qwest
+    qwest, ajax library with promises and XHR2 support
 
-    Version     : 0.2.4
+    Version     : 0.3.0
     Author      : Aurélien Delogu (dev@dreamysource.fr)
     Homepage    : https://github.com/pyrsmk/qwest
     License     : MIT
-
-    Doc
-    ===
-    https://github.com/ded/reqwest/blob/master/reqwest.js
-    https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest
-
-    TODO
-    ====
-    - timeout
-    - type => response
-        - types valides pour XHR2?
-    - crossOrigin
-    - widthCredentials
 */
 
 this.qwest=function(){
 
-    var qwest=function(method,url,data,options){
+    var qwest=function(method,url,data,options,before){
 
         // Format
         data=data || null;
@@ -36,15 +23,20 @@ this.qwest=function(){
                 new ActiveXObject('Microsoft.XMLHTTP'),
             version2=(xhr.responseType===''),
             async=options.async===undefined?true:!!options.async,
-            cache=options.cache===undefined?true:!!options.cache,
+            cache=!!options.cache,
             type=options.type?options.type.toLowerCase():'json',
             user=options.user || '',
             password=options.password || '',
-            headers=options.headers || [],
+            headers={'X-Requested-With':'XMLHttpRequest'},
+            accepts={
+                xml : 'application/xml, text/xml',
+                html: 'text/html',
+                text: 'text/plain',
+                json: 'application/json, text/javascript',
+                js  : 'application/javascript, text/javascript'
+            },
             vars='',
             i,
-            contentType='Content-Type',
-            requestedWith='X-Requested-With',
             parseError='parseError',
             serialized,
             success_stack=[],
@@ -92,11 +84,12 @@ this.qwest=function(){
                     if(xhr.status!=200){
                         throw xhr.status+" ("+xhr.statusText+")";
                     }
+                    clearTimeout(iTimeout);
                     // Init
                     var responseText=xhr.responseText,
                         responseXML='responseXML';
                     // Process response
-                    if(type=='text'){
+                    if(type=='text' || type='html'){
                         response=responseText;
                     }
                     else if(typeSupported && xhr.response!==undefined){
@@ -182,7 +175,7 @@ this.qwest=function(){
         if(method=='GET'){
             vars+=data;
         }
-        if(cache){
+        if(!cache){
             if(vars){
                 vars+='&';
             }
@@ -205,14 +198,16 @@ this.qwest=function(){
             };
         }
         // Prepare headers
-        if(serialized && method=='POST' && !headers[contentType]){
-            headers[contentType]='application/x-www-form-urlencoded';
+        if(serialized && method=='POST'){
+            headers['Content-Type']='application/x-www-form-urlencoded';
         }
-        if(!headers[requestedWith]){
-            headers[requestedWith]='XMLHttpRequest';
-        }
+        headers.Accept=accepts[type];
         for(i in headers){
             xhr.setRequestHeader(i,headers[i]);
+        }
+        // Before
+        if(before){
+            before.apply(xhr);
         }
         // Send request
         xhr.send(method=='POST'?data:null);
@@ -222,11 +217,11 @@ this.qwest=function(){
 
     // Return final qwest object
     return {
-        get:function(url,data,options){
-            return qwest('GET',url,data,options);
+        get:function(url,data,options,before){
+            return qwest('GET',url,data,options,before);
         },
-        post:function(url,data,options){
-            return qwest('POST',url,data,options);
+        post:function(url,data,options,before){
+            return qwest('POST',url,data,options,before);
         }
     };
     
