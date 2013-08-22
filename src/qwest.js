@@ -1,7 +1,7 @@
 /*
     qwest, ajax library with promises and XHR2 support
 
-    Version     : 0.3.2
+    Version     : 0.3.3
     Author      : Aurélien Delogu (dev@dreamysource.fr)
     Homepage    : https://github.com/pyrsmk/qwest
     License     : MIT
@@ -150,11 +150,6 @@ this.qwest=function(){
                 }
             };
 
-        // Identify supported XHR version
-        if(type && version2){
-            xhr.responseType=type;
-            typeSupported=(xhr.responseType==type);
-        }
         // Prepare data
         if(data instanceof ArrayBuffer || data instanceof Blob || data instanceof Document || data instanceof FormData){
             if(method=='GET'){
@@ -185,6 +180,11 @@ this.qwest=function(){
         }
         // Open connection
         xhr.open(method,url,async,user,password);
+        // Identify supported XHR version
+        if(type && version2){
+            xhr.responseType=type;
+            typeSupported=(xhr.responseType==type);
+        }
         // Plug response handler
         if(version2){
             xhr.onload=handleResponse;
