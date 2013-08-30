@@ -1,7 +1,7 @@
 /*
     qwest, ajax library with promises and XHR2 support
 
-    Version     : 0.3.4
+    Version     : 0.3.5
     Author      : Aurélien Delogu (dev@dreamysource.fr)
     Homepage    : https://github.com/pyrsmk/qwest
     License     : MIT
@@ -85,11 +85,11 @@ this.qwest=function(){
                         throw xhr.status+" ("+xhr.statusText+")";
                     }
                     // Init
-                    var responseText=xhr.responseText,
+                    var responseText='responseText',
                         responseXML='responseXML';
                     // Process response
                     if(type=='text' || type=='html'){
-                        response=responseText;
+                        response=xhr[responseText];
                     }
                     else if(typeSupported && xhr.response!==undefined){
                         response=xhr.response;
@@ -99,10 +99,10 @@ this.qwest=function(){
                             case 'json':
                                 try{
                                     if(win.JSON){
-                                        response=win.JSON.parse(responseText);
+                                        response=win.JSON.parse(xhr[responseText]);
                                     }
                                     else{
-                                        response=eval('('+responseText+')');
+                                        response=eval('('+xhr[responseText]+')');
                                     }
                                 }
                                 catch(e){
@@ -110,7 +110,7 @@ this.qwest=function(){
                                 }
                                 break;
                             case 'js':
-                                response=eval(responseText);
+                                response=eval(xhr[responseText]);
                                 break;
                             case 'xml':
                                 if(!xhr[responseXML] || (xhr[responseXML][parseError] && xhr[responseXML][parseError].errorCode && xhr[responseXML][parseError].reason)){
