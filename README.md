@@ -1,4 +1,4 @@
-qwest 0.3.5
+qwest 0.3.6
 ===========
 
 Qwest is a simple ajax library based on `promises` behaviour and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob`, `Document` and `FormData`.
@@ -32,6 +32,17 @@ The available `options` are :
 - password : the password to access to the URL, if needed
 
 The `before` option lets you specify a callback to modify the `XHR` object before the request occurs.
+
+You can also verify the XHR object version to handle fallbacks :
+
+```javascript
+if(qwest.xhr2){
+    // Actions for XHR2
+}
+else{
+    // Actions for XHR1
+}
+```
 
 Examples
 --------
