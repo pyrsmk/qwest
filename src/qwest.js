@@ -1,7 +1,7 @@
 /*
     qwest, ajax library with promises and XHR2 support
 
-    Version     : 0.3.6
+    Version     : 0.4.0
     Author      : Aurélien Delogu (dev@dreamysource.fr)
     Homepage    : https://github.com/pyrsmk/qwest
     License     : MIT
@@ -10,6 +10,10 @@
 this.qwest=function(){
     
     var win=window,
+        // Variables for limit mechanism
+        limit=null,
+        requests=0,
+        request_stack=[],
         // Get XMLHttpRequest object
         getXHR=function(){
             return win.XMLHttpRequest?
@@ -18,211 +22,260 @@ this.qwest=function(){
             },
         // Guess XHR version
         version2=(getXHR().responseType===''),
-    
-        // Core function
-        qwest=function(method,url,data,options,before){
+        
+    // Core function
+    qwest=function(method,url,data,options,before){
 
-            // Format
-            data=data || null;
-            options=options || {};
+        // Format
+        data=data || null;
+        options=options || {};
 
-            var typeSupported=false,
-                xhr=getXHR(),
-                async=options.async===undefined?true:!!options.async,
-                cache=!!options.cache,
-                type=options.type?options.type.toLowerCase():'json',
-                user=options.user || '',
-                password=options.password || '',
-                headers={'X-Requested-With':'XMLHttpRequest'},
-                accepts={
-                    xml : 'application/xml, text/xml',
-                    html: 'text/html',
-                    text: 'text/plain',
-                    json: 'application/json, text/javascript',
-                    js  : 'application/javascript, text/javascript'
-                },
-                vars='',
-                i,
-                parseError='parseError',
-                serialized,
-                success_stack=[],
-                error_stack=[],
-                complete_stack=[],
-                response,
-                success,
-                error,
-                func,
-                // Define promises
-                promises={
-                    success:function(func){
-                        if(async){
-                            success_stack.push(func);
-                        }
-                        else if(success){
-                            func.apply(xhr,[response]);
-                        }
-                        return promises;
-                    },
-                    error:function(func){
-                        if(async){
-                            error_stack.push(func);
-                        }
-                        else if(error){
-                            func.apply(xhr,[response]);
-                        }
-                        return promises;
-                    },
-                    complete:function(func){
-                        if(async){
-                            complete_stack.push(func);
-                        }
-                        else{
-                            func.apply(xhr);
-                        }
-                        return promises;
+        var typeSupported=false,
+            xhr=getXHR(),
+            async=options.async===undefined?true:!!options.async,
+            cache=!!options.cache,
+            type=options.type?options.type.toLowerCase():'json',
+            user=options.user || '',
+            password=options.password || '',
+            headers={'X-Requested-With':'XMLHttpRequest'},
+            accepts={
+                xml : 'application/xml, text/xml',
+                html: 'text/html',
+                text: 'text/plain',
+                json: 'application/json, text/javascript',
+                js  : 'application/javascript, text/javascript'
+            },
+            vars='',
+            i,
+            parseError='parseError',
+            serialized,
+            success_stack=[],
+            error_stack=[],
+            complete_stack=[],
+            response,
+            success,
+            error,
+            func,
+            // Define promises
+            promises={
+                success:function(func){
+                    if(async){
+                        success_stack.push(func);
                     }
+                    else if(success){
+                        func.apply(xhr,[response]);
+                    }
+                    return promises;
                 },
-                // Handle the response
-                handleResponse=function(){
-                    var i;
-                    try{
-                        // Verify status code
-                        if(xhr.status!=200){
-                            throw xhr.status+" ("+xhr.statusText+")";
-                        }
-                        // Init
-                        var responseText='responseText',
-                            responseXML='responseXML';
-                        // Process response
-                        if(type=='text' || type=='html'){
-                            response=xhr[responseText];
-                        }
-                        else if(typeSupported && xhr.response!==undefined){
-                            response=xhr.response;
-                        }
-                        else{
-                            switch(type){
-                                case 'json':
-                                    try{
-                                        if(win.JSON){
-                                            response=win.JSON.parse(xhr[responseText]);
-                                        }
-                                        else{
-                                            response=eval('('+xhr[responseText]+')');
-                                        }
-                                    }
-                                    catch(e){
-                                        throw "Error while parsing JSON body";
-                                    }
-                                    break;
-                                case 'js':
-                                    response=eval(xhr[responseText]);
-                                    break;
-                                case 'xml':
-                                    if(!xhr[responseXML] || (xhr[responseXML][parseError] && xhr[responseXML][parseError].errorCode && xhr[responseXML][parseError].reason)){
-                                        throw "Error while parsing XML body";
+                error:function(func){
+                    if(async){
+                        error_stack.push(func);
+                    }
+                    else if(error){
+                        func.apply(xhr,[response]);
+                    }
+                    return promises;
+                },
+                complete:function(func){
+                    if(async){
+                        complete_stack.push(func);
+                    }
+                    else{
+                        func.apply(xhr);
+                    }
+                    return promises;
+                }
+            },
+            promises_limit={
+                success:function(func){
+                    request_stack[request_stack.length-1].success.push(func);
+                    return promises_limit;
+                },
+                error:function(func){
+                    request_stack[request_stack.length-1].error.push(func);
+                    return promises_limit;
+                },
+                complete:function(func){
+                    request_stack[request_stack.length-1].complete.push(func);
+                    return promises_limit;
+                }
+            },
+            // Handle the response
+            handleResponse=function(){
+                // Prepare
+                var i,req,p;
+                --requests;
+                // Launch next stacked request
+                if(request_stack.length){
+                    req=request_stack.shift();
+                    p=qwest(req.method,req.url,req.data,req.options,req.before);
+                    for(i=0;func=req.success[i];++i){
+                        p.success(func);
+                    }
+                    for(i=0;func=req.error[i];++i){
+                        p.error(func);
+                    }
+                    for(i=0;func=req.complete[i];++i){
+                        p.complete(func);
+                    }
+                }
+                // Handle response
+                try{
+                    // Verify status code
+                    if(xhr.status!=200){
+                        throw xhr.status+" ("+xhr.statusText+")";
+                    }
+                    // Init
+                    var responseText='responseText',
+                        responseXML='responseXML';
+                    // Process response
+                    if(type=='text' || type=='html'){
+                        response=xhr[responseText];
+                    }
+                    else if(typeSupported && xhr.response!==undefined){
+                        response=xhr.response;
+                    }
+                    else{
+                        switch(type){
+                            case 'json':
+                                try{
+                                    if(win.JSON){
+                                        response=win.JSON.parse(xhr[responseText]);
                                     }
                                     else{
-                                        response=xhr[responseXML];
+                                        response=eval('('+xhr[responseText]+')');
                                     }
-                                    break;
-                                default:
-                                    throw "Unsupported "+type+" type";
-                            }
-                        }
-                        // Execute success stack
-                        success=true;
-                        if(async){
-                            for(i=0;func=success_stack[i];++i){
-                                func.apply(xhr,[response]);
-                            }
-                        }
-                    }
-                    catch(e){
-                        error=true;
-                        response="Request to '"+url+"' aborted: "+e;
-                        // Execute error stack
-                        if(async){
-                            for(i=0;func=error_stack[i];++i){
-                                func.apply(xhr,[response]);
-                            }
+                                }
+                                catch(e){
+                                    throw "Error while parsing JSON body";
+                                }
+                                break;
+                            case 'js':
+                                response=eval(xhr[responseText]);
+                                break;
+                            case 'xml':
+                                if(!xhr[responseXML] || (xhr[responseXML][parseError] && xhr[responseXML][parseError].errorCode && xhr[responseXML][parseError].reason)){
+                                    throw "Error while parsing XML body";
+                                }
+                                else{
+                                    response=xhr[responseXML];
+                                }
+                                break;
+                            default:
+                                throw "Unsupported "+type+" type";
                         }
                     }
-                    // Execute complete stack
+                    // Execute success stack
+                    success=true;
                     if(async){
-                        for(i=0;func=complete_stack[i];++i){
-                            func.apply(xhr);
+                        for(i=0;func=success_stack[i];++i){
+                            func.apply(xhr,[response]);
                         }
                     }
-                };
-
-            // Prepare data
-            if(data instanceof ArrayBuffer || data instanceof Blob || data instanceof Document || data instanceof FormData){
-                if(method=='GET'){
-                    data=null;
                 }
-            }
-            else{
-                var values=[],
-                    enc=encodeURIComponent;
-                for(i in data){
-                    values.push(enc(i)+'='+enc(data[i]));
-                }
-                data=values.join('&');
-                serialized=true;
-            }
-            // Prepare URL
-            if(method=='GET'){
-                vars+=data;
-            }
-            if(!cache){
-                if(vars){
-                    vars+='&';
-                }
-                vars+='t='+Date.now();
-            }
-            if(vars){
-                url+=(/\?/.test(url)?'&':'?')+vars;
-            }
-            // Open connection
-            xhr.open(method,url,async,user,password);
-            // Identify supported XHR version
-            if(type && version2){
-                try{
-                    xhr.responseType=type;
-                    typeSupported=(xhr.responseType==type);
-                }
-                catch(e){}
-            }
-            // Plug response handler
-            if(version2){
-                xhr.onload=handleResponse;
-            }
-            else{
-                xhr.onreadystatechange=function(){
-                    if(xhr.readyState==4){
-                        handleResponse();
+                catch(e){
+                    error=true;
+                    response="Request to '"+url+"' aborted: "+e;
+                    // Execute error stack
+                    if(async){
+                        for(i=0;func=error_stack[i];++i){
+                            func.apply(xhr,[response]);
+                        }
                     }
-                };
-            }
-            // Prepare headers
-            if(serialized && method=='POST'){
-                headers['Content-Type']='application/x-www-form-urlencoded';
-            }
-            headers.Accept=accepts[type];
-            for(i in headers){
-                xhr.setRequestHeader(i,headers[i]);
-            }
-            // Before
-            if(before){
-                before.apply(xhr);
-            }
-            // Send request
-            xhr.send(method=='POST'?data:null);
+                }
+                // Execute complete stack
+                if(async){
+                    for(i=0;func=complete_stack[i];++i){
+                        func.apply(xhr);
+                    }
+                }
+            };
+
+        // Limit requests
+        if(limit && requests==limit){
+            // Stock current request
+            request_stack.push({
+                method      : method,
+                url         : url,
+                data        : data,
+                options     : options,
+                before      : before,
+                success     : [],
+                error       : [],
+                complete    : []
+            });
             // Return promises
-            return promises;
-            
-        };
+            return promises_limit;
+        }
+        // New request
+        ++requests;
+        // Prepare data
+        if(data instanceof ArrayBuffer || data instanceof Blob || data instanceof Document || data instanceof FormData){
+            if(method=='GET'){
+                data=null;
+            }
+        }
+        else{
+            var values=[],
+                enc=encodeURIComponent;
+            for(i in data){
+                values.push(enc(i)+'='+enc(data[i]));
+            }
+            data=values.join('&');
+            serialized=true;
+        }
+        // Prepare URL
+        if(method=='GET'){
+            vars+=data;
+        }
+        if(!cache){
+            if(vars){
+                vars+='&';
+            }
+            vars+='t='+Date.now();
+        }
+        if(vars){
+            url+=(/\?/.test(url)?'&':'?')+vars;
+        }
+        // Open connection
+        xhr.open(method,url,async,user,password);
+        // Identify supported XHR version
+        if(type && version2){
+            try{
+                xhr.responseType=type;
+                typeSupported=(xhr.responseType==type);
+            }
+            catch(e){}
+        }
+        // Plug response handler
+        if(version2){
+            xhr.onload=handleResponse;
+        }
+        else{
+            xhr.onreadystatechange=function(){
+                if(xhr.readyState==4){
+                    handleResponse();
+                }
+            };
+        }
+        // Prepare headers
+        if(serialized && method=='POST'){
+            headers['Content-Type']='application/x-www-form-urlencoded';
+        }
+        headers.Accept=accepts[type];
+        for(i in headers){
+            xhr.setRequestHeader(i,headers[i]);
+        }
+        // Before
+        if(before){
+            before.apply(xhr);
+        }
+        // Send request
+        xhr.send(method=='POST'?data:null);
+        // Return promises
+        return promises;
+        
+    };
 
     // Return final qwest object
     return {
@@ -232,7 +285,10 @@ this.qwest=function(){
         post:function(url,data,options,before){
             return qwest('POST',url,data,options,before);
         },
-        xhr2:version2
+        xhr2:version2,
+        limit:function(by){
+            limit=by;
+        }
     };
     
 }();

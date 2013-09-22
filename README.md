@@ -1,7 +1,22 @@
-qwest 0.3.6
+qwest 0.4.0
 ===========
 
 Qwest is a simple ajax library based on `promises` behaviour and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob`, `Document` and `FormData`.
+
+That's new!
+-----------
+
+New qwest version brings requests limitation. It's really useful if you have several request to launch at the same time. If you exceed the limit you've defined then qwest will stock further requests and start them when slots are ready.
+
+```javascript
+qwest.limit(4);
+
+$$('.foo').each(function(){
+    qwest.get(this.data('some_url_to_get'));
+});
+```
+
+If you want to remove the limit, just do `qwest.limit(null)`.
 
 Syntax
 ------
