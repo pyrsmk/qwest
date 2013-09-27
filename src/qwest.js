@@ -1,7 +1,7 @@
 /*
     qwest, ajax library with promises and XHR2 support
 
-    Version     : 0.4.0
+    Version     : 0.4.1
     Author      : Aurélien Delogu (dev@dreamysource.fr)
     Homepage    : https://github.com/pyrsmk/qwest
     License     : MIT
@@ -210,7 +210,13 @@ this.qwest=function(){
         // New request
         ++requests;
         // Prepare data
-        if(data instanceof ArrayBuffer || data instanceof Blob || data instanceof Document || data instanceof FormData){
+        if(
+           win.ArrayBuffer && 
+           (data instanceof ArrayBuffer ||
+           data instanceof Blob ||
+           data instanceof Document ||
+           data instanceof FormData)
+        ){
             if(method=='GET'){
                 data=null;
             }
