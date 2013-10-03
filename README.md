@@ -6,7 +6,7 @@ Qwest is a simple ajax library based on `promises` behaviour and that supports `
 That's new!
 -----------
 
-New qwest version brings requests limitation to avoid browser freezes and server overloads. It's really useful to free some bandwidth and memory resources when you have a whole bunch of requests to do at the same time (when you load a gallery, per example). You just need to set the request limit and when the count is reached qwest will stock all further requests to start them when a slot is free.
+New qwest version brings requests limitation to avoid browser freezes and server overloads. It's really useful for freeing bandwidth and memory resources when you have a whole bunch of requests to do at the same time (when you load a gallery, per example). You just need to set the request limit and when the count is reached qwest will stock all further requests to start them when a slot is free.
 
 ```javascript
 qwest.limit(4);
