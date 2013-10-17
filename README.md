@@ -1,4 +1,4 @@
-qwest 0.4.1
+qwest 0.4.2
 ===========
 
 Qwest is a simple ajax library based on `promises` behaviour and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob`, `Document` and `FormData`.
@@ -6,17 +6,14 @@ Qwest is a simple ajax library based on `promises` behaviour and that supports `
 That's new!
 -----------
 
-New qwest version brings requests limitation to avoid browser freezes and server overloads. It's really useful for freeing bandwidth and memory resources when you have a whole bunch of requests to do at the same time (when you load a gallery, per example). You just need to set the request limit and when the count is reached qwest will stock all further requests to start them when a slot is free.
+You don't need to write array's data name as 'foo[]' anymore, qwest will handle this for you. So, just do :
 
 ```javascript
-qwest.limit(4);
-
-$$('.foo').each(function(){
-    qwest.get(this.data('some_url_to_get'));
-});
+// Old
+qwest.get('someurl.com',{ 'foo[]' : [1,2,3,4] });
+// New
+qwest.get('someurl.com',{ foo : [1,2,3,4] });
 ```
-
-If you want to remove the limit, just do `qwest.limit(null)`.
 
 Syntax
 ------
@@ -59,8 +56,23 @@ else{
 }
 ```
 
-Examples
---------
+Requests limitation
+-------------------
+
+Requests limitation is a very powerful functionnality which avoids browser freezes and server overloads. It's really useful for freeing bandwidth and memory resources when you have a whole bunch of requests to do at the same time (when you load a gallery, per example). You just need to set the request limit and when the count is reached qwest will stock all further requests to start them when a slot is free.
+
+```javascript
+qwest.limit(4);
+
+$$('.foo').each(function(){
+    qwest.get(this.data('some_url_to_get'));
+});
+```
+
+If you want to remove the limit, just do `qwest.limit(null)`.
+
+Some examples
+-------------
 
 Send a simple GET request :
 
@@ -134,10 +146,9 @@ qwest.get('example.com',{},{},function(){
      });
 ```
 
-Some notes
-----------
+Notes
+-----
 
-- won't accept arrays or objects with different levels as `data` parameter, to define an array please set value's name to "foo[]" like in HTML
 - default "Content-Type" header is "application/x-www-form-urlencoded" for basic `data`
 
 License
