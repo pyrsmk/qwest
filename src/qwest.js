@@ -1,7 +1,7 @@
 /*
     qwest, ajax library with promises and XHR2 support
 
-    Version     : 0.4.2
+    Version     : 0.5.0pre
     Author      : Aurélien Delogu (dev@dreamysource.fr)
     Homepage    : https://github.com/pyrsmk/qwest
     License     : MIT
@@ -41,12 +41,13 @@ this.qwest=function(){
             accepts={
                 xml : 'application/xml, text/xml',
                 html: 'text/html',
-                text: 'text/plain',
+                //text: 'text/plain',
                 json: 'application/json, text/javascript',
                 js  : 'application/javascript, text/javascript'
             },
+            toUpper=function(match,p1,p2){return p2.toUpperCase();},
             vars='',
-            i,
+            i,j,
             parseError='parseError',
             serialized,
             success_stack=[],
@@ -129,10 +130,10 @@ this.qwest=function(){
                     var responseText='responseText',
                         responseXML='responseXML';
                     // Process response
-                    if(type=='text' || type=='html'){
+                    /*if(type=='text' || type=='html'){
                         response=xhr[responseText];
                     }
-                    else if(typeSupported && xhr.response!==undefined){
+                    else */if(typeSupported && xhr.response!==undefined){
                         response=xhr.response;
                     }
                     else{
@@ -162,7 +163,8 @@ this.qwest=function(){
                                 }
                                 break;
                             default:
-                                throw "Unsupported "+type+" type";
+                                //throw "Unsupported "+type+" type";
+                                response=xhr[responseText];
                         }
                     }
                     // Execute success stack
@@ -213,9 +215,9 @@ this.qwest=function(){
         if(
            win.ArrayBuffer && 
            (data instanceof ArrayBuffer ||
-           data instanceof Blob ||
-           data instanceof Document ||
-           data instanceof FormData)
+            data instanceof Blob ||
+            data instanceof Document ||
+            data instanceof FormData)
         ){
             if(method=='GET'){
                 data=null;
@@ -225,7 +227,9 @@ this.qwest=function(){
             var values=[],
                 enc=encodeURIComponent;
             for(i in data){
-                values.push(enc(i)+(data[i].pop?'[]':'')+'='+enc(data[i]));
+                if(data[i]!==undefined){
+                    values.push(enc(i)+(data[i].pop?'[]':'')+'='+enc(data[i]));
+                }
             }
             data=values.join('&');
             serialized=true;
@@ -265,12 +269,19 @@ this.qwest=function(){
             };
         }
         // Prepare headers
-        if(serialized && method=='POST'){
-            headers['Content-Type']='application/x-www-form-urlencoded';
-        }
-        headers.Accept=accepts[type];
         for(i in headers){
+            // Format
+            j=i.replace(/(^|-)(\w)/g,toUpper);
+            headers[j]=headers[i];
+            delete headers[i];
+            // Set header
             xhr.setRequestHeader(i,headers[i]);
+        }
+        if(!headers['Content-Type'] && serialized && method=='POST'){
+            xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+        }
+        if(!headers.Accept){
+            xhr.setRequestHeader('Accept',accepts[type]);
         }
         // Before
         if(before){

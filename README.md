@@ -1,5 +1,5 @@
-qwest 0.4.2
-===========
+qwest 0.5.0pre
+==============
 
 Qwest is a simple ajax library based on `promises` behaviour and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob`, `Document` and `FormData`.
 
@@ -150,6 +150,7 @@ Notes
 -----
 
 - default "Content-Type" header is "application/x-www-form-urlencoded" for basic `data`
+- if a parameter from the `data` is `undefined`, qwest will silently ignore it
 
 License
 -------
