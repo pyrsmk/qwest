@@ -1,13 +1,20 @@
 /*
     qwest, ajax library with promises and XHR2 support
 
-    Version     : 0.5.0pre
+    Version     : 0.5.0
     Author      : Aurélien Delogu (dev@dreamysource.fr)
     Homepage    : https://github.com/pyrsmk/qwest
     License     : MIT
 */
 
-this.qwest=function(){
+(function(def){
+    if(typeof module!='undefined'){
+        module.exports=def;
+    }
+    else{
+        this.qwest=def;
+    }
+}(function(){
     
     var win=window,
         // Variables for limit mechanism
@@ -308,4 +315,4 @@ this.qwest=function(){
         }
     };
     
-}();
+}()));
