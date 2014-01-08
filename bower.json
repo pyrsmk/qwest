@@ -1,0 +1,12 @@
+{
+  "name": "pyrsmk/qwest",
+  "version": "0.5.0",
+  "main": "src/qwest.js",
+  "description": "Ajax library with promises and XHR2 support",
+  "license": "MIT",
+  "author": "Aurélien Delogu",
+  "repository": {
+      "type": "git"
+    , "url": "https://github.com/pyrsmk/qwest.git"
+  }
+}
