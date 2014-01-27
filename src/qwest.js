@@ -280,11 +280,6 @@
         }
         // Prepare headers
         for(i in headers){
-            // Format
-            j=i.replace(/(^|-)(\w)/g,toUpper);
-            headers[j]=headers[i];
-            delete headers[i];
-            // Set header
             xhr.setRequestHeader(i,headers[i]);
         }
         if(!headers['Content-Type'] && serialized && method=='POST'){
