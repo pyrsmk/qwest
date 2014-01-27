@@ -1,6 +1,6 @@
 {
     "browser"   : true,
-    "predef"    : ["ActiveXObject","Document","log"],
+    "predef"    : ["ActiveXObject","Document","log","define","module"],
     "boss"      : true,
     "curly"     : true,
     "eqnull"    : true,
