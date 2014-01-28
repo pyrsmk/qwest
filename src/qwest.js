@@ -245,11 +245,10 @@
         if(method=='GET'){
             vars+=data;
         }
+        if(cache == null){ cache = method=='POST'; }
         if(!cache){
-            if(vars){
-                vars+='&';
-            }
-            vars+='t='+Date.now();
+            if(vars){ vars+='&'; }
+            vars+='__t='+Date.now();
         }
         if(vars){
             url+=(/\?/.test(url)?'&':'?')+vars;
