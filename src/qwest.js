@@ -8,10 +8,11 @@
 */
 
 (function(def){
-    if(typeof module!='undefined'){
+    if(typeof define=='function'&&define.amd){
+      define(def);
+    } else if(typeof module!='undefined'){
         module.exports=def;
-    }
-    else{
+    } else{
         this.qwest=def;
     }
 }(function(){
