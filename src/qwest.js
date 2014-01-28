@@ -1,15 +1,10 @@
 /*
     qwest, ajax library with promises and XHR2 support
 
-    Version     : 0.5.2
+    Version     : 0.5.3
     Author      : Aurélien Delogu (dev@dreamysource.fr)
     Homepage    : https://github.com/pyrsmk/qwest
     License     : MIT
-*/
-
-/*
-	- stabiliser
-	- réfléchir à une meilleure normalisation des entêtes (pull request #5)
 */
 
 (function(def){
@@ -60,7 +55,7 @@
                 json: 'application/json, text/javascript',
                 js  : 'application/javascript, text/javascript'
             },
-            toUpper=function(match,p1,p2){return p2.toUpperCase();},
+            toUpper=function(match,p1,p2){return p1+p2.toUpperCase();},
             vars='',
             i,j,
             parseError='parseError',
@@ -284,15 +279,18 @@
             };
         }
         // Prepare headers
-        for(i in headers){
-            xhr.setRequestHeader(i,headers[i]);
-        }
-        if(!headers['Content-Type'] && serialized && method=='POST'){
-            xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-        }
-        if(!headers.Accept){
-            xhr.setRequestHeader('Accept',accepts[type]);
-        }
+		for(i in headers){
+			j=i.replace(/(^|-)([^-])/g,toUpper);
+			headers[j]=headers[i];
+			delete headers[i];
+			xhr.setRequestHeader(j,headers[j]);
+		}
+		if(!headers['Content-Type'] && serialized && method=='POST'){
+			xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+		}
+		if(!headers.Accept){
+			xhr.setRequestHeader('Accept',accepts[type]);
+		}
         // Before
         if(before){
             before.apply(xhr);
