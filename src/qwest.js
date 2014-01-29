@@ -43,7 +43,7 @@
         var typeSupported=false,
             xhr=getXHR(),
             async=options.async===undefined?true:!!options.async,
-            cache=!!options.cache,
+            cache=options.cache,
             type=options.type?options.type.toLowerCase():'json',
             user=options.user || '',
             password=options.password || '',
@@ -248,11 +248,10 @@
         if(method=='GET'){
             vars+=data;
         }
+        if(cache == null){ cache = method=='POST'; }
         if(!cache){
-            if(vars){
-                vars+='&';
-            }
-            vars+='t='+Date.now();
+            if(vars){ vars+='&'; }
+            vars+='__t='+Date.now();
         }
         if(vars){
             url+=(/\?/.test(url)?'&':'?')+vars;

@@ -38,7 +38,7 @@ The `data` parameter is an object that list data to send.
 The available `options` are :
 
 - type : either [XHR2 supported types](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest#Properties), text, html, json (by default), js or xml; used to have automatic parsing of the response and a valid `Accept` header
-- cache : true or false (default); used to disable browser caching
+- cache : true or false (default is `false` for GET requests and `true` for POST requests); used to disable browser caching using a query parameter `__t` with request timestamp
 - async : true (default) or false; used to make asynchronous or synchronous requests
 - user : the user to access to the URL, if needed
 - password : the password to access to the URL, if needed
