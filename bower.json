@@ -1,6 +1,6 @@
 {
   "name": "pyrsmk/qwest",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "main": "src/qwest.js",
   "description": "Ajax library with promises and XHR2 support",
   "license": "MIT",
