@@ -1,7 +1,7 @@
 /*
     qwest, ajax library with promises and XHR2 support
 
-    Version     : 0.5.4
+    Version     : 0.5.5
     Author      : Aurélien Delogu (dev@dreamysource.fr)
     Homepage    : https://github.com/pyrsmk/qwest
     License     : MIT
@@ -133,8 +133,8 @@
                 // Handle response
                 try{
                     // Verify status code
-                    if(xhr.status!=200){
-                        throw xhr.status+" ("+xhr.statusText+")";
+                    if(!/^2/.test(xhr.status)){
+                        throw xhr.status+' ('+xhr.statusText+')';
                     }
                     // Init
                     var responseText='responseText',
