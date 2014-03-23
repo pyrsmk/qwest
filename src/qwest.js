@@ -16,20 +16,133 @@
 		this.qwest=def;
 	}
 }(function(){
-	
-	var win=window,
-		// Variables for limit mechanism
-		limit=null,
+
+	/*
+		Return a better type of a variable
+
+		Parameters
+			variable
+
+		Return
+			String
+	*/
+	function getTypeOf(variable){
+		var type=typeof variable;
+		if(type=='object' && variable.pop){
+			type='array';
+		}
+		return type;
+	}
+
+	/*
+		Linearize data
+
+		Parameters
+			Object data
+
+		Return
+			String
+	*/
+	function linearize(data){
+		var values=[],
+			name,i,j;
+		for(name in data){
+			switch(getTypeOf(data[name])){
+				case 'array':
+					newValues=linearizeArray(data[name]);
+					for(i=0,j=newValues.length;i<j;++i){
+						values.push(name+newValues[i]);
+					}
+					break;
+				case 'object':
+					newValues=linearizeObject(data[name]);
+					for(i=0,j=newValues.length;i<j;++i){
+						values.push(name+newValues[i]);
+					}
+					break;
+				default:
+					values.push(name+'='+encodeURIComponent(data[name]));
+			}
+		}
+		return values.join('&');
+	}
+
+	/*
+		Linearize array values
+
+		Parameters
+			Array data
+
+		Return
+			Array
+	*/
+	function linearizeArray(data){
+		var values=[],
+			newValues,
+			i,j,k,l;
+		for(i=0,j=data.length;i<j;++i){
+			switch(getTypeOf(data[i])){
+				case 'array':
+					newValues=linearizeArray(data[i]);
+					for(k=0,l=newValues.length;k<l;++k){
+						values.push('[]'+newValues[k]);
+					}
+					break;
+				case 'object':
+					newValues=linearizeObject(data[i]);
+					for(k=0,l=newValues.length;k<l;++k){
+						values.push('[]'+newValues[k]);
+					}
+					break;
+				default:
+					values.push('[]='+encodeURIComponent(data[i]));
+			}
+		}
+		return values;
+	}
+
+	/*
+		Linearize object values
+
+		Parameters
+			Object data
+
+		Return
+			Array
+	*/
+	function linearizeObject(data){
+		var values=[];
+		for(var name in data){
+			switch(getTypeOf(data[name])){
+				case 'array':
+					newValues=linearizeArray(data[name]);
+					for(k=0,l=newValues.length;k<l;++k){
+						values.push('['+name+']'+newValues[k]);
+					}
+					break;
+				case 'object':
+					newValues=linearizeObject(data[name]);
+					for(k=0,l=newValues.length;k<l;++k){
+						values.push('['+name+']'+newValues[k]);
+					}
+					break;
+				default:
+					values.push('['+name+']='+encodeURIComponent(data[name]));
+			}
+		}
+		return values;
+	}
+
+	// Global variables
+	var limit=null,
 		requests=0,
 		request_stack=[],
-		// Get XMLHttpRequest object
 		getXHR=function(){
-			return win.XMLHttpRequest?
+			return window.XMLHttpRequest?
 				   new XMLHttpRequest():
 				   new ActiveXObject('Microsoft.XMLHTTP');
-			},
-		// Guess XHR version
-		version2=(getXHR().responseType===''),
+		},
+		version2=(getXHR().responseType==='');
 		
 	// Core function
 	qwest=function(method,url,data,options,before){
@@ -55,8 +168,8 @@
 			},
 			toUpper=function(match,p1,p2){return p1+p2.toUpperCase();},
 			vars='',
-			i,j,
-			parseError='parseError',
+			i,
+			j,
 			serialized,
 			success_stack=[],
 			error_stack=[],
@@ -112,7 +225,9 @@
 			// Handle the response
 			handleResponse=function(){
 				// Prepare
-				var i,req,p;
+				var i,
+					req,
+					p;
 				--requests;
 				// Launch next stacked request
 				if(request_stack.length){
@@ -135,11 +250,9 @@
 						throw xhr.status+' ('+xhr.statusText+')';
 					}
 					// Init
-					var responseText='responseText',
-						responseXML='responseXML';
 					// Process response
 					/*if(type=='text' || type=='html'){
-						response=xhr[responseText];
+						response=xhr.responseText;
 					}
 					else */if(typeSupported && xhr.response!==undefined){
 						response=xhr.response;
@@ -148,11 +261,11 @@
 						switch(type){
 							case 'json':
 								try{
-									if(win.JSON){
-										response=win.JSON.parse(xhr[responseText]);
+									if(window.JSON){
+										response=window.JSON.parse(xhr.responseText);
 									}
 									else{
-										response=eval('('+xhr[responseText]+')');
+										response=eval('('+xhr.responseText+')');
 									}
 								}
 								catch(e){
@@ -160,19 +273,19 @@
 								}
 								break;
 							case 'js':
-								response=eval(xhr[responseText]);
+								response=eval(xhr.responseText);
 								break;
 							case 'xml':
-								if(!xhr[responseXML] || (xhr[responseXML][parseError] && xhr[responseXML][parseError].errorCode && xhr[responseXML][parseError].reason)){
+								if(!xhr.responseXML || (xhr.responseXML.parseError && xhr.responseXML.parseError.errorCode && xhr.responseXML.parseError.reason)){
 									throw "Error while parsing XML body";
 								}
 								else{
-									response=xhr[responseXML];
+									response=xhr.responseXML;
 								}
 								break;
 							default:
 								//throw "Unsupported "+type+" type";
-								response=xhr[responseText];
+								response=xhr.responseText;
 						}
 					}
 					// Execute success stack
@@ -205,14 +318,14 @@
 		if(limit && requests==limit){
 			// Stock current request
 			request_stack.push({
-				method      : method,
-				url         : url,
-				data        : data,
-				options     : options,
-				before      : before,
-				success     : [],
-				error       : [],
-				complete    : []
+				method		: method,
+				url			: url,
+				data		: data,
+				options		: options,
+				before		: before,
+				success		: [],
+				error		: [],
+				complete	: []
 			});
 			// Return promises
 			return promises_limit;
@@ -221,8 +334,8 @@
 		++requests;
 		// Prepare data
 		if(
-		   win.ArrayBuffer && 
-		   (data instanceof ArrayBuffer ||
+			window.ArrayBuffer && 
+			(data instanceof ArrayBuffer ||
 			data instanceof Blob ||
 			data instanceof Document ||
 			data instanceof FormData)
@@ -232,14 +345,7 @@
 			}
 		}
 		else{
-			var values=[],
-				enc=encodeURIComponent;
-			for(i in data){
-				if(data[i]!==undefined){
-					values.push(enc(i)+(data[i].pop?'[]':'')+'='+enc(data[i]));
-				}
-			}
-			data=values.join('&');
+			data=linearize(data);
 			serialized=true;
 		}
 		// Prepare URL
