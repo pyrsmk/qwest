@@ -151,4 +151,4 @@ Please note that the default "Content-Type" header is "application/x-www-form-ur
 License
 -------
 
-MIT license everywhere!
+[MIT license](http://dreamysource.mit-license.org) everywhere!
