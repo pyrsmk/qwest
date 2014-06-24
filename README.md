@@ -1,4 +1,4 @@
-qwest 0.6.0
+qwest 0.5.5
 ===========
 
 Qwest is a simple ajax library based on `promises` behaviour and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob`, `Document` and `FormData`.
@@ -33,7 +33,7 @@ qwest.<method>(<url>,[data],[options],[before])
 
 The method is either `get` or `post`. There's no `put` or `delete` support because the `XmlHttpRequest` object does not support data sending with those methods.
 
-The `data` parameter is an object that list data to send. It supports multi-dimensional arrays and objects.
+The `data` parameter is an object that list data to send.
 
 The available `options` are :
 
@@ -146,7 +146,11 @@ qwest.get('example.com',{},{},function(){
      });
 ```
 
-Please note that the default "Content-Type" header is "application/x-www-form-urlencoded". Overwrite it if you want ;)
+Notes
+-----
+
+- default "Content-Type" header is "application/x-www-form-urlencoded" for basic `data`
+- if a parameter from the `data` is `undefined`, qwest will silently ignore it
 
 License
 -------
