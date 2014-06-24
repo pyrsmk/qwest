@@ -25,8 +25,8 @@
 		// Get XMLHttpRequest object
 		getXHR=function(){
 			return win.XMLHttpRequest?
-				   new XMLHttpRequest():
-				   new ActiveXObject('Microsoft.XMLHTTP');
+					new XMLHttpRequest():
+					new ActiveXObject('Microsoft.XMLHTTP');
 			},
 		// Guess XHR version
 		version2=(getXHR().responseType===''),
@@ -236,8 +236,8 @@
 		++requests;
 		// Prepare data
 		if(
-		   win.ArrayBuffer && 
-		   (data instanceof ArrayBuffer ||
+			win.ArrayBuffer && 
+			(data instanceof ArrayBuffer ||
 			data instanceof Blob ||
 			data instanceof Document ||
 			data instanceof FormData)
