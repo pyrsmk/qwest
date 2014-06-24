@@ -199,6 +199,21 @@
 						func.apply(xhr);
 					}
 				}
+			},
+			// Recursively build the query string
+			buildData = function(data, key) {
+				var res = [],
+					enc = encodeURIComponent;
+				if(typeof data === 'object' && data != null) {
+					for(var p in data) {
+						if(data.hasOwnProperty(p)) {
+							res = res.concat(buildData(data[p], key ? key + '[' + p + ']' : p));
+						}
+					}
+				} else if(data != null && key != null) {
+					res.push(enc(key) + '=' + enc(data));
+				}
+				return res.join('&');
 			};
 
 		// Limit requests
@@ -232,14 +247,7 @@
 			}
 		}
 		else{
-			var values=[],
-				enc=encodeURIComponent;
-			for(i in data){
-				if(data[i]!==undefined){
-					values.push(enc(i)+(data[i].pop?'[]':'')+'='+enc(data[i]));
-				}
-			}
-			data=values.join('&');
+			data = buildData(data);
 			serialized=true;
 		}
 		// Prepare URL
