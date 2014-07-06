@@ -21,13 +21,13 @@ Syntax
 ```javascript
 qwest.<method>(<url>,[data],[options],[before])
      .success(function(response){
-        // Runned when the request is successful
+        // Run when the request is successful
      })
      .error(function(message){
         // Process error message
      });
      .complete(function(){
-        // Always runned
+        // Always run
      });
 ```
 
