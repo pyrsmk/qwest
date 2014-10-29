@@ -1,6 +1,5 @@
 {
   "name": "qwest",
-  "version": "0.6.0",
   "description": "Ajax library with XHR2, promises and requests limitation",
   "main": "src/qwest.js",
   "repository": {

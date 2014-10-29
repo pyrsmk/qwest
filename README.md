@@ -25,7 +25,7 @@ qwest.<method>(<url>,[data],[options],[before])
      })
      .error(function(message){
         // Process error message
-     });
+     })
      .complete(function(){
         // Always run
      });

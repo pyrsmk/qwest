@@ -28,7 +28,7 @@ module.exports = function(grunt) {
 		uglify: {
 			library: {
 				files: {
-					'<%= bower.name %>-<%= bower.version %>.min.js': ['src/*.js']
+					'<%= bower.name %>.min.js': ['src/*.js']
 				}
 			}
 		},
