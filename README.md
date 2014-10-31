@@ -42,6 +42,7 @@ The available `options` are :
 - async : true (default) or false; used to make asynchronous or synchronous requests
 - user : the user to access to the URL, if needed
 - password : the password to access to the URL, if needed
+- headers: javascript object containing headers to be sent
 
 The `before` option lets you specify a callback to modify the `XHR` object before the request occurs.
 
@@ -136,7 +137,6 @@ To apply some manual options to the `XHR` object, define a `before` callback :
 
 ```javascript
 qwest.get('example.com',{},{},function(){
-        this.setRequestHeader('Accept-Encoding','gzip, deflate');
         this.uploadonprogress=function(e){
             // Upload in progress
         };
@@ -147,6 +147,19 @@ qwest.get('example.com',{},{},function(){
 ```
 
 Please note that the default "Content-Type" header is "application/x-www-form-urlencoded". Overwrite it if you want ;)
+
+Example for posting json data:
+```javascript
+qwest.post('example.com',{data:"mydata"},{
+          headers:{
+               "Content-Type":"application/json"
+          }
+     })
+     .success(function(response){
+        // Blah blah blah
+     });
+```
+
 
 License
 -------

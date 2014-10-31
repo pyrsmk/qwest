@@ -1,3 +1,4 @@
+
 /*
 	qwest, ajax library with promises and XHR2 support
 
@@ -215,7 +216,12 @@
 				}
 				return res.join('&');
 			};
-
+		//Copy options headers to headers
+		if(options.headers){
+            for(var i in options.headers){
+                headers[i] = options.headers[i];
+            }
+        }		
 		// Limit requests
 		if(limit && requests==limit){
 			// Stock current request
@@ -246,10 +252,14 @@
 				data=null;
 			}
 		}
+		else if(/\/json$/.test(headers['Content-Type'])){
+			data=JSON.stringify(data);		
+		}
 		else{
 			data = buildData(data);
 			serialized=true;
 		}
+		
 		// Prepare URL
 		if(method=='GET'){
 			vars+=data;
@@ -290,8 +300,10 @@
 		// Prepare headers
 		for(i in headers){
 			j=i.replace(/(^|-)([^-])/g,toUpper);
-			headers[j]=headers[i];
-			delete headers[i];
+			if(j != i){
+				headers[j]=headers[i];
+				delete headers[i];
+			}
 			xhr.setRequestHeader(j,headers[j]);
 		}
 		if(!headers['Content-Type'] && serialized && method=='POST'){
