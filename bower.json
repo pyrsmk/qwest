@@ -8,12 +8,15 @@
   },
   "keywords": [
     "ajax",
-    "promises"
+    "request",
+    "promise",
+    "xhr"
   ],
   "authors": ["Aurélien Delogu"],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/pyrsmk/qwest/issues"
   },
-  "homepage": "http://dreamysource.fr/product/qwest"
+  "homepage": "http://dreamysource.fr/product/qwest",
+  "ignore": [".git"]
 }

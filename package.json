@@ -10,7 +10,9 @@
   "main": "src/qwest.js",
   "keywords": [
     "ajax",
-    "promises"
+    "request",
+    "promise",
+    "xhr"
   ],
   "license": "MIT",
   "bugs": {
