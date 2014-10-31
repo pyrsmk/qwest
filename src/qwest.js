@@ -218,7 +218,7 @@
 			};
 		//Copy options headers to headers
 		if(options.headers){
-            for(var i in options.headers){
+            for(i in options.headers){
                 headers[i] = options.headers[i];
             }
         }		

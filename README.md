@@ -1,18 +1,16 @@
-qwest 0.6.0
+qwest 0.7.0
 ===========
 
 Qwest is a simple ajax library based on `promises` behaviour and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob`, `Document` and `FormData`.
 
-That's new!
------------
+Install
+-------
 
-You don't need to write array's data name as 'foo[]' anymore, qwest will handle this for you. So, just do :
+You can pick the minified library or install it with :
 
-```javascript
-// Old
-qwest.get('someurl.com',{ 'foo[]' : [1,2,3,4] });
-// New
-qwest.get('someurl.com',{ foo : [1,2,3,4] });
+```
+bower install qwest
+npm install qwest --save-dev
 ```
 
 Syntax
