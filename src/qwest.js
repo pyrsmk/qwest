@@ -2,339 +2,451 @@
 /*
 	qwest, ajax library with promises and XHR2 support
 
-	Author
-		Aurélien Delogu (dev@dreamysource.fr)
+	Site
+		https://github.com/pyrsmk/qwest
 */
 
-(function(def){
-	if(typeof define=='function'){
-		define(def);
+;(function(context,name,definition){
+	if(typeof module!='undefined' && module.exports){
+		module.exports=definition();
 	}
-	else if(typeof module!='undefined'){
-		module.exports=def;
+	else if(typeof define=='function' && define.amd){
+		define(definition);
 	}
 	else{
-		this.qwest=def;
+		context[name]=definition();
 	}
-}(function(){
+}(this,'qwest',function(){
 	
 	var win=window,
+		doc=document,
+		before,
 		// Variables for limit mechanism
 		limit=null,
 		requests=0,
 		request_stack=[],
 		// Get XMLHttpRequest object
 		getXHR=function(){
-			return win.XMLHttpRequest?
-					new XMLHttpRequest():
-					new ActiveXObject('Microsoft.XMLHTTP');
+				return win.XMLHttpRequest?
+						new XMLHttpRequest():
+						new ActiveXObject('Microsoft.XMLHTTP');
 			},
 		// Guess XHR version
-		version2=(getXHR().responseType===''),
+		xhr2=(getXHR().responseType===''),
 		
 	// Core function
 	qwest=function(method,url,data,options,before){
 
 		// Format
+		method=method.toUpperCase();
 		data=data || null;
 		options=options || {};
 
-		var typeSupported=false,
-			xhr=getXHR(),
-			async=options.async===undefined?true:!!options.async,
-			cache=options.cache,
-			type=options.type?options.type.toLowerCase():'json',
-			user=options.user || '',
-			password=options.password || '',
-			headers={'X-Requested-With':'XMLHttpRequest'},
-			accepts={
-				xml : 'application/xml, text/xml',
-				html: 'text/html',
-				//text: 'text/plain',
-				json: 'application/json, text/javascript',
-				js  : 'application/javascript, text/javascript'
+		// Define variables
+		var nativeResponseParsing=false,
+			crossOrigin,
+			xhr,
+			xdr=false,
+			timeoutInterval,
+			retries=0,
+			headers={},
+			mimeTypes={
+				text: '*/*',
+				xml: 'application/xml',
+				json: 'application/json',
+				js: 'application/javascript',
+				arraybuffer: null,
+				formdata: null,
+				document: null,
+				file: null,
+				blob: null
 			},
-			toUpper=function(match,p1,p2){return p1+p2.toUpperCase();},
+			contentType='Content-Type',
 			vars='',
 			i,j,
-			parseError='parseError',
 			serialized,
-			success_stack=[],
-			error_stack=[],
+			then_stack=[],
+			catch_stack=[],
 			complete_stack=[],
 			response,
 			success,
 			error,
 			func,
-			// Define promises
-			promises={
-				success:function(func){
-					if(async){
-						success_stack.push(func);
-					}
-					else if(success){
-						func.apply(xhr,[response]);
-					}
-					return promises;
-				},
-				error:function(func){
-					if(async){
-						error_stack.push(func);
-					}
-					else if(error){
-						func.apply(xhr,[response]);
-					}
-					return promises;
-				},
-				complete:function(func){
-					if(async){
-						complete_stack.push(func);
-					}
-					else{
-						func.apply(xhr);
-					}
-					return promises;
+
+		// Define promises
+		promises={
+			then:function(func){
+				if(options.async){
+					then_stack.push(func);
 				}
+				else if(success){
+					func.call(xhr,response);
+				}
+				return promises;
 			},
-			promises_limit={
-				success:function(func){
-					request_stack[request_stack.length-1].success.push(func);
-					return promises_limit;
-				},
-				error:function(func){
-					request_stack[request_stack.length-1].error.push(func);
-					return promises_limit;
-				},
-				complete:function(func){
-					request_stack[request_stack.length-1].complete.push(func);
-					return promises_limit;
+			'catch':function(func){
+				if(options.async){
+					catch_stack.push(func);
 				}
+				else if(error){
+					func.call(xhr,response);
+				}
+				return promises;
 			},
-			// Handle the response
-			handleResponse=function(){
-				// Prepare
-				var i,req,p;
-				--requests;
-				// Launch next stacked request
-				if(request_stack.length){
-					req=request_stack.shift();
-					p=qwest(req.method,req.url,req.data,req.options,req.before);
-					for(i=0;func=req.success[i];++i){
-						p.success(func);
-					}
-					for(i=0;func=req.error[i];++i){
-						p.error(func);
-					}
-					for(i=0;func=req.complete[i];++i){
-						p.complete(func);
-					}
+			complete:function(func){
+				if(options.async){
+					complete_stack.push(func);
 				}
-				// Handle response
-				try{
-					// Verify status code
-					if(!/^2/.test(xhr.status)){
-						throw xhr.status+' ('+xhr.statusText+')';
-					}
-					// Init
-					var responseText='responseText',
-						responseXML='responseXML';
-					// Process response
-					/*if(type=='text' || type=='html'){
-						response=xhr[responseText];
-					}
-					else */if(typeSupported && xhr.response!==undefined){
-						response=xhr.response;
-					}
-					else{
-						switch(type){
-							case 'json':
-								try{
-									if(win.JSON){
-										response=win.JSON.parse(xhr[responseText]);
-									}
-									else{
-										response=eval('('+xhr[responseText]+')');
-									}
-								}
-								catch(e){
-									throw "Error while parsing JSON body";
-								}
-								break;
-							case 'js':
-								response=eval(xhr[responseText]);
-								break;
-							case 'xml':
-								if(!xhr[responseXML] || (xhr[responseXML][parseError] && xhr[responseXML][parseError].errorCode && xhr[responseXML][parseError].reason)){
-									throw "Error while parsing XML body";
+				else{
+					func.call(xhr);
+				}
+				return promises;
+			}
+		},
+		promises_limit={
+			then:function(func){
+				request_stack[request_stack.length-1].then.push(func);
+				return promises_limit;
+			},
+			'catch':function(func){
+				request_stack[request_stack.length-1]['catch'].push(func);
+				return promises_limit;
+			},
+			complete:function(func){
+				request_stack[request_stack.length-1].complete.push(func);
+				return promises_limit;
+			}
+		},
+
+		// Handle the response
+		handleResponse=function(){
+			// Prepare
+			var i,req,p;
+			--requests;
+			// Launch next stacked request
+			if(request_stack.length){
+				req=request_stack.shift();
+				p=qwest(req.method,req.url,req.data,req.options,req.before);
+				for(i=0;func=req.then[i];++i){
+					p.then(func);
+				}
+				for(i=0;func=req['catch'][i];++i){
+					p['catch'](func);
+				}
+				for(i=0;func=req.complete[i];++i){
+					p.complete(func);
+				}
+			}
+			// Handle response
+			try{
+				// Clear the timeout
+				clearInterval(timeoutInterval);
+				// Verify status code
+				if(!/^2|1223/.test(xhr.status)){ // https://stackoverflow.com/questions/10046972/msie-returns-status-code-of-1223-for-ajax-request
+					throw xhr.status+' ('+xhr.statusText+')';
+				}
+				// Init
+				var responseText='responseText',
+					responseXML='responseXML',
+					parseError='parseError';
+				// Process response
+				if(nativeResponseParsing && 'response' in xhr && xhr.response!==null){
+					response=xhr.response;
+				}
+				else if(options.responseType=='document'){
+					var frame=doc.createElement('iframe');
+					frame.style.display='none';
+					doc.body.appendChild(frame);             
+					frame.contentDocument.open();
+					frame.contentDocument.write(xhr.response);
+					frame.contentDocument.close();
+					response=frame.contentDocument;
+					doc.body.removeChild(frame);
+				}
+				else{
+					switch(options.responseType){
+						case 'json':
+							try{
+								if('JSON' in win){
+									response=JSON.parse(xhr[responseText]);
 								}
 								else{
-									response=xhr[responseXML];
+									response=eval('('+xhr[responseText]+')');
 								}
-								break;
-							default:
-								//throw "Unsupported "+type+" type";
-								response=xhr[responseText];
-						}
-					}
-					// Execute success stack
-					success=true;
-					if(async){
-						for(i=0;func=success_stack[i];++i){
-							func.apply(xhr,[response]);
-						}
-					}
-				}
-				catch(e){
-					error=true;
-					response="Request to '"+url+"' aborted: "+e;
-					// Execute error stack
-					if(async){
-						for(i=0;func=error_stack[i];++i){
-							func.apply(xhr,[response]);
-						}
+							}
+							catch(e){
+								throw "Error while parsing JSON body : "+e;
+							}
+							break;
+						case 'js':
+							response=eval(xhr[responseText]);
+							break;
+						case 'xml':
+							if(!xhr[responseXML] || (xhr[responseXML][parseError] && xhr[responseXML][parseError]['catch'].catchCode && xhr[responseXML][parseError].reason)){
+								throw "Error while parsing XML body";
+							}
+							else{
+								response=xhr[responseXML];
+							}
+							break;
+						default:
+							response=xhr[responseText];
 					}
 				}
-				// Execute complete stack
-				if(async){
-					for(i=0;func=complete_stack[i];++i){
-						func.apply(xhr);
+				// Execute 'then' stack
+				success=true;
+				if(options.async){
+					for(i=0;func=then_stack[i];++i){
+						func.call(xhr,response);
 					}
 				}
-			},
-			// Recursively build the query string
-			buildData = function(data, key) {
-				var res = [],
-					enc = encodeURIComponent;
-				if(typeof data === 'object' && data != null) {
-					for(var p in data) {
-						if(data.hasOwnProperty(p)) {
-							res = res.concat(buildData(data[p], key ? key + '[' + p + ']' : p));
-						}
+			}
+			catch(e){
+				error=true;
+				response="Request to '"+url+"' aborted: "+e;
+				// Execute 'catch' stack
+				if(options.async){
+					for(i=0;func=catch_stack[i];++i){
+						func.call(xhr,response);
 					}
-				} else if(data != null && key != null) {
-					res.push(enc(key) + '=' + enc(data));
 				}
-				return res.join('&');
-			};
-		//Copy options headers to headers
-		if(options.headers){
-            for(i in options.headers){
-                headers[i] = options.headers[i];
-            }
-        }		
-		// Limit requests
-		if(limit && requests==limit){
-			// Stock current request
-			request_stack.push({
-				method      : method,
-				url         : url,
-				data        : data,
-				options     : options,
-				before      : before,
-				success     : [],
-				error       : [],
-				complete    : []
-			});
-			// Return promises
-			return promises_limit;
-		}
+			}
+			// Execute complete stack
+			if(options.async){
+				for(i=0;func=complete_stack[i];++i){
+					func.call(xhr);
+				}
+			}
+		},
+
+		// Recursively build the query string
+		buildData=function(data,key){
+			var res=[],
+				enc=encodeURIComponent,
+				p;
+			if(typeof data==='object' && data!=null) {
+				for(p in data) {
+					if(data.hasOwnProperty(p)) {
+						res=res.concat(buildData(data[p],key?key+'['+p+']':p));
+					}
+				}
+			}
+			else if(data!=null && key!=null){
+				res.push(enc(key)+'='+enc(data));
+			}
+			return res.join('&');
+		};
+
 		// New request
 		++requests;
+
+		// Normalize options
+		options.async='async' in options?!!options.async:true;
+		options.cache='cache' in options?!!options.cache:(method!='GET');
+		options.dataType='dataType' in options?options.dataType.toLowerCase():'post';
+		options.responseType='responseType' in options?options.responseType.toLowerCase():'json';
+		options.user=options.user || '';
+		options.password=options.password || '';
+		options.withCredentials=!!options.withCredentials;
+		options.timeout=options.timeout?parseInt(options.timeout,10):3000;
+		options.retries=options.retries?parseInt(options.retries,10):3;
+
+		// Guess if we're dealing with a cross-origin request
+		i=url.match(/\/\/(.+?)\//);
+		crossOrigin=i && i[1]?i[1]!=location.host:false;
+
 		// Prepare data
-		if(
-			win.ArrayBuffer && 
-			(data instanceof ArrayBuffer ||
-			data instanceof Blob ||
-			data instanceof Document ||
-			data instanceof FormData)
-		){
-			if(method=='GET'){
-				data=null;
+		if('ArrayBuffer' in win && data instanceof ArrayBuffer){
+			options.dataType='arraybuffer';
+		}
+		else if('Blob' in win && data instanceof Blob){
+			options.dataType='blob';
+		}
+		else if('Document' in win && data instanceof Document){
+			options.dataType='document';
+		}
+		else if('FormData' in win && data instanceof FormData){
+			options.dataType='formdata';
+		}
+		switch(options.dataType){
+			case 'json':
+				data=JSON.stringify(data);
+				break;
+			case 'post':
+				data=buildData(data);
+		}
+
+		// Prepare headers
+		if(options.headers){
+			var format=function(match,p1,p2){
+				return p1+p2.toUpperCase();
+			};
+			for(i in options.headers){
+				headers[i.replace(/(^|-)([^-])/g,format)]=options.headers[i];
 			}
 		}
-		else if(/\/json$/.test(headers['Content-Type'])){
-			data=JSON.stringify(data);		
+		if(!headers[contentType] && method!='GET'){
+			if(options.dataType in mimeTypes){
+				if(mimeTypes[options.dataType]){
+					headers[contentType]=mimeTypes[options.dataType];
+				}
+			}
+			else{
+				headers[contentType]='application/x-www-form-urlencoded';
+			}
 		}
-		else{
-			data = buildData(data);
-			serialized=true;
+		if(!headers.Accept){
+			headers.Accept=(options.responseType in mimeTypes)?mimeTypes[options.responseType]:'*';
 		}
-		
+		if(!crossOrigin && !headers['X-Requested-With']){ // because that header breaks in legacy browsers with CORS
+			headers['X-Requested-With']='XMLHttpRequest';
+		}
+
 		// Prepare URL
 		if(method=='GET'){
 			vars+=data;
 		}
-		if(cache==null){
-			cache=(method=='POST');
-		}
-		if(!cache){
+		if(!options.cache){
 			if(vars){
 				vars+='&';
 			}
-			vars+='__t='+Date.now();
+			vars+='__t='+(+new Date());
 		}
 		if(vars){
 			url+=(/\?/.test(url)?'&':'?')+vars;
 		}
-		// Open connection
-		xhr.open(method,url,async,user,password);
-		// Identify supported XHR version
-		if(type && version2){
-			try{
-				xhr.responseType=type;
-				typeSupported=(xhr.responseType==type);
-			}
-			catch(e){}
+
+		// The limit has been reached, stock the request
+		if(limit && requests==limit){
+			request_stack.push({
+				method	: method,
+				url		: url,
+				data	: data,
+				options	: options,
+				before	: before,
+				then	: [],
+				'catch'	: [],
+				complete: []
+			});
+			return promises_limit;
 		}
-		// Plug response handler
-		if(version2){
-			xhr.onload=handleResponse;
-		}
-		else{
-			xhr.onreadystatechange=function(){
-				if(xhr.readyState==4){
-					handleResponse();
+
+		// Send the request
+		var send=function(){
+			// Get XHR object
+			xhr=getXHR();
+			if(crossOrigin){
+				if(!('withCredentials' in xhr) && win.XDomainRequest){
+					xhr=new XDomainRequest(); // CORS with IE8/9
+					xdr=true;
+					if(method!='GET' && method!='POST'){
+						method='POST';
+					}
 				}
-			};
-		}
-		// Prepare headers
-		for(i in headers){
-			j=i.replace(/(^|-)([^-])/g,toUpper);
-			if(j != i){
-				headers[j]=headers[i];
-				delete headers[i];
 			}
-			xhr.setRequestHeader(j,headers[j]);
-		}
-		if(!headers['Content-Type'] && serialized && method=='POST'){
-			xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-		}
-		if(!headers.Accept){
-			xhr.setRequestHeader('Accept',accepts[type]);
-		}
-		// Before
-		if(before){
-			before.apply(xhr);
-		}
-		// Send request
-		xhr.send(method=='POST'?data:null);
+			// Open connection
+			if(xdr){
+				xhr.open(method,url);
+			}
+			else{
+				xhr.open(method,url,options.async,options.user,options.password);
+				if(xhr2 && options.async){
+					xhr.withCredentials=options.withCredentials;
+				}
+			}
+			// Set headers
+			for(var i in headers){
+				xhr.setRequestHeader(i,headers[i]);
+			}
+			// Verify if the response type is supported by the current browser
+			if(xhr2 && options.responseType!='document'){ // Don't verify for 'document' since we're using an internal routine
+				try{
+					xhr.responseType=options.responseType;
+					nativeResponseParsing=(xhr.responseType==options.responseType);
+				}
+				catch(e){}
+			}
+			// Plug response handler
+			if(xhr2 || xdr){
+				xhr.onload=handleResponse;
+			}
+			else{
+				xhr.onreadystatechange=function(){
+					if(xhr.readyState==4){
+						handleResponse();
+					}
+				};
+			}
+			// Override mime type to ensure the response is well parsed
+			if('overrideMimeType' in xhr){
+				xhr.overrideMimeType(mimeTypes[options.responseType]);
+			}
+			// Run 'before' callback
+			if(before){
+				before.call(xhr);
+			}
+			// Send request
+			if(xdr){
+				setTimeout(function(){ // https://developer.mozilla.org/en-US/docs/Web/API/XDomainRequest
+					xhr.send();
+				},0);
+			}
+			else{
+				xhr.send(method!='GET'?data:null);
+			}
+		};
+
+		// Timeout/retries
+		var timeout=function(){
+			timeoutInterval=setTimeout(function(){
+				xhr.abort();
+				if(!options.retries || ++retries!=options.retries){
+					timeout();
+					send();
+				}
+				else{
+					error=true;
+					response="Request to '"+url+"' aborted: timeout";
+					if(options.async){
+						for(i=0;func=catch_stack[i];++i){
+							func.call(xhr,response);
+						}
+					}
+				}
+			},options.timeout);
+		};
+
+		// Start the request
+		timeout();
+		send();
+
 		// Return promises
 		return promises;
 		
 	};
 
-	// Return final qwest object
-	return {
-		get:function(url,data,options,before){
-			return qwest('GET',url,data,options,before);
+	// Return external qwest object
+	var create=function(method){
+			return function(url,data,options){
+				var b=before;
+				before=null;
+				return qwest(method,url,data,options,b);
+			};
 		},
-		post:function(url,data,options,before){
-			return qwest('POST',url,data,options,before);
+		obj={
+		before: function(callback){
+			before=callback;
+			return obj;
 		},
-		xhr2:version2,
-		limit:function(by){
+		get: create('GET'),
+		post: create('POST'),
+		put: create('PUT'),
+		'delete': create('DELETE'),
+		xhr2: xhr2,
+		limit: function(by){
 			limit=by;
 		}
 	};
+	return obj;
 	
-}()));
+}));
