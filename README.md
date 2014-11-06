@@ -1,7 +1,7 @@
-qwest 0.7.0
+qwest 1.0.0
 ===========
 
-Qwest is a simple ajax library based on `promises` behaviour and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob`, `Document` and `FormData`.
+Qwest is a simple ajax library based on `promises` behaviour and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
 
 Install
 -------
@@ -9,155 +9,181 @@ Install
 You can pick the minified library or install it with :
 
 ```
+jam install qwest
 bower install qwest
 npm install qwest --save-dev
 ```
 
-Syntax
+Changes since 0.7
+-----------------
+
+- use `then()` and `catch()` promises instead of `success()` and `error()`
+- the `type` option has been replaced by `responseType`
+- `dataType` option has been added
+- the `before` callback has now its own promise (see it in action at the bottom of the doc)
+- added CORS support; `XDomainRequest` for IE8/9 is supported as well
+- added timeout/retries support
+- handle PUT/DELETE requests
+
+Quick examples
+--------------
+
+```javascript
+qwest.get('example.com')
+	 .then(function(response){
+		alert(response);
+	 });
+```
+
+```javascript
+qwest.post('example.com',{
+		firstname: 'Pedro',
+		lastname: 'Sanchez',
+		age: 30
+	 })
+	 .then(function(response){
+		// Make some useful actions
+	 })
+	 .catch(function(message){
+		// Print the error message
+	 });
+```
+
+Basics
 ------
 
 ```javascript
-qwest.<method>(<url>,[data],[options],[before])
-     .success(function(response){
-        // Run when the request is successful
-     })
-     .error(function(message){
-        // Process error message
-     })
-     .complete(function(){
-        // Always run
-     });
+qwest.<method>(<url>,[data],[options])
+	 .then(function(response){
+		// Run when the request is successful
+	 })
+	 .catch(function(message){
+		// Process error message
+	 })
+	 .complete(function(){
+		// Always run
+	 });
 ```
 
-The method is either `get` or `post`. There's no `put` or `delete` support because the `XmlHttpRequest` object does not support data sending with those methods.
-
-The `data` parameter is an object that list data to send. It supports multi-dimensional arrays and objects.
+The method is either `get`, `post`, `put` or `delete`. The `data` parameter can be a multi-dimensional array or object, a string, an ArrayBuffer, a Blob, etc... If you don't want to pass any data but specify some options, set data to `null`.
 
 The available `options` are :
 
-- type : either [XHR2 supported types](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest#Properties), text, html, json (by default), js or xml; used to have automatic parsing of the response and a valid `Accept` header
-- cache : true or false (default is `false` for GET requests and `true` for POST requests); used to disable browser caching using a query parameter `__t` with request timestamp
+- dataType : 'post' (by default), 'json', 'text', 'arraybuffer', 'blob', 'document' or 'formdata' (you don't need to specify XHR2 types since they're automatically detected)
+- responseType : the response type; either 'json' (by default), 'js', 'xml', 'text', 'arraybuffer', 'blob' or 'document'
+- cache : browser caching; default is `false` for GET requests and `true` for POST requests
 - async : true (default) or false; used to make asynchronous or synchronous requests
 - user : the user to access to the URL, if needed
 - password : the password to access to the URL, if needed
-- headers: javascript object containing headers to be sent
+- headers : javascript object containing headers to be sent
+- withCredentials : false by default; sends [credentials](http://www.w3.org/TR/XMLHttpRequest2/#user-credentials) with your XHR2 request ([more info in that post](https://dev.opera.com/articles/xhr2/#xhrcredentials))
+- timeout : the timeout for the request in ms; 3000 by default
+- retries : the number of times the request would be runned if the timeout is reached; 3 by default; if you want to remove the limit set it to `null`
 
-The `before` option lets you specify a callback to modify the `XHR` object before the request occurs.
-
-You can also verify the XHR object version to handle fallbacks :
+In each callback, the `this` keyword refers to the `XmlHttpRequest` object, so you can do some specific tasks you may need.
 
 ```javascript
-if(qwest.xhr2){
-    // Actions for XHR2
-}
-else{
-    // Actions for XHR1
-}
+qwest.get('example.com')
+	 .then(function(response){
+		// Blah blah blah
+	 })
+	 .catch(function(message){
+		log(this.responseText);
+		throw message;
+	 });
 ```
 
-Requests limitation
--------------------
+Request limitation
+------------------
 
-Requests limitation is a very powerful functionnality which avoids browser freezes and server overloads. It's really useful for freeing bandwidth and memory resources when you have a whole bunch of requests to do at the same time (when you load a gallery, per example). You just need to set the request limit and when the count is reached qwest will stock all further requests to start them when a slot is free.
+One of the great qwest's functionnalities is the request limitation. It avoids browser freezes and server overloads by freeing bandwidth and memory resources when you have a whole bunch of requests to do at the same time (when you load a gallery, per example). You just need to set the request limit and when the count is reached qwest will stock all further requests and start them when a slot is free.
 
 ```javascript
 qwest.limit(4);
 
-$$('.foo').each(function(){
-    qwest.get(this.data('some_url_to_get'));
+$('.foo').forEach(function(){
+	qwest.get(this.data('some_url_to_get'));
 });
 ```
 
-If you want to remove the limit, just do `qwest.limit(null)`.
+If you want to remove the limit, do `qwest.limit(null)`.
 
-Some examples
--------------
+Set options to XHR
+------------------
 
-Send a simple GET request :
-
-```javascript
-qwest.get('example.com')
-     .success(function(response){
-        alert(response);
-     });
-```
-
-Send a synchronous POST request with data :
+If you want to apply some manual options to the `XHR` object, you can use the `before` promise. It must be called before __any__ other promise. The `this` keyword refers to the `XHR` object itself.
 
 ```javascript
-qwest.post('example.com',{foo:'bar'},{async:false})
-     .success(function(response){
-        // Make some useful actions
-     })
-     .error(function(message){
-        log(message);
-     });
+qwest.before(function(){
+		this.uploadonprogress=function(e){
+			// Upload in progress
+		};
+	 })
+	 .get('example.com')
+	 .then(function(response){
+		// Blah blah blah
+	 });
 ```
 
-As seen, qwest methods are chainable and you can specify multiple `success`, `error` or `complete` callbacks :
+Handling fallbacks
+------------------
+
+XHR2 is not available on every browser, so, if needed, you can simply verify the XHR version.
 
 ```javascript
-qwest.post('example.com',{foo:'bar'})
-     .success(function(response){
-        // Make some useful actions
-     })
-     .success(function(response){
-        // And other actions
-     })
-     .error(function(message){
-        // Log here
-     })
-     .error(function(message){
-        // Maybe here
-     })
-     .error(function(message){
-        // Or here
-     })
-     .complete(function(message){
-        // Finally, execute that
-     });
+if(qwest.xhr2){
+	// Actions for XHR2
+}
+else{
+	// Actions for XHR1
+}
 ```
 
-In each callback, the `this` keyword is the `XmlHttpRequest` object, so you can do some specific tasks you may need.
+Receiving binary data in older browsers
+---------------------------------------
+
+Getting binary data in legacy browsers needs a trick, as we can read it on [MDN](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Sending_and_Receiving_Binary_Data#Receiving_binary_data_in_older_browsers). In qwest, that's how we could handle it :
 
 ```javascript
-qwest.get('example.com')
-     .success(function(response){
-        // Blah blah blah
-     })
-     .error(function(message){
-        log(this.responseText);
-        throw message;
-     });
+qwest.before(function(){
+		this.overrideMimeType('text\/plain; charset=x-user-defined');
+	 })
+	 .get('example.com/file')
+	 .then(function(response){
+	 	// response is now a binary string
+	 });
 ```
 
-To apply some manual options to the `XHR` object, define a `before` callback :
+Compatibility notes
+-------------------
+
+According to this [compatibility table](https://kangax.github.io/compat-table/es5), IE7/8 do not support using `catch` and `delete` as method name because these are reserved words. If you want to support those browsers you should write :
 
 ```javascript
-qwest.get('example.com',{},{},function(){
-        this.uploadonprogress=function(e){
-            // Upload in progress
-        };
-     })
-     .success(function(response){
-        // Blah blah blah
-     });
+qwest.delete('example.com')
+	 .then(function(){})
+	 .catch(function(){});
 ```
 
-Please note that the default "Content-Type" header is "application/x-www-form-urlencoded". Overwrite it if you want ;)
+Like this :
 
-Example for posting json data:
 ```javascript
-qwest.post('example.com',{data:"mydata"},{
-          headers:{
-               "Content-Type":"application/json"
-          }
-     })
-     .success(function(response){
-        // Blah blah blah
-     });
+qwest['delete']('example.com')
+	 .then(function(){})
+	 ['catch'](function(){});
 ```
 
+The CORS object shipped with IE8 and 9 is `XDomainRequest`. This object __does not__ support `PUT` and `DELETE` requests.
+
+XHR2 does not support `arraybuffer`, `blob` and `document` response types in synchroneous mode.
+
+Last notes
+----------
+
+- if an error occurs in a `then()` callback, it will be catched by the `catch()` promise
+- the default `Content-Type` header is `application/x-www-form-urlencoded` for `post` and `xhr2` data types, with a `POST` request
+- the `js` response type executes a remote javascript file and returns its raw code in the `then()` promise
+- if you want to set or get raw data, set the related option to `text`
 
 License
 -------
