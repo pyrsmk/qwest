@@ -19,7 +19,15 @@ module.exports = function(grunt) {
 			library: ['src/*.js'],
 			options: {
 				browser		: true,
-				predef		: ['Document', 'define', 'module', 'ActiveXObject', 'console', 'log'],
+				predef		: [
+					'Document',
+					'define',
+					'module',
+					'ActiveXObject',
+					'console',
+					'XDomainRequest',
+					'log'
+				],
 				boss		: true,
 				curly		: true,
 				eqnull		: true,
@@ -58,6 +66,9 @@ module.exports = function(grunt) {
 			},
 			npm: {
 				command: 'npm publish'
+			},
+			jam: {
+				command: 'jam publish'
 			}
 		}
 	});
