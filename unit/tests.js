@@ -28,7 +28,7 @@ domready(function(){
 						}
 					};
 				 }(methods[i].toUpperCase()))
-				 .catch(function(message){
+				 ['catch'](function(message){
 					ok(false,message);
 					if(++executed==4){
 						start();
@@ -45,7 +45,7 @@ domready(function(){
 					//console.log(response.debug);
 					ok(response.status=='ok',methods[i].toUpperCase()+' request');
 				 })
-				 .catch(function(message){
+				 ['catch'](function(message){
 					ok(false,message);
 				 });
 		}
@@ -58,7 +58,7 @@ domready(function(){
 			 .then(function(response){
 				++a;
 			 })
-			 .catch(function(message){
+			 ['catch'](function(message){
 				++b;
 			 })
 			 .then(function(response){
@@ -77,7 +77,7 @@ domready(function(){
 					 .then(function(response){
 						++a;
 					 })
-					 .catch(function(message){
+					 ['catch'](function(message){
 						++b;
 					 })
 					 .then(function(response){
@@ -94,14 +94,14 @@ domready(function(){
 					 .then(function(response){
 						++a;
 					 })
-					 .catch(function(message){
+					 ['catch'](function(message){
 						++b;
 					 });
 			 })
 			 .then(function(response){
 				++a;
 			 })
-			 .catch(function(message){
+			 ['catch'](function(message){
 				++b;
 			 });
 	});
@@ -113,7 +113,7 @@ domready(function(){
 			 .then(function(response){
 				++a;
 			 })
-			 .catch(function(message){
+			 ['catch'](function(message){
 				++b;
 			 })
 			 .then(function(response){
@@ -128,7 +128,7 @@ domready(function(){
 			 .then(function(response){
 				++a;
 			 })
-			 .catch(function(message){
+			 ['catch'](function(message){
 				++b;
 			 });
 		ok(a==3 && b==0 && c==2,a+'/'+b+'/'+c);
@@ -139,7 +139,7 @@ domready(function(){
 			 .then(function(response){
 				++a;
 			 })
-			 .catch(function(message){
+			 ['catch'](function(message){
 				++b;
 			 })
 			 .then(function(response){
@@ -154,7 +154,7 @@ domready(function(){
 			 .then(function(response){
 				++a;
 			 })
-			 .catch(function(message){
+			 ['catch'](function(message){
 				++b;
 			 });
 		ok(a==0 && b==2 && c==2,a+'/'+b+'/'+c);
@@ -172,7 +172,7 @@ domready(function(){
 						start();
 					}
 				 })
-				 .catch(function(message){
+				 ['catch'](function(message){
 					ok(false,message);
 					if(++executed==20){
 						start();
@@ -190,14 +190,14 @@ domready(function(){
 				 .then(function(response){
 					ok(response.status=='ok');
 				 })
-				 .catch(function(message){
+				 ['catch'](function(message){
 					ok(false,message);
 				 });
 		}
 		qwest.limit(null);
 	});
 
-	asyncTest('Timeout (async)',function(){
+	/*asyncTest('Timeout (async)',function(){
 		expect(1);
 		var t=+new Date;
 		qwest.get('tests/timeout/test.php',null,{
@@ -208,11 +208,11 @@ domready(function(){
 				ok(false,'the 4x250ms timeout has been reached too early ['+(+new Date-t)+'ms]');
 				start();
 			 })
-			 .catch(function(message){
+			 ['catch'](function(message){
 				ok((+new Date-t)>=1000,'asynchroneous request ['+(+new Date-t)+'ms]');
 				start();
 			 });
-	});
+	});*/
 
 	test('Timeout (sync)',function(){
 		expect(1);
@@ -225,23 +225,23 @@ domready(function(){
 			 .then(function(response){
 				ok(response.status=='ok','synchroneous request ['+(+new Date-t)+'ms]');
 			 })
-			 .catch(function(message){
+			 ['catch'](function(message){
 				ok(false,'synchroneous request : '+message);
 			 });
 	});
 
-	asyncTest('CORS',function(){
+	/*asyncTest('CORS',function(){
 		expect(1);
-		qwest.get('https://maps.googleapis.com/maps/api/geocode/json')
+		qwest.get('http://dreamysource.fr/cors')
 			 .then(function(response){
 				ok(response.status=='ZERO_RESULTS');
 				start();
 			 })
-			 .catch(function(message){
+			 ['catch'](function(message){
 				ok(false,message);
 				start();
 			 });
-	});
+	});*/
 
 	asyncTest('Before promise',function(){
 		expect(1);
@@ -254,13 +254,13 @@ domready(function(){
 				ok(response.status=='ok');
 				start();
 			 })
-			 .catch(function(message){
+			 ['catch'](function(message){
 				ok(false,message);
 				start();
 			 });
 	});
 
-	asyncTest('Cache',function(){
+	/*asyncTest('Cache',function(){
 		expect(2);
 		var a,b,
 			phase2=function(){
@@ -274,12 +274,12 @@ domready(function(){
 								ok(response==b,'POST request');
 								start();
 							 })
-							 .catch(function(message){
+							 ['catch'](function(message){
 								ok(false,message);
 								start();
 							 });
 					 })
-					 .catch(function(message){
+					 ['catch'](function(message){
 						ok(false,message);
 						start();
 					 });
@@ -294,16 +294,16 @@ domready(function(){
 						ok(response!=a,'GET request');
 						phase2();
 					 })
-					 .catch(function(message){
+					 ['catch'](function(message){
 						ok(false,message);
 						phase2();
 					 });
 			 })
-			 .catch(function(message){
+			 ['catch'](function(message){
 				ok(false,message);
 				phase2();
 			 });
-	});
+	});*/
 
 	asyncTest('Authentication',function(){
 		expect(1);
@@ -316,7 +316,7 @@ domready(function(){
 				ok(response.status=='ok');
 				start();
 			 })
-			 .catch(function(message){
+			 ['catch'](function(message){
 				ok(false,message);
 				start();
 			 });
@@ -330,7 +330,7 @@ domready(function(){
 				ok(response.status=='ok');
 				start();
 			 })
-			 .catch(function(message){
+			 ['catch'](function(message){
 				ok(false,message);
 				start();
 			 });
@@ -344,7 +344,7 @@ domready(function(){
 				ok(response=='ok');
 				start();
 			 })
-			 .catch(function(message){
+			 ['catch'](function(message){
 				ok(false,message);
 				start();
 			 });
@@ -352,13 +352,13 @@ domready(function(){
 
 	asyncTest('Get XML response',function(){
 		expect(1);
-		qwest.get('tests/get_xml/test.php',null,{responseType:'xml'})
+		qwest.get('tests/get_xml/test.xml',null,{responseType:'xml'})
 			 .then(function(response){
 				//console.log(response.getElementsByTagName('status')[0]);
 				ok(response.getElementsByTagName('status')[0].textContent=='ok');
 				start();
 			 })
-			 .catch(function(message){
+			 ['catch'](function(message){
 				ok(false,message);
 				start();
 			 });
@@ -372,63 +372,68 @@ domready(function(){
 				ok(window.xmlTest);
 				start();
 			 })
-			 .catch(function(message){
+			 ['catch'](function(message){
 				ok(false,message);
 				start();
 			 });
 	});
 
-	asyncTest('Get ArrayBuffer response',function(){
-		expect(1);
-		qwest.get('tests/get_arraybuffer/test.php',null,{responseType:'arraybuffer'})
-			 .then(function(response){
-				var arrayBuffer=new Uint8Array(response),
-					length=arrayBuffer.length;
-				//console.log(arrayBuffer[0].toString(16));
-				//console.log(arrayBuffer[1].toString(16));
-				//console.log(arrayBuffer[length-2].toString(16));
-				//console.log(arrayBuffer[length-1].toString(16));
-				ok(
-					arrayBuffer[0].toString(16)=='ff' &&
-					arrayBuffer[1].toString(16)=='d8' &&
-					arrayBuffer[length-2].toString(16)=='ff' &&
-					arrayBuffer[length-1].toString(16)=='d9'
-				);
-				start();
-			 })
-			 .catch(function(message){
-				ok(false,message);
-				start();
-			 });
-	});
+	if('ArrayBuffer' in window){
+		asyncTest('Get ArrayBuffer response',function(){
+			expect(1);
+			qwest.get('tests/get_arraybuffer/test.php',null,{responseType:'arraybuffer'})
+				 .then(function(response){
+					var arrayBuffer=new Uint8Array(response),
+						length=arrayBuffer.length;
+					//console.log(arrayBuffer[0].toString(16));
+					//console.log(arrayBuffer[1].toString(16));
+					//console.log(arrayBuffer[length-2].toString(16));
+					//console.log(arrayBuffer[length-1].toString(16));
+					ok(
+						arrayBuffer[0].toString(16)=='ff' &&
+						arrayBuffer[1].toString(16)=='d8' &&
+						arrayBuffer[length-2].toString(16)=='ff' &&
+						arrayBuffer[length-1].toString(16)=='d9'
+					);
+					start();
+				 })
+				 ['catch'](function(message){
+					ok(false,message);
+					start();
+				 });
+		});
+	}
 
-	asyncTest('Get Blob response',function(){
-		expect(1);
-		qwest.get('tests/get_blob/test.php',null,{responseType:'blob'})
-			 .then(function(response){
-				//console.log(response);
-				ok(response.size);
-				start();
-			 })
-			 .catch(function(message){
-				ok(false,message);
-				start();
-			 });
-	});
+	if('Blob' in window){
+		asyncTest('Get Blob response',function(){
+			expect(1);
+			qwest.get('tests/get_blob/test.php',null,{responseType:'blob'})
+				 .then(function(response){
+					//console.log(response);
+					ok(response.size);
+					start();
+				 })
+				 ['catch'](function(message){
+					ok(false,message);
+					start();
+				 });
+		});
+	}
 
-	asyncTest('Get Document response',function(){
-		expect(1);
-		qwest.get('tests/get_document/test.php',null,{responseType:'document'})
-			 .then(function(response){
-				//console.log(response);
-				ok(response.querySelector('p').innerText=='ok');
-				start();
-			 })
-			 .catch(function(message){
-				ok(false,message);
-				start();
-			 });
-	});
+	if(qwest.xhr2 && 'querySelector' in document){
+		asyncTest('Get Document response',function(){
+			expect(1);
+			qwest.get('tests/get_document/test.php',null,{responseType:'document'})
+				 .then(function(response){
+					ok(response.querySelector('p').innerHTML=='ok');
+					start();
+				 })
+				 ['catch'](function(message){
+					ok(false,message);
+					start();
+				 });
+		});
+	}
 
 	asyncTest('Send basic POST data',function(){
 		expect(1);
@@ -437,11 +442,10 @@ domready(function(){
 				bar: [{foo:'bar'}]
 			 })
 			 .then(function(response){
-				//console.log(response.debug);
 				ok(response.status.trim()=='ok');
 				start();
 			 })
-			 .catch(function(message){
+			 ['catch'](function(message){
 				ok(false,message);
 				start();
 			 });
@@ -460,7 +464,7 @@ domready(function(){
 				ok(response.status=='ok');
 				start();
 			 })
-			 .catch(function(message){
+			 ['catch'](function(message){
 				ok(false,message);
 				start();
 			 });
@@ -474,71 +478,79 @@ domready(function(){
 				ok(response.status=='ok');
 				start();
 			 })
-			 .catch(function(message){
+			 ['catch'](function(message){
 				ok(false,message);
 				start();
 			 });
 	});
 
-	asyncTest('Send FormData data',function(){
-		expect(1);
-		var formData=new FormData();
-		formData.append('firstname','Pedro');
-		formData.append('lastname','Sanchez');
-		qwest.post('tests/send_formdata/test.php',formData)
-			 .then(function(response){
-				//console.log(response.debug);
-				ok(response.status=='ok');
-				start();
-			 })
-			 .catch(function(message){
-				ok(false,message);
-				start();
-			 });
-	});
+	if('FormData' in window){
+		asyncTest('Send FormData data',function(){
+			expect(1);
+			var formData=new FormData();
+			formData.append('firstname','Pedro');
+			formData.append('lastname','Sanchez');
+			qwest.post('tests/send_formdata/test.php',formData)
+				 .then(function(response){
+					//console.log(response.debug);
+					ok(response.status=='ok');
+					start();
+				 })
+				 ['catch'](function(message){
+					ok(false,message);
+					start();
+				 });
+		});
+	}
 
-	asyncTest('Send Blob data',function(){
-		expect(1);
-		var blob=new Blob(['test'],{type:'text/plain'});
-		qwest.post('tests/send_blob/test.php',blob)
-			 .then(function(response){
-				//console.log(response.debug);
-				ok(response.status=='ok');
-				start();
-			 })
-			 .catch(function(message){
-				ok(false,message);
-				start();
-			 });
-	});
+	if('Blob' in window){
+		asyncTest('Send Blob data',function(){
+			expect(1);
+			var blob=new Blob(['test'],{type:'text/plain'});
+			qwest.post('tests/send_blob/test.php',blob)
+				 .then(function(response){
+					//console.log(response.debug);
+					ok(response.status=='ok');
+					start();
+				 })
+				 ['catch'](function(message){
+					ok(false,message);
+					start();
+				 });
+		});
+	}
 
-	asyncTest('Send Document data',function(){
-		expect(1);
-		qwest.post('tests/send_document/test.php',document)
-			 .then(function(response){
-				//console.log(response.debug);
-				ok(response.status=='ok');
-				start();
-			 })
-			 .catch(function(message){
-				ok(false,message);
-				start();
-			 });
-	});
+	if(qwest.xhr2){
+		asyncTest('Send Document data',function(){
+			expect(1);
+			qwest.post('tests/send_document/test.php',document)
+				 .then(function(response){
+					//console.log(response.debug);
+					ok(response.status=='ok');
+					start();
+				 })
+				 ['catch'](function(message){
+					ok(false,message);
+					start();
+				 });
+		});
+	}
 
-	asyncTest('Send ArrayBuffer data',function(){
-		expect(1);
-		var arrayBuffer=new Uint8Array([1,2,3]);
-		qwest.post('tests/send_arraybuffer/test.php',arrayBuffer)
-			 .then(function(response){
-				//console.log(response.debug);
-				ok(response.status=='ok');
-				start();
-			 })
-			 .catch(function(message){
-				ok(false,message);
-				start();
-			 });
-	});
+	if('ArrayBuffer' in window){
+		asyncTest('Send ArrayBuffer data',function(){
+			expect(1);
+			var arrayBuffer=new Uint8Array([1,2,3]);
+			qwest.post('tests/send_arraybuffer/test.php',arrayBuffer)
+				 .then(function(response){
+					//console.log(response.debug);
+					ok(response.status=='ok');
+					start();
+				 })
+				 ['catch'](function(message){
+					ok(false,message);
+					start();
+				 });
+		});
+	}
 
 });

@@ -1,4 +1,4 @@
-/*! qwest 1.0.0 (https://github.com/pyrsmk/qwest) */
+/*! qwest 1.1.0 (https://github.com/pyrsmk/qwest) */
 
 ;(function(context,name,definition){
 	if(typeof module!='undefined' && module.exports){
@@ -46,7 +46,7 @@
 			headers={},
 			mimeTypes={
 				text: '*/*',
-				xml: 'application/xml',
+				xml: 'text/xml',
 				json: 'application/json',
 				js: 'application/javascript',
 				arraybuffer: null,
@@ -176,11 +176,24 @@
 							response=eval(xhr[responseText]);
 							break;
 						case 'xml':
-							if(!xhr[responseXML] || (xhr[responseXML][parseError] && xhr[responseXML][parseError]['catch'].catchCode && xhr[responseXML][parseError].reason)){
-								throw "Error while parsing XML body";
+							// Based on jQuery's parseXML() function
+							try{
+								// Standard
+								if(win.DOMParser){
+									response=(new DOMParser()).parseFromString(xhr[responseText],'text/xml');
+								}
+								// IE<9
+								else{
+									response=new ActiveXObject('Microsoft.XMLDOM');
+									response.async='false';
+									response.loadXML(xhr[responseText]);
+								}
 							}
-							else{
-								response=xhr[responseXML];
+							catch(e){
+								response=undefined;
+							}
+							if(!response || !response.documentElement || response.getElementsByTagName('parsererror').length){
+								throw 'Invalid XML';
 							}
 							break;
 						default:
@@ -197,7 +210,7 @@
 			}
 			catch(e){
 				error=true;
-				response="Request to '"+url+"' aborted: "+e;
+				response=e+' ('+url+')';
 				// Execute 'catch' stack
 				if(options.async){
 					for(i=0;func=catch_stack[i];++i){
@@ -349,8 +362,10 @@
 				}
 			}
 			// Set headers
-			for(var i in headers){
-				xhr.setRequestHeader(i,headers[i]);
+			if(!xdr){
+				for(var i in headers){
+					xhr.setRequestHeader(i,headers[i]);
+				}
 			}
 			// Verify if the response type is supported by the current browser
 			if(xhr2 && options.responseType!='document'){ // Don't verify for 'document' since we're using an internal routine
@@ -400,7 +415,7 @@
 				}
 				else{
 					error=true;
-					response="Request to '"+url+"' aborted: timeout";
+					response='Timeout ('+url+')';
 					if(options.async){
 						for(i=0;func=catch_stack[i];++i){
 							func.call(xhr,response);

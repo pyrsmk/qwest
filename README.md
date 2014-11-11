@@ -1,4 +1,4 @@
-qwest 1.0.0
+qwest 1.1.0
 ===========
 
 Qwest is a simple ajax library based on `promises` behaviour and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
@@ -184,6 +184,8 @@ Last notes
 - the default `Content-Type` header is `application/x-www-form-urlencoded` for `post` and `xhr2` data types, with a `POST` request
 - the `js` response type executes a remote javascript file and returns its raw code in the `then()` promise
 - if you want to set or get raw data, set the related option to `text`
+- as stated on [StackOverflow](https://stackoverflow.com/questions/8464262/access-is-denied-error-on-xdomainrequest), XDomainRequest forbid HTTPS requests from HTTP scheme and vice versa
+- XDomainRequest does not support XHR2 types
 
 License
 -------
