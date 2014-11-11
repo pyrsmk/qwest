@@ -1,10 +1,4 @@
-
-/*
-	qwest, ajax library with promises and XHR2 support
-
-	Site
-		https://github.com/pyrsmk/qwest
-*/
+/* qwest 1.0.0 (https://github.com/pyrsmk/qwest) */
 
 ;(function(context,name,definition){
 	if(typeof module!='undefined' && module.exports){
