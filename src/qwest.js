@@ -8,13 +8,13 @@
 
 ;(function(context,name,definition){
 	if(typeof module!='undefined' && module.exports){
-		module.exports=definition();
+		module.exports=definition;
 	}
 	else if(typeof define=='function' && define.amd){
 		define(definition);
 	}
 	else{
-		context[name]=definition();
+		context[name]=definition;
 	}
 }(this,'qwest',function(){
 	
@@ -434,19 +434,19 @@
 			};
 		},
 		obj={
-		before: function(callback){
-			before=callback;
-			return obj;
-		},
-		get: create('GET'),
-		post: create('POST'),
-		put: create('PUT'),
-		'delete': create('DELETE'),
-		xhr2: xhr2,
-		limit: function(by){
-			limit=by;
-		}
-	};
+			before: function(callback){
+				before=callback;
+				return obj;
+			},
+			get: create('GET'),
+			post: create('POST'),
+			put: create('PUT'),
+			'delete': create('DELETE'),
+			xhr2: xhr2,
+			limit: function(by){
+				limit=by;
+			}
+		};
 	return obj;
 	
-}));
+}()));
