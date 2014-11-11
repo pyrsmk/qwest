@@ -41,6 +41,9 @@ module.exports = function(grunt) {
 		},
 		// Minify
 		uglify: {
+			options: {
+				preserveComments: 'some'
+			},
 			library: {
 				files: {
 					'<%= bower.name %>.min.js': ['src/*.js']
@@ -74,6 +77,6 @@ module.exports = function(grunt) {
 	});
 
 	// Define tasks
-	grunt.registerTask('default', ['clean', 'jshint', 'uglify', 'string-replace', 'shell']);
+	grunt.registerTask('default', ['clean', 'jshint', 'uglify', 'string-replace'/*, 'shell'*/]);
 
 };
