@@ -197,7 +197,7 @@ domready(function(){
 		qwest.limit(null);
 	});
 
-	/*asyncTest('Timeout (async)',function(){
+	asyncTest('Timeout (async)',function(){
 		expect(1);
 		var t=+new Date;
 		qwest.get('tests/timeout/test.php',null,{
@@ -205,14 +205,15 @@ domready(function(){
 				retries: 4
 			 })
 			 .then(function(response){
-				ok(false,'the 4x250ms timeout has been reached too early ['+(+new Date-t)+'ms]');
+				ok(false,(+new Date-t)+'ms');
 				start();
 			 })
 			 ['catch'](function(message){
-				ok((+new Date-t)>=1000,'asynchroneous request ['+(+new Date-t)+'ms]');
+			 	console.log(message);
+				ok((+new Date-t)>=1000,(+new Date-t)+'ms');
 				start();
 			 });
-	});*/
+	});
 
 	test('Timeout (sync)',function(){
 		expect(1);
@@ -223,25 +224,25 @@ domready(function(){
 				async: false
 			 })
 			 .then(function(response){
-				ok(response.status=='ok','synchroneous request ['+(+new Date-t)+'ms]');
+				ok(response.status=='ok',(+new Date-t)+'ms');
 			 })
 			 ['catch'](function(message){
-				ok(false,'synchroneous request : '+message);
+				ok(false,message);
 			 });
 	});
 
-	/*asyncTest('CORS',function(){
+	asyncTest('CORS',function(){
 		expect(1);
-		qwest.get('http://dreamysource.fr/cors')
+		qwest.get('http://sandbox.dreamysource.fr/cors/')
 			 .then(function(response){
-				ok(response.status=='ZERO_RESULTS');
+				ok(response.status=='ok');
 				start();
 			 })
 			 ['catch'](function(message){
 				ok(false,message);
 				start();
 			 });
-	});*/
+	});
 
 	asyncTest('Before promise',function(){
 		expect(1);
@@ -260,7 +261,7 @@ domready(function(){
 			 });
 	});
 
-	/*asyncTest('Cache',function(){
+	asyncTest('Cache',function(){
 		expect(2);
 		var a,b,
 			phase2=function(){
@@ -303,7 +304,7 @@ domready(function(){
 				ok(false,message);
 				phase2();
 			 });
-	});*/
+	});
 
 	asyncTest('Authentication',function(){
 		expect(1);

@@ -173,7 +173,7 @@ qwest['delete']('example.com')
 	 ['catch'](function(){});
 ```
 
-The CORS object shipped with IE8 and 9 is `XDomainRequest`. This object __does not__ support `PUT` and `DELETE` requests.
+The CORS object shipped with IE8 and 9 is `XDomainRequest`. This object __does not__ support `PUT` and `DELETE` requests and XHR2 types.
 
 XHR2 does not support `arraybuffer`, `blob` and `document` response types in synchroneous mode.
 
@@ -185,7 +185,6 @@ Last notes
 - the `js` response type executes a remote javascript file and returns its raw code in the `then()` promise
 - if you want to set or get raw data, set the related option to `text`
 - as stated on [StackOverflow](https://stackoverflow.com/questions/8464262/access-is-denied-error-on-xdomainrequest), XDomainRequest forbid HTTPS requests from HTTP scheme and vice versa
-- XDomainRequest does not support XHR2 types
 
 License
 -------

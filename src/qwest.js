@@ -42,6 +42,7 @@
 			xhr,
 			xdr=false,
 			timeoutInterval,
+			aborted=false,
 			retries=0,
 			headers={},
 			mimeTypes={
@@ -114,9 +115,16 @@
 
 		// Handle the response
 		handleResponse=function(){
+			// Verify request's state
+			// --- https://stackoverflow.com/questions/7287706/ie-9-javascript-error-c00c023f
+			if(aborted){
+				return;
+			}
 			// Prepare
 			var i,req,p;
 			--requests;
+			// Clear the timeout
+			clearInterval(timeoutInterval);
 			// Launch next stacked request
 			if(request_stack.length){
 				req=request_stack.shift();
@@ -133,10 +141,9 @@
 			}
 			// Handle response
 			try{
-				// Clear the timeout
-				clearInterval(timeoutInterval);
 				// Verify status code
-				if(!/^2|1223/.test(xhr.status)){ // https://stackoverflow.com/questions/10046972/msie-returns-status-code-of-1223-for-ajax-request
+				// --- https://stackoverflow.com/questions/10046972/msie-returns-status-code-of-1223-for-ajax-request
+				if('status' in xhr && !/^2|1223/.test(xhr.status)){
 					throw xhr.status+' ('+xhr.statusText+')';
 				}
 				// Init
@@ -408,12 +415,15 @@
 		// Timeout/retries
 		var timeout=function(){
 			timeoutInterval=setTimeout(function(){
+				aborted=true;
 				xhr.abort();
 				if(!options.retries || ++retries!=options.retries){
+					aborted=false;
 					timeout();
 					send();
 				}
 				else{
+					aborted=false;
 					error=true;
 					response='Timeout ('+url+')';
 					if(options.async){
