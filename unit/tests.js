@@ -365,20 +365,6 @@ domready(function(){
 			 });
 	});
 
-	asyncTest('Get JS response',function(){
-		expect(1);
-		qwest.get('tests/get_js/test.php',null,{responseType:'js'})
-			 .then(function(response){
-				//console.log(response);
-				ok(window.xmlTest);
-				start();
-			 })
-			 ['catch'](function(message){
-				ok(false,message);
-				start();
-			 });
-	});
-
 	if('ArrayBuffer' in window){
 		asyncTest('Get ArrayBuffer response',function(){
 			expect(1);

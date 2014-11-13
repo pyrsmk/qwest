@@ -1,4 +1,4 @@
-/*! qwest 1.2.0 (https://github.com/pyrsmk/qwest) */
+/*! qwest 1.3.0 (https://github.com/pyrsmk/qwest) */
 
 ;(function(context,name,definition){
 	if(typeof module!='undefined' && module.exports){
@@ -49,7 +49,6 @@
 				text: '*/*',
 				xml: 'text/xml',
 				json: 'application/json',
-				js: 'application/javascript',
 				arraybuffer: null,
 				formdata: null,
 				document: null,
@@ -178,9 +177,6 @@
 							catch(e){
 								throw "Error while parsing JSON body : "+e;
 							}
-							break;
-						case 'js':
-							response=eval(xhr[responseText]);
 							break;
 						case 'xml':
 							// Based on jQuery's parseXML() function

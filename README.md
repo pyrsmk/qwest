@@ -1,4 +1,4 @@
-qwest 1.2.0
+qwest 1.3.0
 ===========
 
 Qwest is a simple ajax library based on `promises` behaviour and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
@@ -24,6 +24,7 @@ Changes since 0.7
 - added CORS support; `XDomainRequest` for IE8/9 is supported as well
 - added timeout/retries support
 - handle PUT/DELETE requests
+- the `js` response type has been removed for security reasons, if you want anyway to execute a remote script do a `eval(response)` in a `then` promise and set the response type to `text`
 
 Quick examples
 --------------
@@ -70,7 +71,7 @@ The method is either `get`, `post`, `put` or `delete`. The `data` parameter can 
 The available `options` are :
 
 - dataType : 'post' (by default), 'json', 'text', 'arraybuffer', 'blob', 'document' or 'formdata' (you don't need to specify XHR2 types since they're automatically detected)
-- responseType : the response type; either 'json' (by default), 'js', 'xml', 'text', 'arraybuffer', 'blob' or 'document'
+- responseType : the response type; either 'json' (by default), 'xml', 'text', 'arraybuffer', 'blob' or 'document'
 - cache : browser caching; default is `false` for GET requests and `true` for POST requests
 - async : true (default) or false; used to make asynchronous or synchronous requests
 - user : the user to access to the URL, if needed
@@ -182,7 +183,6 @@ Last notes
 
 - if an error occurs in a `then()` callback, it will be catched by the `catch()` promise
 - the default `Content-Type` header is `application/x-www-form-urlencoded` for `post` and `xhr2` data types, with a `POST` request
-- the `js` response type executes a remote javascript file and returns its raw code in the `then()` promise
 - if you want to set or get raw data, set the related option to `text`
 - as stated on [StackOverflow](https://stackoverflow.com/questions/8464262/access-is-denied-error-on-xdomainrequest), XDomainRequest forbid HTTPS requests from HTTP scheme and vice versa
 
