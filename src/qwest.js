@@ -1,4 +1,4 @@
-/*! qwest 1.1.0 (https://github.com/pyrsmk/qwest) */
+/*! qwest 1.2.0 (https://github.com/pyrsmk/qwest) */
 
 ;(function(context,name,definition){
 	if(typeof module!='undefined' && module.exports){
