@@ -9,7 +9,7 @@
   "keywords": [
     "ajax",
     "request",
-    "promise",
+    "promises",
     "xhr"
   ],
   "authors": ["Aurélien Delogu"],

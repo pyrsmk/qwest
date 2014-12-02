@@ -1,4 +1,4 @@
-/*! qwest 1.3.0 (https://github.com/pyrsmk/qwest) */
+/*! qwest 1.4.0 (https://github.com/pyrsmk/qwest) */
 
 ;(function(context,name,definition){
 	if(typeof module!='undefined' && module.exports){
@@ -120,7 +120,7 @@
 				return;
 			}
 			// Prepare
-			var i,req,p;
+			var i,req,p,responseType;
 			--requests;
 			// Clear the timeout
 			clearInterval(timeoutInterval);
@@ -156,7 +156,7 @@
 				else if(options.responseType=='document'){
 					var frame=doc.createElement('iframe');
 					frame.style.display='none';
-					doc.body.appendChild(frame);             
+					doc.body.appendChild(frame);
 					frame.contentDocument.open();
 					frame.contentDocument.write(xhr.response);
 					frame.contentDocument.close();
@@ -164,7 +164,22 @@
 					doc.body.removeChild(frame);
 				}
 				else{
-					switch(options.responseType){
+					// Guess response type
+					responseType=options.responseType;
+					if(responseType=='auto'){
+						switch(xhr.getResponseHeader(contentType)){
+							case mimeTypes.json:
+								responseType='json';
+								break;
+							case mimeTypes.xml:
+								responseType='xml';
+								break;
+							default:
+								responseType='text';
+						}
+					}
+					// Handle response type
+					switch(responseType){
 						case 'json':
 							try{
 								if('JSON' in win){
@@ -254,7 +269,7 @@
 		options.async='async' in options?!!options.async:true;
 		options.cache='cache' in options?!!options.cache:(method!='GET');
 		options.dataType='dataType' in options?options.dataType.toLowerCase():'post';
-		options.responseType='responseType' in options?options.responseType.toLowerCase():'json';
+		options.responseType='responseType' in options?options.responseType.toLowerCase():'auto';
 		options.user=options.user || '';
 		options.password=options.password || '';
 		options.withCredentials=!!options.withCredentials;
@@ -306,7 +321,7 @@
 			}
 		}
 		if(!headers.Accept){
-			headers.Accept=(options.responseType in mimeTypes)?mimeTypes[options.responseType]:'*';
+			headers.Accept=(options.responseType in mimeTypes)?mimeTypes[options.responseType]:'*/*';
 		}
 		if(!crossOrigin && !headers['X-Requested-With']){ // because that header breaks in legacy browsers with CORS
 			headers['X-Requested-With']='XMLHttpRequest';
@@ -390,7 +405,7 @@
 				};
 			}
 			// Override mime type to ensure the response is well parsed
-			if('overrideMimeType' in xhr){
+			if(options.responseType!=='auto' && 'overrideMimeType' in xhr){
 				xhr.overrideMimeType(mimeTypes[options.responseType]);
 			}
 			// Run 'before' callback

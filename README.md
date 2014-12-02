@@ -1,4 +1,4 @@
-qwest 1.3.0
+qwest 1.4.0
 ===========
 
 Qwest is a simple ajax library based on `promises` behaviour and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
@@ -14,17 +14,13 @@ bower install qwest
 npm install qwest --save-dev
 ```
 
-Changes since 0.7
------------------
+Changes in 1.4
+--------------
 
-- use `then()` and `catch()` promises instead of `success()` and `error()`
-- the `type` option has been replaced by `responseType`
-- `dataType` option has been added
-- the `before` callback has now its own promise (see it in action at the bottom of the doc)
-- added CORS support; `XDomainRequest` for IE8/9 is supported as well
-- added timeout/retries support
-- handle PUT/DELETE requests
-- the `js` response type has been removed for security reasons, if you want anyway to execute a remote script do a `eval(response)` in a `then` promise and set the response type to `text`
+The response type option is now set to `auto` by default.
+
+- `auto` mode is only supported for `xml`, `json` and `text` response types; for `arraybuffer`, `blob` and `document` you'll need to define explicitly the `responseType` option
+- if the response of your requests doesn't return a valid (and recognized) `Content-Type` header, then you __must__ explicitly set the `responseType` option
 
 Quick examples
 --------------
@@ -70,15 +66,15 @@ The method is either `get`, `post`, `put` or `delete`. The `data` parameter can 
 
 The available `options` are :
 
-- dataType : 'post' (by default), 'json', 'text', 'arraybuffer', 'blob', 'document' or 'formdata' (you don't need to specify XHR2 types since they're automatically detected)
-- responseType : the response type; either 'json' (by default), 'xml', 'text', 'arraybuffer', 'blob' or 'document'
+- dataType : `post` (by default), `json`, `text`, `arraybuffer`, `blob`, `document` or `formdata` (you don't need to specify XHR2 types since they're automatically detected)
+- responseType : the response type; either `auto` (default), `json`, `xml`, `text`, `arraybuffer`, `blob` or `document`
 - cache : browser caching; default is `false` for GET requests and `true` for POST requests
-- async : true (default) or false; used to make asynchronous or synchronous requests
+- async : `true` (default) or `false`; used to make asynchronous or synchronous requests
 - user : the user to access to the URL, if needed
 - password : the password to access to the URL, if needed
 - headers : javascript object containing headers to be sent
-- withCredentials : false by default; sends [credentials](http://www.w3.org/TR/XMLHttpRequest2/#user-credentials) with your XHR2 request ([more info in that post](https://dev.opera.com/articles/xhr2/#xhrcredentials))
-- timeout : the timeout for the request in ms; 3000 by default
+- withCredentials : `false` by default; sends [credentials](http://www.w3.org/TR/XMLHttpRequest2/#user-credentials) with your XHR2 request ([more info in that post](https://dev.opera.com/articles/xhr2/#xhrcredentials))
+- timeout : the timeout for the request in ms; `3000` by default
 - retries : the number of times the request would be runned if the timeout is reached; 3 by default; if you want to remove the limit set it to `null`
 
 In each callback, the `this` keyword refers to the `XmlHttpRequest` object, so you can do some specific tasks you may need.
