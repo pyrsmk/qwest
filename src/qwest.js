@@ -11,7 +11,7 @@
 		context[name]=definition;
 	}
 }(this,'qwest',function(){
-	
+
 	var win=window,
 		doc=document,
 		before,
@@ -27,7 +27,7 @@
 			},
 		// Guess XHR version
 		xhr2=(getXHR().responseType===''),
-		
+
 	// Core function
 	qwest=function(method,url,data,options,before){
 
@@ -219,13 +219,16 @@
 					}
 				}
 				// Execute 'then' stack
-				success=true;
-				if(options.async){
-					for(i=0;func=then_stack[i];++i){
-						func.call(xhr,response);
-					}
-				}
-			}
+                var prevResult;
+                if (options.async) {
+                    for (i = 0; func = then_stack[i]; ++i) {
+                        if (i === 0) {
+                            prevResult = func.call(xhr, response);
+                        } else {
+                            prevResult = func.call(xhr, prevResult);
+                        }
+                    }
+                }
 			catch(e){
 				error=true;
 				response=e+' ('+url+')';
@@ -452,7 +455,7 @@
 
 		// Return promises
 		return promises;
-		
+
 	};
 
 	// Return external qwest object
@@ -478,5 +481,5 @@
 			}
 		};
 	return obj;
-	
+
 }()));
