@@ -231,7 +231,7 @@ domready(function(){
 			 });
 	});
 
-	/*asyncTest('CORS',function(){
+	asyncTest('CORS',function(){
 		expect(1);
 		qwest.get('http://sandbox.dreamysource.fr/cors/')
 			 .then(function(response){
@@ -242,7 +242,7 @@ domready(function(){
 				ok(false,message);
 				start();
 			 });
-	});*/
+	});
 
 	asyncTest('Before promise',function(){
 		expect(1);

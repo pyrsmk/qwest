@@ -1,4 +1,4 @@
-/*! qwest 1.4.0 (https://github.com/pyrsmk/qwest) */
+/*! qwest 1.5.1 (https://github.com/pyrsmk/qwest) */
 
 ;(function(context,name,definition){
 	if(typeof module!='undefined' && module.exports){
@@ -219,23 +219,20 @@
 					}
 				}
 				// Execute 'then' stack
-                var prevResult;
-                if (options.async) {
-                    for (i = 0; func = then_stack[i]; ++i) {
-                        if (i === 0) {
-                            prevResult = func.call(xhr, response);
-                        } else {
-                            prevResult = func.call(xhr, prevResult);
-                        }
-                    }
-                }
+				success=true;
+				p=response;
+				if(options.async){
+					for(i=0;func=then_stack[i];++i){
+						p=func.call(xhr,p);
+					}
+				}
+			}
 			catch(e){
 				error=true;
-				response=e+' ('+url+')';
 				// Execute 'catch' stack
 				if(options.async){
 					for(i=0;func=catch_stack[i];++i){
-						func.call(xhr,response);
+						func.call(xhr,e+' ('+url+')');
 					}
 				}
 			}
