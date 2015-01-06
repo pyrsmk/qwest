@@ -1,4 +1,4 @@
-qwest 1.5.1
+qwest 1.5.3
 ===========
 
 Qwest is a simple ajax library based on `promises` behaviour and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
@@ -13,14 +13,6 @@ jam install qwest
 bower install qwest
 npm install qwest --save-dev
 ```
-
-Changes in 1.4
---------------
-
-The response type option is now set to `auto` by default.
-
-- `auto` mode is only supported for `xml`, `json` and `text` response types; for `arraybuffer`, `blob` and `document` you'll need to define explicitly the `responseType` option
-- if the response of your requests doesn't return a valid (and recognized) `Content-Type` header, then you __must__ explicitly set the `responseType` option
 
 Quick examples
 --------------
@@ -170,13 +162,19 @@ qwest['delete']('example.com')
 	 ['catch'](function(){});
 ```
 
-The CORS object shipped with IE8 and 9 is `XDomainRequest`. This object __does not__ support `PUT` and `DELETE` requests and XHR2 types.
-
 XHR2 does not support `arraybuffer`, `blob` and `document` response types in synchroneous mode.
+
+The CORS object shipped with IE8 and 9 is `XDomainRequest`. This object __does not__ support `PUT` and `DELETE` requests and XHR2 types. Moreover, the `getResponseHeader()` method is not supported too which is used in the `auto` mode for detecting the reponse type. Then, the response type automatically fallbacks to `json` when in `auto` mode. If you expect another response type, please specify it explicitly. If you want to specify another default response type to fallback in `auto` mode, you can do it like this :
+
+```js
+qwest.setDefaultXdrResponseType('text');
+```
 
 Last notes
 ----------
 
+- `auto` mode is only supported for `xml`, `json` and `text` response types; for `arraybuffer`, `blob` and `document` you'll need to define explicitly the `responseType` option
+- if the response of your request doesn't return a valid (and recognized) `Content-Type` header, then you __must__ explicitly set the `responseType` option
 - if an error occurs in a `then()` callback, it will be catched by the `catch()` promise
 - the default `Content-Type` header is `application/x-www-form-urlencoded` for `post` and `xhr2` data types, with a `POST` request
 - if you want to set or get raw data, set the related option to `text`

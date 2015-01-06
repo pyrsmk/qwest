@@ -1,4 +1,4 @@
-/*! qwest 1.5.1 (https://github.com/pyrsmk/qwest) */
+/*! qwest 1.5.3 (https://github.com/pyrsmk/qwest) */
 
 ;(function(context,name,definition){
 	if(typeof module!='undefined' && module.exports){
@@ -15,6 +15,8 @@
 	var win=window,
 		doc=document,
 		before,
+		// Default response type for XDR in auto mode
+		defaultXdrResponseType='json',
 		// Variables for limit mechanism
 		limit=null,
 		requests=0,
@@ -167,15 +169,20 @@
 					// Guess response type
 					responseType=options.responseType;
 					if(responseType=='auto'){
-						switch(xhr.getResponseHeader(contentType)){
-							case mimeTypes.json:
-								responseType='json';
-								break;
-							case mimeTypes.xml:
-								responseType='xml';
-								break;
-							default:
-								responseType='text';
+						if(xdr){
+							responseType=defaultXdrResponseType;
+						}
+						else{
+							switch(xhr.getResponseHeader(contentType)){
+								case mimeTypes.json:
+									responseType='json';
+									break;
+								case mimeTypes.xml:
+									responseType='xml';
+									break;
+								default:
+									responseType='text';
+							}
 						}
 					}
 					// Handle response type
@@ -475,6 +482,9 @@
 			xhr2: xhr2,
 			limit: function(by){
 				limit=by;
+			},
+			setDefaultXdrResponseType: function(type){
+				defaultXdrResponseType=type.toLowerCase();
 			}
 		};
 	return obj;
