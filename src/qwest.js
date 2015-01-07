@@ -259,7 +259,9 @@
 			if(typeof data==='object' && data!=null) {
 				for(p in data) {
 					if(data.hasOwnProperty(p)) {
-						res=res.concat(buildData(data[p],key?key+'['+p+']':p));
+						var built = buildData(data[p],key?key+'['+p+']':p);
+						if (built != "")
+							res=res.concat(built);
 					}
 				}
 			}
