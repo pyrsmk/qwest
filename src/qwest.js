@@ -266,7 +266,7 @@
 			else if(data!=null && key!=null){
 				res.push(enc(key)+'='+enc(data));
 			}
-			return res.join('&');
+			return res.join('&').replace(/\&$/, '');
 		};
 
 		// New request
