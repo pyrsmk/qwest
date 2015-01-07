@@ -1,4 +1,4 @@
-/*! qwest 1.5.3 (https://github.com/pyrsmk/qwest) */
+/*! qwest 1.5.4 (https://github.com/pyrsmk/qwest) */
 
 ;(function(context,name,definition){
 	if(typeof module!='undefined' && module.exports){
@@ -259,9 +259,10 @@
 			if(typeof data==='object' && data!=null) {
 				for(p in data) {
 					if(data.hasOwnProperty(p)) {
-						var built = buildData(data[p],key?key+'['+p+']':p);
-						if (built != "")
+						var built=buildData(data[p],key?key+'['+p+']':p);
+						if(built!==''){
 							res=res.concat(built);
+						}
 					}
 				}
 			}
