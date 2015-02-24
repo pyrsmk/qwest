@@ -425,7 +425,7 @@
 			// Send request
 			if(xdr){
 				setTimeout(function(){ // https://developer.mozilla.org/en-US/docs/Web/API/XDomainRequest
-					xhr.send();
+					xhr.send(method!='GET'?data:null);
 				},0);
 			}
 			else{
