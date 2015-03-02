@@ -331,7 +331,7 @@
 			}
 		}
 		if(!headers.Accept){
-			headers.Accept=(options.responseType in mimeTypes)?mimeTypes[options.responseType]:'*/*';
+			headers.Accept=(options.responseType in mimeTypes && mimeTypes[options.responseType] !== null)?mimeTypes[options.responseType]:'*/*';
 		}
 		if(!crossOrigin && !headers['X-Requested-With']){ // because that header breaks in legacy browsers with CORS
 			headers['X-Requested-With']='XMLHttpRequest';
