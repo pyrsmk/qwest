@@ -3,23 +3,19 @@ module.exports = function(grunt) {
 	// Requires
 	require('jit-grunt')(grunt);
 	var fs=require('fs'),
-		child_process=require('child_process');
+		child_process=require('child_process'),
+    glob=require('glob');
+    path=require('path');
 
 	// Get library name
-	var excludes=['.','..','ender.js','footer.js'],
-		files=fs.readdirSync('src'),
-		name,i,j;
-	if(files.indexOf('header.js')!==-1){
-		name='header.js';
-	}
-	else{
-		for(i=0,j=files.length;i<j;++i){
-			if(excludes.indexOf(files[i])==-1){
-				name=files[i];
-				break;
-			}
-		}
-	}
+	var excludes=['ender.js','footer.js'],
+		name;
+	files = glob.sync('src/*.js').filter(function (f) {
+    return ! excludes.every(function (e) {
+      return path.basename(f).indexOf(e) >= 0
+    });
+  });
+  name = path.basename(files[0]);
 
 	// Get version
 	var version=fs.readFileSync('src/'+name,{encoding:'utf8'}).match(/^\/\*\! \w+ ([0-9.]+)/)[1];
