@@ -1,4 +1,4 @@
-qwest 1.5.5
+qwest 1.5.6
 ===========
 
 Qwest is a simple ajax library based on `promises` behaviour and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
@@ -33,8 +33,8 @@ qwest.post('example.com',{
 	 .then(function(response){
 		// Make some useful actions
 	 })
-	 .catch(function(message){
-		// Print the error message
+	 .catch(function(e,url){
+		// Process the error
 	 });
 ```
 
@@ -46,8 +46,8 @@ qwest.<method>(<url>,[data],[options])
 	 .then(function(response){
 		// Run when the request is successful
 	 })
-	 .catch(function(message){
-		// Process error message
+	 .catch(function(e,url){
+		// Process the error
 	 })
 	 .complete(function(){
 		// Always run
@@ -76,9 +76,9 @@ qwest.get('example.com')
 	 .then(function(response){
 		// Blah blah blah
 	 })
-	 .catch(function(message){
+	 .catch(function(e,url){
 		log(this.responseText);
-		throw message;
+		throw e+'('+url+')';
 	 });
 ```
 
