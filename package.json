@@ -21,6 +21,7 @@
   },
   "homepage": "http://dreamysource.fr/product/qwest",
   "devDependencies": {
+    "glob": "^4.4.1",
     "grunt": "~0.4.4",
     "grunt-contrib-clean": "~0.5.0",
     "grunt-contrib-jshint": "~0.9.2",
