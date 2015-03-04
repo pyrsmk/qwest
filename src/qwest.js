@@ -239,7 +239,7 @@
 				// Execute 'catch' stack
 				if(options.async){
 					for(i=0;func=catch_stack[i];++i){
-						func.call(xhr,e+' ('+url+')');
+						func.call(xhr, e, url);
 					}
 				}
 			}
