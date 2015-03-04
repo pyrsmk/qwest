@@ -1,4 +1,4 @@
 AuthName "Authentication Required"
-AuthUserFile D:\Dev\JavaScript\qwest\unit\tests\auth\passwd
+AuthUserFile D:\Dev\JavaScript\qwest\tests\tests\auth\passwd
 AuthType Basic
 Require valid-user

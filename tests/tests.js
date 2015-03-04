@@ -456,6 +456,7 @@ domready(function(){
 				bar: [{foo:'bar'}]
 			 })
 			 .then(function(response){
+			 	//console.log(response.debug);
 				ok(response.status.trim()=='ok');
 				start();
 			 })

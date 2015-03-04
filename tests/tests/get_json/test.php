@@ -6,7 +6,7 @@ $headers=apache_request_headers();
 
 header('Content-Type: application/json');
 echo json_encode(array(
-	'status' => $headers['Accept']=='application/json'?'ok':'error',
+	'status' => strpos($headers['Accept'],'application/json')===0?'ok':'error',
 	'debug' => array(
 		'Accept' => $headers['Accept']
 	)
