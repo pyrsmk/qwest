@@ -1,4 +1,4 @@
-/*! qwest 1.5.6 (https://github.com/pyrsmk/qwest) */
+/*! qwest 1.5.7 (https://github.com/pyrsmk/qwest) */
 
 ;(function(context,name,definition){
 	if(typeof module!='undefined' && module.exports){
@@ -51,11 +51,12 @@
 				text: '*/*',
 				xml: 'text/xml',
 				json: 'application/json',
-				arraybuffer: null,
-				formdata: null,
-				document: null,
-				file: null,
-				blob: null
+				post: 'application/x-www-form-urlencoded'
+			},
+			accept={
+				text: '*/*',
+				xml: 'application/xml; q=1.0, text/xml; q=0.8, */*; q=0.1',
+				json: 'application/json; q=1.0, text/*; q=0.8, */*; q=0.1'
 			},
 			contentType='Content-Type',
 			vars='',
@@ -326,12 +327,9 @@
 					headers[contentType]=mimeTypes[options.dataType];
 				}
 			}
-			else{
-				headers[contentType]='application/x-www-form-urlencoded';
-			}
 		}
 		if(!headers.Accept){
-			headers.Accept=(options.responseType in mimeTypes && mimeTypes[options.responseType] !== null)?mimeTypes[options.responseType]:'*/*';
+			headers.Accept=(options.responseType in accept)?accept[options.responseType]:'*/*';
 		}
 		if(!crossOrigin && !headers['X-Requested-With']){ // because that header breaks in legacy browsers with CORS
 			headers['X-Requested-With']='XMLHttpRequest';
