@@ -175,7 +175,7 @@ Last notes
 
 - `auto` mode is only supported for `xml`, `json` and `text` response types; for `arraybuffer`, `blob` and `document` you'll need to define explicitly the `responseType` option
 - if the response of your request doesn't return a valid (and recognized) `Content-Type` header, then you __must__ explicitly set the `responseType` option
-- if an error occurs in a `then()` callback, it will be catched by the `catch()` promise
+- if an error occurs in a `then()` callback, it will be caught by the `catch()` promise
 - the default `Content-Type` header is `application/x-www-form-urlencoded` for `post` and `xhr2` data types, with a `POST` request
 - if you want to set or get raw data, set the related option to `text`
 - as stated on [StackOverflow](https://stackoverflow.com/questions/8464262/access-is-denied-error-on-xdomainrequest), XDomainRequest forbid HTTPS requests from HTTP scheme and vice versa
