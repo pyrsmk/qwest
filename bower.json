@@ -18,5 +18,13 @@
     "url": "https://github.com/pyrsmk/qwest/issues"
   },
   "homepage": "http://dreamysource.fr/product/qwest",
-  "ignore": [".git"]
+  "ignore": [
+    ".git/",
+    ".gitignore",
+    "nodes_modules/",
+    "src/",
+    "tests/",
+    "Gruntfile.js",
+    "package.json"
+  ]
 }
