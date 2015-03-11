@@ -1,4 +1,4 @@
-/*! qwest 1.5.7 (https://github.com/pyrsmk/qwest) */
+/*! qwest 1.5.8 (https://github.com/pyrsmk/qwest) */
 
 ;(function(context,name,definition){
 	if(typeof module!='undefined' && module.exports){
@@ -284,8 +284,8 @@
 		options.user=options.user || '';
 		options.password=options.password || '';
 		options.withCredentials=!!options.withCredentials;
-		options.timeout=options.timeout?parseInt(options.timeout,10):3000;
-		options.retries=options.retries?parseInt(options.retries,10):3;
+		options.timeout='timeout' in options?parseInt(options.timeout,10):3000;
+		options.retries='retries' in options?parseInt(options.retries,10):3;
 
 		// Guess if we're dealing with a cross-origin request
 		i=url.match(/\/\/(.+?)\//);
