@@ -174,16 +174,14 @@
 							responseType=defaultXdrResponseType;
 						}
 						else{
-							switch(xhr.getResponseHeader(contentType)){
-								case mimeTypes.json:
-									responseType='json';
-									break;
-								case mimeTypes.xml:
-									responseType='xml';
-									break;
-								default:
-									responseType='text';
-							}
+                                                        var ct = xhr.getResponseHeader(contentType);
+                                                        if(ct.indexOf(mimeTypes.json) > -1 ){
+                                                                responseType='json';
+                                                        }else if(ct.indexOf(mimeTypes.xml) > -1 ) {
+                                                                responseType='xml';
+                                                        } else {
+                                                                responseType='text';
+                                                        }
 						}
 					}
 					// Handle response type
