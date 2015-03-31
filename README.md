@@ -42,7 +42,7 @@ Basics
 ------
 
 ```javascript
-qwest.<method>(<url>,[data],[options])
+qwest.<method>(<url>[, data[, options]])
 	 .then(function(response){
 		// Run when the request is successful
 	 })
