@@ -45,7 +45,7 @@
 			xdr=false,
 			timeoutInterval,
 			aborted=false,
-			retries=0,
+			attempts=0,
 			headers={},
 			mimeTypes={
 				text: '*/*',
@@ -276,6 +276,13 @@
 		// New request
 		++requests;
 
+		if ('retries' in options) {
+			if (win.console && console.warn) {
+				console.warn('[Qwest] The retries option is deprecated. It indicates total number of requests to attempt. Please use the "attempts" option.');
+			}
+			options.attempts = options.retries;
+		}
+
 		// Normalize options
 		options.async='async' in options?!!options.async:true;
 		options.cache='cache' in options?!!options.cache:(method!='GET');
@@ -285,7 +292,7 @@
 		options.password=options.password || '';
 		options.withCredentials=!!options.withCredentials;
 		options.timeout='timeout' in options?parseInt(options.timeout,10):3000;
-		options.retries='retries' in options?parseInt(options.retries,10):3;
+		options.attempts='attempts' in options?parseInt(options.attempts,10):3;
 
 		// Guess if we're dealing with a cross-origin request
 		i=url.match(/\/\/(.+?)\//);
@@ -431,12 +438,12 @@
 			}
 		};
 
-		// Timeout/retries
+		// Timeout/attempts
 		var timeout=function(){
 			timeoutInterval=setTimeout(function(){
 				aborted=true;
 				xhr.abort();
-				if(!options.retries || ++retries!=options.retries){
+				if(!options.attempts || ++attempts!=options.attempts){
 					aborted=false;
 					timeout();
 					send();
