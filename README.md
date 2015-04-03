@@ -67,7 +67,7 @@ The available `options` are :
 - headers : javascript object containing headers to be sent
 - withCredentials : `false` by default; sends [credentials](http://www.w3.org/TR/XMLHttpRequest2/#user-credentials) with your XHR2 request ([more info in that post](https://dev.opera.com/articles/xhr2/#xhrcredentials))
 - timeout : the timeout for the request in ms; `3000` by default
-- retries : the number of times the request would be runned if the timeout is reached; 3 by default; if you want to remove the limit set it to `null`
+- attempts : the total number of times to attempt the request through timeouts; 3 by default; if you want to remove the limit set it to `null`
 
 In each callback, the `this` keyword refers to the `XmlHttpRequest` object, so you can do some specific tasks you may need.
 

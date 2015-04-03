@@ -202,7 +202,7 @@ domready(function(){
 		var t=+new Date;
 		qwest.get('tests/timeout/test.php',null,{
 				timeout: 250,
-				retries: 4
+				attempts: 4
 			 })
 			 .then(function(response){
 				ok(false,(+new Date-t)+'ms');
@@ -220,7 +220,7 @@ domready(function(){
 		var t=+new Date;
 		qwest.get('tests/timeout/test.php',null,{
 				timeout: 500,
-				retries: 4,
+				attempts: 4,
 				async: false
 			 })
 			 .then(function(response){
