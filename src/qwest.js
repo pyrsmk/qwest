@@ -1,4 +1,4 @@
-/*! qwest 1.5.11 (https://github.com/pyrsmk/qwest) */
+/*! qwest 1.5.12 (https://github.com/pyrsmk/qwest) */
 
 ;(function(context,name,definition){
 	if(typeof module!='undefined' && module.exports){
@@ -174,7 +174,7 @@
 							responseType=defaultXdrResponseType;
 						}
 						else{
-							var ct=xhr.getResponseHeader(contentType);
+							var ct=xhr.getResponseHeader(contentType) || '';
 							if(ct.indexOf(mimeTypes.json)>-1){
 								responseType='json';
 							}
