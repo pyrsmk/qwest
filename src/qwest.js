@@ -490,10 +490,11 @@
 			return function(url,data,options){
 				var b=before;
 				before=null;
-				return qwest(method,url,data,options,b);
+				return qwest(method,this.base+url,data,options,b);
 			};
 		},
 		obj={
+            base: '',
 			before: function(callback){
 				before=callback;
 				return obj;
