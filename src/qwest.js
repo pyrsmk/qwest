@@ -29,6 +29,7 @@
 			},
 		// Guess XHR version
 		xhr2=(getXHR().responseType===''),
+		jqueryParam = require('jquery-param')
 
 	// Core function
 	qwest=function(method,url,data,options,before){
@@ -316,7 +317,7 @@
 				data=JSON.stringify(data);
 				break;
 			case 'post':
-				data=buildData(data);
+				data=jqueryParam(data);
 		}
 
 		// Prepare headers
