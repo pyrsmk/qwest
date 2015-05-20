@@ -51,6 +51,19 @@ domready(function(){
 		}
 	});
 
+	asyncTest('Invalid URL', function() {
+		expect(1);
+		qwest.post('foo')
+			 .then(function(response){
+				ok(false);
+				start();
+			 })
+			 ['catch'](function(message) {
+				ok(true);
+				start();
+			 });
+	});
+
 	asyncTest('Multiple promises (async)',function(){
 		expect(2);
 		var a=0,b=0,c=0;

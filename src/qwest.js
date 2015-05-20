@@ -1,4 +1,4 @@
-/*! qwest 1.5.12 (https://github.com/pyrsmk/qwest) */
+/*! qwest 1.6.0 (https://github.com/pyrsmk/qwest) */
 
 ;(function(context,name,definition){
 	if(typeof module!='undefined' && module.exports){
@@ -252,6 +252,20 @@
 			}
 		},
 
+		// Handle errors
+		handleError= function(e){
+			error=true;
+			--requests;
+			// Clear the timeout
+			clearInterval(timeoutInterval);
+			// Execute 'catch' stack
+			if(options.async){
+				for(i=0;func=catch_stack[i];++i){
+					func.call(xhr, e, url);
+				}
+			}
+		},
+
 		// Recursively build the query string
 		buildData=function(data,key){
 			var res=[],
@@ -291,8 +305,8 @@
 		options.user=options.user || '';
 		options.password=options.password || '';
 		options.withCredentials=!!options.withCredentials;
-		options.timeout='timeout' in options?parseInt(options.timeout,10):3000;
-		options.attempts='attempts' in options?parseInt(options.attempts,10):3;
+		options.timeout='timeout' in options?parseInt(options.timeout,10):30000;
+		options.attempts='attempts' in options?parseInt(options.attempts,10):1;
 
 		// Guess if we're dealing with a cross-origin request
 		i=url.match(/\/\/(.+?)\//);
@@ -343,7 +357,7 @@
 		}
 
 		// Prepare URL
-		if(method=='GET'){
+		if(method=='GET' && data){
 			vars+=data;
 		}
 		if(!options.cache){
@@ -411,6 +425,7 @@
 			// Plug response handler
 			if(xhr2 || xdr){
 				xhr.onload=handleResponse;
+				xhr.onerror=handleError;
 			}
 			else{
 				xhr.onreadystatechange=function(){
