@@ -1,4 +1,4 @@
-qwest 1.5.12
+qwest 1.6.0
 ============
 
 Qwest is a simple ajax library based on `promises` behaviour and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
@@ -19,21 +19,21 @@ Quick examples
 
 ```javascript
 qwest.get('example.com')
-	 .then(function(response){
+	 .then(function(response) {
 		alert(response);
 	 });
 ```
 
 ```javascript
-qwest.post('example.com',{
+qwest.post('example.com', {
 		firstname: 'Pedro',
 		lastname: 'Sanchez',
 		age: 30
 	 })
-	 .then(function(response){
+	 .then(function(response) {
 		// Make some useful actions
 	 })
-	 .catch(function(e,url){
+	 .catch(function(e, url) {
 		// Process the error
 	 });
 ```
@@ -43,13 +43,13 @@ Basics
 
 ```javascript
 qwest.<method>(<url>[, data[, options]])
-	 .then(function(response){
+	 .then(function(response) {
 		// Run when the request is successful
 	 })
-	 .catch(function(e,url){
+	 .catch(function(e, url) {
 		// Process the error
 	 })
-	 .complete(function(){
+	 .complete(function() {
 		// Always run
 	 });
 ```
@@ -73,13 +73,22 @@ In each callback, the `this` keyword refers to the `XmlHttpRequest` object, so y
 
 ```javascript
 qwest.get('example.com')
-	 .then(function(response){
+	 .then(function(response) {
 		// Blah blah blah
 	 })
-	 .catch(function(e,url){
+	 .catch(function(e, url) {
 		log(this.responseText);
 		throw e+'('+url+')';
 	 });
+```
+
+Base URI
+--------
+
+You can define a base URI for your requests. The string will be prepended to the other request URIs.
+
+```javascript
+qwest.base = 'http://example.com/'
 ```
 
 Request limitation
@@ -90,7 +99,7 @@ One of the great qwest's functionnalities is the request limitation. It avoids b
 ```javascript
 qwest.limit(4);
 
-$('.foo').forEach(function(){
+$('.foo').forEach(function() {
 	qwest.get(this.data('some_url_to_get'));
 });
 ```
@@ -103,13 +112,13 @@ Set options to XHR
 If you want to apply some manual options to the `XHR` object, you can use the `before` promise. It must be called before __any__ other promise. The `this` keyword refers to the `XHR` object itself.
 
 ```javascript
-qwest.before(function(){
-		this.uploadonprogress=function(e){
+qwest.before(function() {
+		this.uploadonprogress=function(e) {
 			// Upload in progress
 		};
 	 })
 	 .get('example.com')
-	 .then(function(response){
+	 .then(function(response) {
 		// Blah blah blah
 	 });
 ```
@@ -120,10 +129,10 @@ Handling fallbacks
 XHR2 is not available on every browser, so, if needed, you can simply verify the XHR version.
 
 ```javascript
-if(qwest.xhr2){
+if(qwest.xhr2) {
 	// Actions for XHR2
 }
-else{
+else {
 	// Actions for XHR1
 }
 ```
@@ -134,11 +143,11 @@ Receiving binary data in older browsers
 Getting binary data in legacy browsers needs a trick, as we can read it on [MDN](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Sending_and_Receiving_Binary_Data#Receiving_binary_data_in_older_browsers). In qwest, that's how we could handle it :
 
 ```javascript
-qwest.before(function(){
+qwest.before(function() {
 		this.overrideMimeType('text\/plain; charset=x-user-defined');
 	 })
 	 .get('example.com/file')
-	 .then(function(response){
+	 .then(function(response) {
 	 	// response is now a binary string
 	 });
 ```

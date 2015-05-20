@@ -39,7 +39,8 @@ module.exports = function(grunt) {
 					'ActiveXObject',
 					'console',
 					'XDomainRequest',
-					'log'
+					'log',
+					'JSON'
 				],
 				boss		: true,
 				curly		: true,
