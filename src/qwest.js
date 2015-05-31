@@ -1,4 +1,4 @@
-/*! qwest 1.6.0 (https://github.com/pyrsmk/qwest) */
+/*! qwest 1.6.1 (https://github.com/pyrsmk/qwest) */
 
 ;(function(context,name,definition){
 	if(typeof module!='undefined' && module.exports){
@@ -415,7 +415,7 @@
 				}
 			}
 			// Verify if the response type is supported by the current browser
-			if(xhr2 && options.responseType!='document'){ // Don't verify for 'document' since we're using an internal routine
+			if(xhr2 && options.responseType!='document' && options.responseType!='auto'){ // Don't verify for 'document' since we're using an internal routine
 				try{
 					xhr.responseType=options.responseType;
 					nativeResponseParsing=(xhr.responseType==options.responseType);
@@ -435,7 +435,7 @@
 				};
 			}
 			// Override mime type to ensure the response is well parsed
-			if(options.responseType!=='auto' && 'overrideMimeType' in xhr){
+			if(options.responseType!='auto' && 'overrideMimeType' in xhr){
 				xhr.overrideMimeType(mimeTypes[options.responseType]);
 			}
 			// Run 'before' callback
