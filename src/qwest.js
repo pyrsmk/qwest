@@ -1,4 +1,4 @@
-/*! qwest 1.6.1 (https://github.com/pyrsmk/qwest) */
+/*! qwest 1.7.0 (https://github.com/pyrsmk/qwest) */
 
 ;(function(context,name,definition){
 	if(typeof module!='undefined' && module.exports){
@@ -143,11 +143,6 @@
 			}
 			// Handle response
 			try{
-				// Verify status code
-				// --- https://stackoverflow.com/questions/10046972/msie-returns-status-code-of-1223-for-ajax-request
-				if('status' in xhr && !/^2|1223/.test(xhr.status)){
-					throw xhr.status+' ('+xhr.statusText+')';
-				}
 				// Init
 				var responseText='responseText',
 					responseXML='responseXML',
@@ -226,12 +221,17 @@
 							response=xhr[responseText];
 					}
 				}
+				// Late status code verification to allow data when, per example, a 409 is returned
+				// --- https://stackoverflow.com/questions/10046972/msie-returns-status-code-of-1223-for-ajax-request
+				if('status' in xhr && !/^2|1223/.test(xhr.status)){
+					throw xhr.status+' ('+xhr.statusText+')';
+				}
 				// Execute 'then' stack
 				success=true;
 				p=response;
 				if(options.async){
 					for(i=0;func=then_stack[i];++i){
-						p=func.call(xhr,p);
+						p=func.call(xhr, p);
 					}
 				}
 			}
@@ -240,14 +240,14 @@
 				// Execute 'catch' stack
 				if(options.async){
 					for(i=0;func=catch_stack[i];++i){
-						func.call(xhr, e, url);
+						func.call(xhr, e, response);
 					}
 				}
 			}
 			// Execute complete stack
 			if(options.async){
 				for(i=0;func=complete_stack[i];++i){
-					func.call(xhr);
+					func.call(xhr, response);
 				}
 			}
 		},
@@ -261,7 +261,7 @@
 			// Execute 'catch' stack
 			if(options.async){
 				for(i=0;func=catch_stack[i];++i){
-					func.call(xhr, e, url);
+					func.call(xhr, e, null);
 				}
 			}
 		},

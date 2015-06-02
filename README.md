@@ -1,4 +1,4 @@
-qwest 1.6.1
+qwest 1.7.0
 ============
 
 Qwest is a simple ajax library based on `promises` behaviour and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
@@ -33,7 +33,7 @@ qwest.post('example.com', {
 	 .then(function(response) {
 		// Make some useful actions
 	 })
-	 .catch(function(e, url) {
+	 .catch(function(e, response) {
 		// Process the error
 	 });
 ```
@@ -42,14 +42,14 @@ Basics
 ------
 
 ```javascript
-qwest.<method>(<url>[, data[, options]])
+qwest.`method`(`url`, `data`, `options`)
 	 .then(function(response) {
 		// Run when the request is successful
 	 })
-	 .catch(function(e, url) {
+	 .catch(function(e, response) {
 		// Process the error
 	 })
-	 .complete(function() {
+	 .complete(function(response) {
 		// Always run
 	 });
 ```
@@ -76,11 +76,13 @@ qwest.get('example.com')
 	 .then(function(response) {
 		// Blah blah blah
 	 })
-	 .catch(function(e, url) {
+	 .catch(function(e, response) {
 		log(this.responseText);
 		throw e+'('+url+')';
 	 });
 ```
+
+Please note, the `catch` promise will be executed for status codes different from `2xx`. If a real big error happens, then the `response` parameter will be `null`.
 
 Base URI
 --------
@@ -88,7 +90,7 @@ Base URI
 You can define a base URI for your requests. The string will be prepended to the other request URIs.
 
 ```javascript
-qwest.base = 'http://example.com/'
+qwest.base = 'http://example.com/';
 ```
 
 Request limitation
