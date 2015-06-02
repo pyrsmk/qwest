@@ -1,12 +1,4 @@
-/**
- * qwest 2.0.0
- *
- * @description
- * @returns {object}
- */
+import {qwest} from './qwest.js';
 
-class qwest {
-
-}
-
-export {qwest}
+let q = new qwest();
+q.test();
