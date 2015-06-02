@@ -35,6 +35,7 @@ module.exports = function(grunt) {
 				predef		: [
 					'Document',
 					'define',
+					'require',
 					'module',
 					'ActiveXObject',
 					'console',

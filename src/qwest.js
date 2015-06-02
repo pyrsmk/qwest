@@ -29,6 +29,7 @@
 			},
 		// Guess XHR version
 		xhr2=(getXHR().responseType===''),
+		jqueryParam = require('jquery-param'),
 
 	// Core function
 	qwest=function(method,url,data,options,before){
@@ -264,27 +265,6 @@
 					func.call(xhr, e, null);
 				}
 			}
-		},
-
-		// Recursively build the query string
-		buildData=function(data,key){
-			var res=[],
-				enc=encodeURIComponent,
-				p;
-			if(typeof data==='object' && data!=null) {
-				for(p in data) {
-					if(data.hasOwnProperty(p)) {
-						var built=buildData(data[p],key?key+'['+p+']':p);
-						if(built!==''){
-							res=res.concat(built);
-						}
-					}
-				}
-			}
-			else if(data!=null && key!=null){
-				res.push(enc(key)+'='+enc(data));
-			}
-			return res.join('&');
 		};
 
 		// New request
@@ -330,7 +310,7 @@
 				data=JSON.stringify(data);
 				break;
 			case 'post':
-				data=buildData(data);
+				data=jqueryParam(data);
 		}
 
 		// Prepare headers
