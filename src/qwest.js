@@ -1,3 +1,5 @@
+import {Utils} from './utils.js';
+
 /**
  * qwest 2.0.0
  *
@@ -6,9 +8,17 @@
  */
 
 class qwest {
+
   constructor (options) {
     this.options = options;
+    this._Utils = new Utils();
+    console.log(this._Utils.getXHR());
   }
+
+  /**
+   *
+   * test will be removed
+   */
 
   test () {
     let promise = new Promise(function(resolve, reject) {
@@ -25,6 +35,19 @@ class qwest {
       console.log(result);
     }, function (err) {
       console.log(err);
+    });
+  }
+
+  /**
+   *
+   * @param url
+   * @param options
+   */
+  sendGet (url, options) {
+    let that = this;
+    return new Promise(function (resolve, reject) {
+      let xhr = that._Utils.getXHR();
+
     });
   }
 }
