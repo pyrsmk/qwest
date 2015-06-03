@@ -8,12 +8,25 @@ var source = require('vinyl-source-stream');
 var _ = require('lodash');
 var browserSync = require('browser-sync');
 var reload = browserSync.reload;
+var restEmulator = require('gulp-rest-emulator');
 
 var config = {
   entryFile: './src/app.js',
   outputDir: './dist/',
   outputFile: 'app.js'
 };
+
+gulp.task('mockserver', function () {
+  // Options not require
+  var options = {
+    port: 8000,
+    root: ['./'],
+    rewriteNotFound: false,
+    rewriteTemplate: 'index.html'
+  };
+  return gulp.src('./mocks/**/*.js')
+    .pipe(restEmulator(options));
+});
 
 // clean the output directory
 gulp.task('clean', function(cb){

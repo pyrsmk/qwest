@@ -24,7 +24,7 @@ class qwest {
    * @returns {Promise}
    */
 
-  createRequest (method, url, args) {
+  createRequest (method, url, args, type) {
     let that = this;
     let promise = new Promise(function (resolve, reject) {
       let client = that._Utils.getXHR();
@@ -53,7 +53,7 @@ class qwest {
 
       client.onload = function () {
         if (this.status === 200) {
-          resolve(that._Utils.preprocessResponse(this));
+          resolve(that._Utils.preprocessResponse(this, type));
         } else {
           reject(this.statusText);
         }
@@ -76,9 +76,9 @@ class qwest {
    * @returns {Promise}
    */
 
-  get(url, args) {
+  get(url, args, type) {
     if (url) {
-      return this.createRequest('GET', url, args);
+      return this.createRequest('GET', url, args, type);
     } else {
       throw new Error('qwest :: GET :: missing URL');
     }

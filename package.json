@@ -22,5 +22,8 @@
     "vinyl-source-stream": "^1.0.0"
   },
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "gulp-rest-emulator": "0.0.4"
+  }
 }
