@@ -1,4 +1,4 @@
-qwest 1.7.0
+qwest 2.0.0
 ============
 
 Qwest is a simple ajax library based on `promises` behaviour and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
@@ -6,12 +6,16 @@ Qwest is a simple ajax library based on `promises` behaviour and that supports `
 Install
 -------
 
-You can pick the minified library or install it with :
+In progress
+
+
+Contribute
+----------
 
 ```
-jam install qwest
-bower install qwest
-npm install qwest --save-dev
+git clone ...
+npm install
+gulp watch
 ```
 
 Quick examples

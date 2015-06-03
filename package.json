@@ -1,33 +1,26 @@
 {
   "name": "qwest",
-  "description": "Ajax library with XHR2, promises and requests limitation",
-  "version": "1.7.0",
-  "author": "Aurélien Delogu <pyrsmk@dreamysource.fr> (http://dreamysource.fr)",
+  "version": "2.0.0",
+  "description": "Qwest is a simple ajax library based on promises behaviour and that supports XmlHttpRequest2 special data like ArrayBuffer, Blob and FormData.",
+  "homepage": "https://github.com/pyrsmk/qwest",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pyrsmk/qwest.git"
+    "url": "https://github.com/pyrsmk/qwest"
   },
-  "main": "src/qwest.js",
-  "keywords": [
-    "ajax",
-    "request",
-    "promises",
-    "xhr"
-  ],
-  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/pyrsmk/qwest/issues",
-    "email": "dev@dreamysource.fr"
+    "url": "https://github.com/pyrsmk/qwest/issues"
   },
-  "homepage": "http://dreamysource.fr/product/qwest",
   "devDependencies": {
-    "glob": "^4.4.1",
-    "grunt": "~0.4.4",
-    "grunt-contrib-clean": "~0.5.0",
-    "grunt-contrib-jshint": "^0.11.2",
-    "grunt-contrib-uglify": "~0.4.0",
-    "grunt-shell": "^1.1.1",
-    "grunt-string-replace": "^1.0.0",
-    "jit-grunt": "^0.9.0"
-  }
+    "babelify": "~5.0.3",
+    "browser-sync": "^1.7.1",
+    "browserify": "^6.3.3",
+    "gulp": "~3.8.10",
+    "gulp-rename": "^1.2.0",
+    "lodash": "^2.4.1",
+    "rimraf": "~2.2.8",
+    "watchify": "^2.1.1",
+    "vinyl-source-stream": "^1.0.0"
+  },
+  "author": "",
+  "license": "MIT"
 }
