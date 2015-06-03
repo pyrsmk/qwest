@@ -35,13 +35,29 @@ class Utils {
 
 
   /**
-   * preprocess response
    *
+   * @param res
+   * @returns {*}
    */
 
-  preprocessResponse (response) {
+  preprocessResponse (res) {
+    let data;
 
-    return response;
+    if(this.isJSON(res)) {
+      data = JSON.parse(res.response);
+    }
+
+    return data;
+  }
+
+  /**
+   * Check if data is JSON
+   * @param res
+   * @returns {boolean}
+   */
+
+  isJSON (res) {
+    return res.getAllResponseHeaders().toString().indexOf('json') !== -1;
   }
 }
 
