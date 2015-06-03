@@ -22,7 +22,7 @@ Quick examples
 --------------
 
 ```javascript
-qwest.get('example.com')
+qwest.$httpGet('example.com')
 	 .then(function(response) {
 		alert(response);
 	 });
