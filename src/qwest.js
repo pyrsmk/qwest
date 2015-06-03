@@ -66,7 +66,7 @@ class qwest {
     return promise;
   }
 
-  httpGet (url, args) {
+  $httpGet (url, args) {
     if (url) {
       return this.createRequest('GET', url, args);
     } else {
