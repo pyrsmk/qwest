@@ -2,8 +2,19 @@ import {qwest} from './qwest.js';
 
 let q = new qwest();
 
+let mockApi = {
+  get: 'http://127.0.0.1:8000/api/users'
+};
 
-q.get('https://developer.mozilla.org/en-US/search.json?page=2').then(function (r) {
+
+window.q = q;
+
+/**
+ *
+ *
+ */
+
+q.get(mockApi.get, null, 'json').then(function (r) {
   console.log('response', r);
 }).catch(function () {
   console.log('something went wrong');

@@ -40,10 +40,10 @@ class Utils {
    * @returns {*}
    */
 
-  preprocessResponse (res) {
-    let data;
+  preprocessResponse (res, type) {
+    let data = res;
 
-    if(this.isJSON(res)) {
+    if(this.isJSON(res) || type === 'json') {
       data = JSON.parse(res.response);
     }
 
