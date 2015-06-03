@@ -30,7 +30,18 @@ class Utils {
    */
 
   isXHR2 () {
-    return (this.getXHR().responseType === '');
+    return (this.getXHR().responseType !== '');
+  }
+
+
+  /**
+   * preprocess response
+   *
+   */
+
+  preprocessResponse (response) {
+
+    return response;
   }
 }
 

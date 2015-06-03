@@ -1,3 +1,5 @@
+'use strict';
+
 import {Utils} from './utils.js';
 
 /**
@@ -12,13 +14,14 @@ class qwest {
   constructor (options) {
     this.options = options;
     this._Utils = new Utils();
-    console.log(this._Utils.getXHR());
   }
 
   /**
    *
+   * @param method
    * @param url
-   * @param options
+   * @param args
+   * @returns {Promise}
    */
 
   createRequest (method, url, args) {
@@ -27,10 +30,10 @@ class qwest {
       let client = that._Utils.getXHR();
       let uri = url;
 
-      /*if(that._Utils.isXHR2()) {
+      if(that._Utils.isXHR2()) {
         console.warn('qwest dont have support for IE - yet');
         return false;
-      }*/
+      }
 
       if (args && (method === 'POST') || method === 'PUT') {
         let argCount = 0;
@@ -50,7 +53,7 @@ class qwest {
 
       client.onload = function () {
         if (this.status === 200) {
-          resolve(this.response);
+          resolve(that._Utils.preprocessResponse(this));
         } else {
           reject(this.statusText);
         }
@@ -66,11 +69,48 @@ class qwest {
     return promise;
   }
 
-  $httpGet (url, args) {
+  /**
+   *
+   * @param url
+   * @param args
+   * @returns {Promise}
+   */
+
+  get(url, args) {
     if (url) {
       return this.createRequest('GET', url, args);
     } else {
-      throw 'qwest::missing url';
+      throw new Error('qwest :: GET :: missing URL');
+    }
+  }
+
+  /**
+   *
+   * @param url
+   * @param args
+   * @returns {Promise}
+   */
+
+  post (url, args) {
+    if(url && args) {
+      return this.createRequest('POST', url, args);
+    } else {
+      throw new Error('qwest :: POST :: missing URL or Arguments');
+    }
+  }
+
+  /**
+   *
+   * @param url
+   * @param args
+   * @returns {Promise}
+   */
+
+  delete (url,args) {
+    if(url && args) {
+      return this.createRequest('DELETE', url, args);
+    } else {
+      throw new Error('qwest :: DELETE :: missing URL or Arguments');
     }
   }
 }
