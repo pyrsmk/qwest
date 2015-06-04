@@ -29,7 +29,7 @@ q.get(mockApi.get, null, 'json').then(function (r) {
  */
 
 q.post(mockApi.get, {
-  dupa: 'dupa'
+  something: 'something'
 },'json').then(function (r) {
   console.log('response',r);
 }).catch(function (e) {
