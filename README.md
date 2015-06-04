@@ -18,6 +18,8 @@ npm install
 gulp watch
 ```
 
+https://github.com/airbnb/javascript
+
 Quick examples
 --------------
 

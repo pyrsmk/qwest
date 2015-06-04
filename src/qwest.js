@@ -52,7 +52,7 @@ class qwest {
       }
 
       client.onload = function () {
-        if (this.status === 200) {
+        if (this.status === 200 || 201 && this.readyState === 4) {
           resolve(that._Utils.preprocessResponse(this, type));
         } else {
           reject(this.statusText);

@@ -14,8 +14,27 @@ window.q = q;
  *
  */
 
+/*
 q.get(mockApi.get, null, 'json').then(function (r) {
   console.log('response', r);
 }).catch(function () {
   console.log('something went wrong');
 });
+*/
+
+
+/**
+ *
+ *
+ */
+
+q.post(mockApi.get, {
+  dupa: 'dupa'
+},'json').then(function (r) {
+  console.log('response',r);
+}).catch(function (e) {
+  console.log('something went wrong', e);
+});
+
+
+

@@ -42,7 +42,6 @@ class Utils {
 
   preprocessResponse (res, type) {
     let data = res;
-
     if(this.isJSON(res) || type === 'json') {
       data = JSON.parse(res.response);
     }
