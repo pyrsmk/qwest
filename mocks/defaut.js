@@ -29,6 +29,28 @@ module.exports = {
       error: {
         code: 405
       }
+    },
+    DELETE: {
+      default: {
+        data: {
+          success: true
+        },
+        code: 201
+      },
+      error: {
+        code: 405
+      }
+    },
+    PUT: {
+      default: {
+        data: {
+          success: true
+        },
+        code: 201
+      },
+      error: {
+        code: 405
+      }
     }
   },
   '/api/cities': {

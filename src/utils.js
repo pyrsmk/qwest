@@ -11,7 +11,8 @@ class Utils {
    */
 
   constructor () {
-
+    this._reqStack = [];
+    this._reqLimit = 4;
   }
 
   /**

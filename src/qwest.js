@@ -7,6 +7,7 @@ import {Utils} from './utils.js';
  *
  * @description
  * @returns {object}
+ * @author
  */
 
 class qwest {
@@ -52,12 +53,14 @@ class qwest {
       }
 
       client.onload = function () {
-        if (this.status === 200 || 201 && this.readyState === 4) {
+        if (this.status === 200 || this.status === 201 && this.readyState === 4) {
+          console.log(method, 'resolver');
           resolve(that._Utils.preprocessResponse(this, type));
         } else {
           reject(this.statusText);
         }
       };
+
       client.onerror = function () {
         reject(this.statusText);
       };
@@ -111,6 +114,21 @@ class qwest {
       return this.createRequest('DELETE', url, args);
     } else {
       throw new Error('qwest :: DELETE :: missing URL or Arguments');
+    }
+  }
+
+  /**
+   *
+   * @param url
+   * @param args
+   * @returns {Promise}
+   */
+
+  put (url, args) {
+    if(url && args) {
+      return this.createRequest('PUT', url, args);
+    } else {
+      throw new Error('qwest :: PUT :: missing URL or Arguments');
     }
   }
 }

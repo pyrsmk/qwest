@@ -14,14 +14,11 @@ window.q = q;
  *
  */
 
-/*
 q.get(mockApi.get, null, 'json').then(function (r) {
   console.log('response', r);
 }).catch(function () {
   console.log('something went wrong');
 });
-*/
-
 
 /**
  *
@@ -36,5 +33,16 @@ q.post(mockApi.get, {
   console.log('something went wrong', e);
 });
 
+/**
+ *
+ *
+ */
 
+q.delete(mockApi.get, {
+  del: 'me'
+}, 'json').then(function (r) {
+  console.log('response',r);
+}).catch(function (e) {
+  console.log('something went wrong',e);
+});
 

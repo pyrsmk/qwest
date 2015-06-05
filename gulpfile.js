@@ -61,15 +61,20 @@ gulp.task('build', ['build-persistent'], function() {
 
 gulp.task('watch', ['build-persistent'], function() {
 
-  browserSync({
-    server: {
-      baseDir: './'
-    }
-  });
-
   getBundler().on('update', function() {
     gulp.start('build-persistent')
   });
+
+  // Options not require
+  var options = {
+    port: 8000,
+    root: ['./'],
+    rewriteNotFound: false,
+    rewriteTemplate: 'index.html'
+  };
+
+  return gulp.src('./mocks/**/*.js')
+    .pipe(restEmulator(options));
 });
 
 // WEB SERVER
