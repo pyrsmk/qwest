@@ -28,13 +28,20 @@ class qwest {
    */
 
   createRequest (method, url, args, type) {
+
+    /**
+     * increment requests counter
+     */
+
+    this._reqsInProgress = (this._reqsInProgress < this._reqLimit) ? this._reqsInProgress + 1 : this._reqsInProgress;
+
     let that = this;
     let promise = new Promise(function (resolve, reject) {
       let client = that._Utils.getXHR();
       let uri = url;
       let isLimit = new Promise(function (resolved,rejected) {
         let check = function () {
-          if(that._reqLimit <= that._reqsInProgress ) {
+          if(that._reqLimit > that._reqsInProgress) {
             resolved()
           } else {
             requestAnimationFrame(check);
@@ -42,12 +49,6 @@ class qwest {
         };
         check();
       });
-
-      /**
-       * increment requests counter
-       */
-
-      that._reqsInProgress += 1;
 
       isLimit.then(function () {
         if(that._Utils.isXHR2()) {
@@ -73,26 +74,16 @@ class qwest {
 
         client.onload = function () {
           if (this.status === 200 || this.status === 201 && this.readyState === 4) {
+            that._reqsInProgress -= 1;
+            that._reqsInProgress = (that._reqsInProgress <= 0) ? 0 : that._reqsInProgress;
             resolve(that._Utils.preprocessResponse(this, type));
           } else {
             reject(this.statusText);
           }
-
-          /**
-           * decrement request counter
-           */
-
-          that._reqsInProgress -= 1;
         };
 
         client.onerror = function () {
           reject(this.statusText);
-
-          /**
-           * decrement request counter
-           */
-
-          that._reqsInProgress -= 1;
         };
 
         client.open(method,uri);
