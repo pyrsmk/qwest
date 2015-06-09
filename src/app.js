@@ -9,10 +9,7 @@ let mockApi = {
 
 window.q = q;
 
-/**
- *
- *
- */
+window.testss = 1;
 
 q.get(mockApi.get, null, 'json').then(function (r) {
   console.log('response', r);
@@ -20,29 +17,28 @@ q.get(mockApi.get, null, 'json').then(function (r) {
   console.log('something went wrong');
 });
 
-/**
- *
- *
- */
+/*
+window.testt = 1;
+var x = new Promise(function (resolve, reject) {
+  var y = new Promise(function (resolve,reject) {
+    var check = function () {
+      if(window.testt === 2) {
+        resolve('resolve y');
+      } else {
+        requestAnimationFrame(check);
+      }
+    };
 
-q.post(mockApi.get, {
-  something: 'something'
-},'json').then(function (r) {
-  console.log('response',r);
-}).catch(function (e) {
-  console.log('something went wrong', e);
+    check();
+  });
+
+  y.then(function (e) {
+    console.log(e);
+    resolve('siemano x');
+  });
 });
 
-/**
- *
- *
- */
-
-q.delete(mockApi.get, {
-  del: 'me'
-}, 'json').then(function (r) {
-  console.log('response',r);
-}).catch(function (e) {
-  console.log('something went wrong',e);
+x.then(function (e) {
+  console.log(e);
 });
-
+*/
