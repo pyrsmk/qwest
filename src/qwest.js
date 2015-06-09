@@ -15,6 +15,8 @@ class qwest {
   constructor (options) {
     this.options = options;
     this._Utils = new Utils();
+    this._reqLimit = 4;
+    this._reqsInProgress = 0;
   }
 
   /**
@@ -32,17 +34,20 @@ class qwest {
       let uri = url;
       let isLimit = new Promise(function (resolved,rejected) {
         let check = function () {
-          console.log('check', window.testss);
-          if(window.testss === 2) {
+          if(that._reqLimit <= that._reqsInProgress ) {
             resolved()
-          } else if (window.testss === 3) {
-            rejected()
           } else {
             requestAnimationFrame(check);
           }
         };
         check();
       });
+
+      /**
+       * increment requests counter
+       */
+
+      that._reqsInProgress += 1;
 
       isLimit.then(function () {
         if(that._Utils.isXHR2()) {
@@ -68,15 +73,26 @@ class qwest {
 
         client.onload = function () {
           if (this.status === 200 || this.status === 201 && this.readyState === 4) {
-            console.log(method, 'resolver');
             resolve(that._Utils.preprocessResponse(this, type));
           } else {
             reject(this.statusText);
           }
+
+          /**
+           * decrement request counter
+           */
+
+          that._reqsInProgress -= 1;
         };
 
         client.onerror = function () {
           reject(this.statusText);
+
+          /**
+           * decrement request counter
+           */
+
+          that._reqsInProgress -= 1;
         };
 
         client.open(method,uri);
