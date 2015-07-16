@@ -502,6 +502,7 @@
 			get: create('GET'),
 			post: create('POST'),
 			put: create('PUT'),
+			patch: create('PATCH'),
 			'delete': create('DELETE'),
 			xhr2: xhr2,
 			limit: function(by){
