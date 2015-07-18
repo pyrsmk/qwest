@@ -1,4 +1,4 @@
-/*! qwest 2.0.0 (https://github.com/pyrsmk/qwest) */
+/*! qwest 2.0.1 (https://github.com/pyrsmk/qwest) */
 
 ;(function(context, name, definition) {
 	if(typeof module!='undefined' && module.exports) {
@@ -140,7 +140,7 @@
 				}
 				// Run 'before' callback
 				if(before) {
-					before.call(xhr);
+					before(xhr);
 				}
 				// Send request
 				if(xdr) {

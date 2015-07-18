@@ -217,8 +217,8 @@ domready(function(){
 
 	asyncTest('Before',function(){
 		expect(1);
-		qwest.get('tests/before/test.php', null, null, function(){
-				this.setRequestHeader('X-Running-Test','before');
+		qwest.get('tests/before/test.php', null, null, function(xhr){
+				xhr.setRequestHeader('X-Running-Test','before');
 			 })
 			 .then(function(xhr, response){
 				//console.log(response.debug);

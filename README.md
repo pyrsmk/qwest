@@ -1,7 +1,7 @@
-qwest 2.0.0
+qwest 2.0.1
 ============
 
-Qwest is a simple ajax library based on `promises` behaviour and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
+Qwest is a simple ajax library based on `promises` and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
 
 Install
 -------
@@ -27,23 +27,23 @@ What's new since 1.7?
 Quick examples
 --------------
 
-```javascript
+```js
 qwest.get('example.com')
-	 .then(function(response) {
+	 .then(function(xhr, response) {
 		alert(response);
 	 });
 ```
 
-```javascript
+```js
 qwest.post('example.com', {
 		firstname: 'Pedro',
 		lastname: 'Sanchez',
 		age: 30
 	 })
-	 .then(function(response) {
+	 .then(function(xhr, response) {
 		// Make some useful actions
 	 })
-	 .catch(function(e, response) {
+	 .catch(function(xhr, response, e) {
 		// Process the error
 	 });
 ```
@@ -51,15 +51,15 @@ qwest.post('example.com', {
 Basics
 ------
 
-```javascript
-qwest.`method`(`url`, `data`, `options`)
-	 .then(function(response) {
+```js
+qwest.`method`(`url`, `data`, `options`, `before`)
+	 .then(function(xhr, response) {
 		// Run when the request is successful
 	 })
-	 .catch(function(e, response) {
+	 .catch(function(xhr, response, e) {
 		// Process the error
 	 })
-	 .complete(function(response) {
+	 .complete(function(xhr, response) {
 		// Always run
 	 });
 ```
@@ -79,58 +79,75 @@ The available `options` are :
 - timeout : the timeout for the request in ms; `30000` by default
 - attempts : the total number of times to attempt the request through timeouts; 1 by default; if you want to remove the limit set it to `null`
 
-In each callback, the `this` keyword refers to the `XmlHttpRequest` object, so you can do some specific tasks you may need.
+If you want to make a call with another HTTP method, you can use the `map()` function :
 
-```javascript
-qwest.get('example.com')
-	 .then(function(response) {
-		// Blah blah blah
-	 })
-	 .catch(function(e, response) {
-		log(this.responseText);
-		throw e+'('+url+')';
+```js
+qwest.map('PATCH', 'example.com')
+	 .then(function() {
+	 	// Blah blah
 	 });
 ```
-
-Please note, the `catch` promise will be executed for status codes different from `2xx`. If a real big error happens, then the `response` parameter will be `null`.
 
 Base URI
 --------
 
 You can define a base URI for your requests. The string will be prepended to the other request URIs.
 
-```javascript
-qwest.base = 'http://example.com/';
+```js
+qwest.base = 'http://example.com';
+
+// Will make a request to 'http://example.com/somepage'
+qwest.get('/somepage')
+	 .then(function() {
+	 	// Blah blah
+	 });
 ```
 
-Request limitation
-------------------
+Request limit
+-------------
 
-One of the great qwest's functionnalities is the request limitation. It avoids browser freezes and server overloads by freeing bandwidth and memory resources when you have a whole bunch of requests to do at the same time (when you load a gallery, per example). You just need to set the request limit and when the count is reached qwest will stock all further requests and start them when a slot is free.
+One of the great qwest's functionnalities is the request limitat. It avoids browser freezes and server overloads by freeing bandwidth and memory resources when you have a whole bunch of requests to do at the same time (when you load a gallery, per example). You just need to set the request limit and when the count is reached qwest will stock all further requests and start them when a slot is free.
 
-```javascript
+Let's say we have a gallery with a lot of images to load. We don't want the browser to download all of that by himself to have a faster loading, and why not to apply some effects on the images when they are loaded? Let's see how we can do that.
+
+```html
+<div class="gallery">
+	<img data-src="images/image1.jpg" alt="">
+	<img data-src="images/image2.jpg" alt="">
+	<img data-src="images/image3.jpg" alt="">
+	<img data-src="images/image4.jpg" alt="">
+	<img data-src="images/image5.jpg" alt="">
+	...
+</div>
+```
+
+```js
+// Browsers are limited in number of parallel downloads, setting it to 4 seems fair
 qwest.limit(4);
 
-$('.foo').forEach(function() {
-	qwest.get(this.data('some_url_to_get'));
+$('.gallery').children().forEach(function() {
+	var $this = $(this);
+	qwest.get($this.data('src'), {responseType: 'blob'})
+		 .then(function(xhr, response) {
+			$this.attr('src', window.URL.createObjectURL(response));
+		 });
 });
 ```
 
-If you want to remove the limit, do `qwest.limit(null)`.
+If you want to remove the limit, set it to `null`.
 
-Set options to XHR
-------------------
+Set options to the XHR object
+-----------------------------
 
-If you want to apply some manual options to the `XHR` object, you can use the `before` promise. It must be called before __any__ other promise. The `this` keyword refers to the `XHR` object itself.
+If you want to apply some manual options to the `XHR` object, you can use the `before` option
 
-```javascript
-qwest.before(function() {
-		this.uploadonprogress=function(e) {
+```js
+qwest.get('example.com', null, null, function(xhr) {
+		xhr.uploadonprogress = function(e) {
 			// Upload in progress
 		};
 	 })
-	 .get('example.com')
-	 .then(function(response) {
+	 .then(function(xhr, response) {
 		// Blah blah blah
 	 });
 ```
@@ -138,9 +155,9 @@ qwest.before(function() {
 Handling fallbacks
 ------------------
 
-XHR2 is not available on every browser, so, if needed, you can simply verify the XHR version.
+XHR2 is not available on every browser, so, if needed, you can simply verify the XHR version with :
 
-```javascript
+```js
 if(qwest.xhr2) {
 	// Actions for XHR2
 }
@@ -154,11 +171,10 @@ Receiving binary data in older browsers
 
 Getting binary data in legacy browsers needs a trick, as we can read it on [MDN](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Sending_and_Receiving_Binary_Data#Receiving_binary_data_in_older_browsers). In qwest, that's how we could handle it :
 
-```javascript
-qwest.before(function() {
-		this.overrideMimeType('text\/plain; charset=x-user-defined');
+```js
+qwest.get('example.com/file', null, null, function(xhr) {
+		xhr.overrideMimeType('text\/plain; charset=x-user-defined');
 	 })
-	 .get('example.com/file')
 	 .then(function(response) {
 	 	// response is now a binary string
 	 });
@@ -169,7 +185,7 @@ Compatibility notes
 
 According to this [compatibility table](https://kangax.github.io/compat-table/es5), IE7/8 do not support using `catch` and `delete` as method name because these are reserved words. If you want to support those browsers you should write :
 
-```javascript
+```js
 qwest.delete('example.com')
 	 .then(function(){})
 	 .catch(function(){});
@@ -177,7 +193,7 @@ qwest.delete('example.com')
 
 Like this :
 
-```javascript
+```js
 qwest['delete']('example.com')
 	 .then(function(){})
 	 ['catch'](function(){});
@@ -194,6 +210,7 @@ qwest.setDefaultXdrResponseType('text');
 Last notes
 ----------
 
+- the `catch` handler will be executed for status codes different from `2xx`; if no data has been received when `catch` is called, `response` will be `null`
 - `auto` mode is only supported for `xml`, `json` and `text` response types; for `arraybuffer`, `blob` and `document` you'll need to define explicitly the `responseType` option
 - if the response of your request doesn't return a valid (and recognized) `Content-Type` header, then you __must__ explicitly set the `responseType` option
 - if an error occurs in a `then()` callback, it will be caught by the `catch()` promise
