@@ -1,6 +1,6 @@
 {
   "name": "qwest",
-  "description": "Ajax library with XHR2, promises and requests limitation",
+  "description": "Ajax library with XHR2, promises and request limit",
   "main": "src/qwest.js",
   "repository": {
     "type": "git",

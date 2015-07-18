@@ -14,179 +14,125 @@ domready(function(){
 		ok(Modernizr.xhr2==qwest.xhr2);
 	});
 
-	asyncTest('Asynchroneous REST requests',function(){
-		expect(4);
+	asyncTest('Base URL',function(){
+		expect(1);
+		qwest.base = /^.*\//.exec(window.location.href);
+		qwest.get('tests/base/test.php')
+			 .then(function(xhr, response) {
+				//console.log(response.debug);
+				ok(response.status=='ok');
+				start();
+			 })
+			 ['catch'](function(xhr, response, e){
+				ok(false, e);
+				start();
+			 });
+		qwest.base = '';
+	});
+
+	asyncTest('REST requests (async)',function(){
+		expect(methods.length);
 		var executed=0;
 		for(i=0,j=methods.length;i<j;++i){
 			qwest[methods[i]]('tests/async/test.php?method='+methods[i].toUpperCase())
 				 .then(function(method){
-					return function(response){
+					return function(xhr, response) {
 						//console.log(response.debug);
-						ok(response.status=='ok',method+' request');
-						if(++executed==4){
+						ok(response.status=='ok', method+' request');
+						if(++executed==methods.length){
 							start();
 						}
 					};
 				 }(methods[i].toUpperCase()))
-				 ['catch'](function(message){
-					ok(false,message);
-					if(++executed==4){
+				 ['catch'](function(xhr, response, e){
+					ok(false, e);
+					if(++executed==methods.length){
 						start();
 					}
 				 });
 		}
 	});
 
-	test('Synchroneous REST requests',function(){
-		expect(4);
+	asyncTest('REST requests (sync)',function(){
+		expect(methods.length);
+		var executed=0;
 		for(i=0,j=methods.length;i<j;++i){
-			qwest[methods[i]]('tests/sync/test.php?method='+methods[i].toUpperCase(),null,{async:false})
-				 .then(function(response){
-					//console.log(response.debug);
-					ok(response.status=='ok',methods[i].toUpperCase()+' request');
+			qwest[methods[i]]('tests/async/test.php?method='+methods[i].toUpperCase(),null,{async:false})
+				 .then(function(method){
+					return function(xhr, response) {
+						//console.log(response.debug);
+						ok(response.status=='ok', method+' request');
+						if(++executed==methods.length){
+							start();
+						}
+					};
+				 }(methods[i].toUpperCase()))
+				 ['catch'](function(xhr, response, e){
+					ok(false, e);
+					if(++executed==methods.length){
+						start();
+					}
 				 })
-				 ['catch'](function(message){
-					ok(false,message);
-				 });
+				 .send();
 		}
+	});
+
+	asyncTest('Manual requests (async)',function(){
+		expect(1);
+		qwest.map('PATCH', 'tests/async/test.php?method=PATCH')
+			 .then(function(xhr, response) {
+				//console.log(response.debug);
+				ok(response.status=='ok', 'PATCH request');
+				start();
+		 	 })
+			 ['catch'](function(xhr, response, e){
+				ok(false, e);
+				start();
+			 });
+	});
+
+	asyncTest('Manual requests (sync)',function(){
+		expect(1);
+		qwest.map('PATCH', 'tests/async/test.php?method=PATCH', null, {async: false})
+			 .then(function(xhr, response) {
+				//console.log(response.debug);
+				ok(response.status=='ok', 'PATCH request');
+				start();
+			 })
+			 ['catch'](function(xhr, response, e){
+				ok(false, e);
+				start();
+			 })
+			 .send();
 	});
 
 	asyncTest('Invalid URL', function() {
 		expect(1);
 		qwest.post('foo')
-			 .then(function(response){
+			 .then(function(xhr, response){
 				ok(false);
 				start();
 			 })
-			 ['catch'](function(message) {
+			 ['catch'](function(xhr, response, e) {
 				ok(true);
 				start();
 			 });
 	});
 
-	asyncTest('Multiple promises (async)',function(){
-		expect(2);
-		var a=0,b=0,c=0;
-		qwest.get('tests/multiple/test.php')
-			 .then(function(response){
-				++a;
-			 })
-			 ['catch'](function(message){
-				++b;
-			 })
-			 .then(function(response){
-				++a;
-			 })
-			 .complete(function(){
-				++c;
-			 })
-			 .complete(function(){
-				++c;
-				ok(a==3 && b==0 && c==2,a+'/'+b+'/'+c);
-				a=0;
-				b=0;
-				c=0;
-				qwest.get('tests/multiple/test2.php')
-					 .then(function(response){
-						++a;
-					 })
-					 ['catch'](function(message){
-						++b;
-					 })
-					 .then(function(response){
-						++a;
-					 })
-					 .complete(function(){
-						++c;
-					 })
-					 .complete(function(){
-						++c;
-						ok(a==0 && b==2 && c==2,a+'/'+b+'/'+c);
-						start();
-					 })
-					 .then(function(response){
-						++a;
-					 })
-					 ['catch'](function(message){
-						++b;
-					 });
-			 })
-			 .then(function(response){
-				++a;
-			 })
-			 ['catch'](function(message){
-				++b;
-			 });
-	});
-
-	test('Multiple promises (sync)',function(){
-		expect(2);
-		var a=0,b=0,c=0;
-		qwest.get('tests/multiple/test.php',null,{async:false})
-			 .then(function(response){
-				++a;
-			 })
-			 ['catch'](function(message){
-				++b;
-			 })
-			 .then(function(response){
-				++a;
-			 })
-			 .complete(function(){
-				++c;
-			 })
-			 .complete(function(){
-				++c;
-			 })
-			 .then(function(response){
-				++a;
-			 })
-			 ['catch'](function(message){
-				++b;
-			 });
-		ok(a==3 && b==0 && c==2,a+'/'+b+'/'+c);
-		a=0;
-		b=0;
-		c=0;
-		qwest.get('tests/multiple/test2.php',null,{async:false})
-			 .then(function(response){
-				++a;
-			 })
-			 ['catch'](function(message){
-				++b;
-			 })
-			 .then(function(response){
-				++a;
-			 })
-			 .complete(function(){
-				++c;
-			 })
-			 .complete(function(){
-				++c;
-			 })
-			 .then(function(response){
-				++a;
-			 })
-			 ['catch'](function(message){
-				++b;
-			 });
-		ok(a==0 && b==2 && c==2,a+'/'+b+'/'+c);
-	});
-
-	asyncTest('Request limitation (async)',function(){
+	asyncTest('Request limit (async)',function(){
 		expect(20);
-		qwest.limit(20);
+		qwest.limit(5);
 		var executed=0;
 		for(i=1,j=20;i<=j;++i){
 			qwest.get('tests/limit/test.php')
-				 .then(function(response){
+				 .then(function(xhr, response){
 					ok(response.status=='ok');
 					if(++executed==20){
 						start();
 					}
 				 })
-				 ['catch'](function(message){
-					ok(false,message);
+				 ['catch'](function(xhr, response, e){
+					ok(false, e);
 					if(++executed==20){
 						start();
 					}
@@ -195,17 +141,25 @@ domready(function(){
 		qwest.limit(null);
 	});
 
-	test('Request limitation (sync)',function(){
+	asyncTest('Request limit (sync)',function(){
 		expect(20);
-		qwest.limit(20);
+		qwest.limit(5);
+		var executed=0;
 		for(i=1,j=20;i<=j;++i){
 			qwest.get('tests/limit/test.php',null,{async:false})
-				 .then(function(response){
+				 .then(function(xhr, response){
 					ok(response.status=='ok');
+					if(++executed==20){
+						start();
+					}
 				 })
-				 ['catch'](function(message){
-					ok(false,message);
-				 });
+				 ['catch'](function(xhr, response, e){
+					ok(false, e);
+					if(++executed==20){
+						start();
+					}
+				 })
+				 .send();
 		}
 		qwest.limit(null);
 	});
@@ -217,59 +171,62 @@ domready(function(){
 				timeout: 250,
 				attempts: 4
 			 })
-			 .then(function(response){
+			 .then(function(xhr, response){
 				ok(false,(+new Date-t)+'ms');
 				start();
 			 })
-			 ['catch'](function(message){
+			 ['catch'](function(xhr, response, e){
 			 	//console.log(message);
 				ok((+new Date-t)>=1000,(+new Date-t)+'ms');
 				start();
 			 });
 	});
 
-	test('Timeout (sync)',function(){
+	asyncTest('Timeout (sync)',function(){
 		expect(1);
 		var t=+new Date;
 		qwest.get('tests/timeout/test.php',null,{
-				timeout: 500,
+				timeout: 250,
 				attempts: 4,
 				async: false
 			 })
-			 .then(function(response){
-				ok(response.status=='ok',(+new Date-t)+'ms');
+			 .then(function(xhr, response){
+				ok(false,(+new Date-t)+'ms');
+				start();
 			 })
-			 ['catch'](function(message){
-				ok(false,message);
-			 });
+			 ['catch'](function(xhr, response, e){
+			 	//console.log(response);
+				ok((+new Date-t)>=1000,(+new Date-t)+'ms');
+				start();
+			 })
+			 .send();
 	});
 
 	asyncTest('CORS',function(){
 		expect(1);
 		qwest.get('http://sandbox.dreamysource.fr/cors/')
-			 .then(function(response){
+			 .then(function(xhr, response){
 				ok(response.status=='ok');
 				start();
 			 })
-			 ['catch'](function(message){
-				ok(false,message);
+			 ['catch'](function(xhr, response, e){
+				ok(false, e);
 				start();
 			 });
 	});
 
-	asyncTest('Before promise',function(){
+	asyncTest('Before',function(){
 		expect(1);
-		qwest.before(function(){
+		qwest.get('tests/before/test.php', null, null, function(){
 				this.setRequestHeader('X-Running-Test','before');
 			 })
-			 .get('tests/before/test.php')
-			 .then(function(response){
+			 .then(function(xhr, response){
 				//console.log(response.debug);
 				ok(response.status=='ok');
 				start();
 			 })
-			 ['catch'](function(message){
-				ok(false,message);
+			 ['catch'](function(xhr, response, e){
+				ok(false, e);
 				start();
 			 });
 	});
@@ -279,7 +236,7 @@ domready(function(){
 		var a,b,
 			phase2=function(){
 				qwest.post('tests/cache/test.php',null,{responseType:'text'})
-					 .then(function(response){
+					 .then(function(xhr, response){
 						//console.log(response);
 						b=response;
 						qwest.post('tests/cache/test.php',null,{responseType: 'text'})
@@ -293,28 +250,28 @@ domready(function(){
 								start();
 							 });
 					 })
-					 ['catch'](function(message){
-						ok(false,message);
+					 ['catch'](function(xhr, response, e){
+						ok(false, e);
 						start();
 					 });
 			};
 		qwest.get('tests/cache/test.php',null,{responseType:'text'})
-			 .then(function(response){
+			 .then(function(xhr, response){
 				//console.log(response);
 				a=response;
 				qwest.get('tests/cache/test.php',null,{responseType:'text'})
-					 .then(function(response){
+					 .then(function(xhr, response){
 						//console.log(response);
 						ok(response!=a,'GET request');
 						phase2();
 					 })
-					 ['catch'](function(message){
-						ok(false,message);
+					 ['catch'](function(xhr, response, e){
+						ok(false, e);
 						phase2();
 					 });
 			 })
-			 ['catch'](function(message){
-				ok(false,message);
+			 ['catch'](function(xhr, response, e){
+				ok(false, e);
 				phase2();
 			 });
 	});
@@ -325,13 +282,13 @@ domready(function(){
 				user: 'pyrsmk',
 				password: 'test'
 			 })
-			 .then(function(response){
+			 .then(function(xhr, response){
 				//console.log(response.debug);
 				ok(response.status=='ok');
 				start();
 			 })
-			 ['catch'](function(message){
-				ok(false,message);
+			 ['catch'](function(xhr, response, e){
+				ok(false, e);
 				start();
 			 });
 	});
@@ -339,22 +296,22 @@ domready(function(){
 	asyncTest('Get JSON response',function(){
 		expect(2);
 		qwest.get('tests/get_json/test.php',null,{responseType:'json'})
-			 .then(function(response){
+			 .then(function(xhr, response){
 				//console.log(response.debug);
 				ok(response.status=='ok','Manual');
 				qwest.get('tests/get_json/test.php',null,{headers:{'Accept':'application/json'}})
-					 .then(function(response){
+					 .then(function(xhr, response){
 						//console.log(response.debug);
 						ok(response.status=='ok','Auto');
 						start();
 					 })
-					 ['catch'](function(message){
-						ok(false,message);
+					 ['catch'](function(xhr, response, e){
+						ok(false, e);
 						start();
 					 });
 			 })
-			 ['catch'](function(message){
-				ok(false,message);
+			 ['catch'](function(xhr, response, e){
+				ok(false, e);
 				start();
 			 });
 	});
@@ -362,22 +319,21 @@ domready(function(){
 	asyncTest('Get DOMString response',function(){
 		expect(2);
 		qwest.get('tests/get_text/test.php',null,{responseType:'text'})
-			 .then(function(response){
-				//console.log(response);
+			 .then(function(xhr, response){
 				ok(response=='ok','Manual');
 				qwest.get('tests/get_text/test.php')
-					 .then(function(response){
+					 .then(function(xhr, response){
 						//console.log(response.debug);
 						ok(response=='ok','Auto');
 						start();
 					 })
-					 ['catch'](function(message){
-						ok(false,message);
+					 ['catch'](function(xhr, response, e){
+						ok(false, e);
 						start();
 					 });
 			 })
-			 ['catch'](function(message){
-				ok(false,message);
+			 ['catch'](function(xhr, response, e){
+				ok(false, e);
 				start();
 			 });
 	});
@@ -385,22 +341,22 @@ domready(function(){
 	asyncTest('Get XML response',function(){
 		expect(2);
 		qwest.get('tests/get_xml/test.php',null,{responseType:'xml'})
-			 .then(function(response){
+			 .then(function(xhr, response){
 				//console.log(response.getElementsByTagName('status')[0]);
 				ok(response.getElementsByTagName('status')[0].textContent=='ok','Manual');
 				qwest.get('tests/get_xml/test.php')
-					 .then(function(response){
+					 .then(function(xhr, response){
 						//console.log(response.debug);
 						ok(response.getElementsByTagName('status')[0].textContent=='ok','Auto');
 						start();
 					 })
-					 ['catch'](function(message){
-						ok(false,message);
+					 ['catch'](function(xhr, response, e){
+						ok(false, e);
 						start();
 					 });
 			 })
-			 ['catch'](function(message){
-				ok(false,message);
+			 ['catch'](function(xhr, response, e){
+				ok(false, e);
 				start();
 			 });
 	});
@@ -409,7 +365,7 @@ domready(function(){
 		asyncTest('Get ArrayBuffer response',function(){
 			expect(1);
 			qwest.get('tests/get_arraybuffer/test.php',null,{responseType:'arraybuffer'})
-				 .then(function(response){
+				 .then(function(xhr, response){
 					var arrayBuffer=new Uint8Array(response),
 						length=arrayBuffer.length;
 					//console.log(arrayBuffer[0].toString(16));
@@ -424,8 +380,8 @@ domready(function(){
 					);
 					start();
 				 })
-				 ['catch'](function(message){
-					ok(false,message);
+				 ['catch'](function(xhr, response, e){
+					ok(false, e);
 					start();
 				 });
 		});
@@ -435,13 +391,13 @@ domready(function(){
 		asyncTest('Get Blob response',function(){
 			expect(1);
 			qwest.get('tests/get_blob/test.php',null,{responseType:'blob'})
-				 .then(function(response){
+				 .then(function(xhr, response){
 					//console.log(response);
 					ok(response.size);
 					start();
 				 })
-				 ['catch'](function(message){
-					ok(false,message);
+				 ['catch'](function(xhr, response, e){
+					ok(false, e);
 					start();
 				 });
 		});
@@ -451,12 +407,12 @@ domready(function(){
 		asyncTest('Get Document response',function(){
 			expect(1);
 			qwest.get('tests/get_document/test.php',null,{responseType:'document'})
-				 .then(function(response){
+				 .then(function(xhr, response){
 					ok(response.querySelector('p').innerHTML=='ok');
 					start();
 				 })
-				 ['catch'](function(message){
-					ok(false,message);
+				 ['catch'](function(xhr, response, e){
+					ok(false, e);
 					start();
 				 });
 		});
@@ -468,13 +424,13 @@ domready(function(){
 				foo: 'bar',
 				bar: [{foo:'bar'}]
 			 })
-			 .then(function(response){
+			 .then(function(xhr, response){
 			 	//console.log(response.debug);
 				ok(response.status.trim()=='ok');
 				start();
 			 })
-			 ['catch'](function(message){
-				ok(false,message);
+			 ['catch'](function(xhr, response, e){
+				ok(false, e);
 				start();
 			 });
 	});
@@ -487,13 +443,13 @@ domready(function(){
 			 },{
 				dataType: 'json'
 			 })
-			 .then(function(response){
+			 .then(function(xhr, response){
 				//console.log(response.debug);
 				ok(response.status=='ok');
 				start();
 			 })
-			 ['catch'](function(message){
-				ok(false,message);
+			 ['catch'](function(xhr, response, e){
+				ok(false, e);
 				start();
 			 });
 	});
@@ -501,13 +457,13 @@ domready(function(){
 	asyncTest('Send DOMString data',function(){
 		expect(1);
 		qwest.post('tests/send_text/test.php','text',{dataType:'text'})
-			 .then(function(response){
+			 .then(function(xhr, response){
 				//console.log(response.debug);
 				ok(response.status=='ok');
 				start();
 			 })
-			 ['catch'](function(message){
-				ok(false,message);
+			 ['catch'](function(xhr, response, e){
+				ok(false, e);
 				start();
 			 });
 	});
@@ -519,13 +475,13 @@ domready(function(){
 			formData.append('firstname','Pedro');
 			formData.append('lastname','Sanchez');
 			qwest.post('tests/send_formdata/test.php',formData)
-				 .then(function(response){
+				 .then(function(xhr, response){
 					//console.log(response.debug);
 					ok(response.status=='ok');
 					start();
 				 })
-				 ['catch'](function(message){
-					ok(false,message);
+				 ['catch'](function(xhr, response, e){
+					ok(false, e);
 					start();
 				 });
 		});
@@ -536,13 +492,13 @@ domready(function(){
 			expect(1);
 			var blob=new Blob(['test'],{type:'text/plain'});
 			qwest.post('tests/send_blob/test.php',blob)
-				 .then(function(response){
+				 .then(function(xhr, response){
 					//console.log(response.debug);
 					ok(response.status=='ok');
 					start();
 				 })
-				 ['catch'](function(message){
-					ok(false,message);
+				 ['catch'](function(xhr, response, e){
+					ok(false, e);
 					start();
 				 });
 		});
@@ -552,13 +508,13 @@ domready(function(){
 		asyncTest('Send Document data',function(){
 			expect(1);
 			qwest.post('tests/send_document/test.php',document)
-				 .then(function(response){
+				 .then(function(xhr, response){
 					//console.log(response.debug);
 					ok(response.status=='ok');
 					start();
 				 })
-				 ['catch'](function(message){
-					ok(false,message);
+				 ['catch'](function(xhr, response, e){
+					ok(false, e);
 					start();
 				 });
 		});
@@ -569,13 +525,13 @@ domready(function(){
 			expect(1);
 			var arrayBuffer=new Uint8Array([1,2,3]);
 			qwest.post('tests/send_arraybuffer/test.php',arrayBuffer)
-				 .then(function(response){
+				 .then(function(xhr, response){
 					//console.log(response.debug);
 					ok(response.status=='ok');
 					start();
 				 })
-				 ['catch'](function(message){
-					ok(false,message);
+				 ['catch'](function(xhr, response, e){
+					ok(false, e);
 					start();
 				 });
 		});

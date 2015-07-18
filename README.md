@@ -1,4 +1,4 @@
-qwest 1.7.0
+qwest 2.0.0
 ============
 
 Qwest is a simple ajax library based on `promises` behaviour and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
@@ -13,6 +13,16 @@ jam install qwest
 bower install qwest
 npm install qwest --save-dev
 ```
+
+What's new since 1.7?
+---------------------
+
+- `map()` : define your hown HTTP request
+- `sync` request now need to call `.send()` after your promises
+- the `before` function is now a parameter of the qwest call and not a promise anymore
+- promise's return values do not chain anymore (and it shouldn't have) 
+- depends on [PinkySwear](https://github.com/timjansen/pinkyswear.js) for a better Promises/A+ integration
+- depends on [jquery-param](https://github.com/knowledgecode/jquery-param) for a better POST data building
 
 Quick examples
 --------------
@@ -190,6 +200,7 @@ Last notes
 - the default `Content-Type` header is `application/x-www-form-urlencoded` for `post` and `xhr2` data types, with a `POST` request
 - if you want to set or get raw data, set the related option to `text`
 - as stated on [StackOverflow](https://stackoverflow.com/questions/8464262/access-is-denied-error-on-xdomainrequest), XDomainRequest forbid HTTPS requests from HTTP scheme and vice versa
+- promises are asynchroneous, even with `sync` requests
 
 License
 -------
