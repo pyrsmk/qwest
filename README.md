@@ -20,7 +20,6 @@ What's new since 1.7?
 - `map()` : define your hown HTTP request
 - `sync` request now need to call `.send()` after your promises
 - the `before` function is now a parameter of the qwest call and not a promise anymore
-- promise's return values do not chain anymore (and it shouldn't have) 
 - depends on [PinkySwear](https://github.com/timjansen/pinkyswear.js) for a better Promises/A+ integration
 - depends on [jquery-param](https://github.com/knowledgecode/jquery-param) for a better POST data building
 
@@ -86,6 +85,16 @@ qwest.map('PATCH', 'example.com')
 	 .then(function() {
 	 	// Blah blah
 	 });
+```
+
+If you need to do a `sync` request, you must call `send()` at the end of your promise :
+
+```js
+qwest.get('example.com', {async: false})
+	 .then(function() {
+	 	// Blah blah
+	 })
+	 .send();
 ```
 
 Base URI
