@@ -17,9 +17,10 @@ npm install qwest --save-dev
 What's new since 1.7?
 ---------------------
 
-- `map()` : define your hown HTTP request
-- `sync` request now need to call `.send()` after your promises
+- `map()` : define your own HTTP request
+- `sync` requests now need to call `.send()` after your promises
 - the `before` function is now a parameter of the qwest call and not a promise anymore
+- promise handlers (`then`, `catch`, `complete`) parameters have changed
 - depends on [PinkySwear](https://github.com/timjansen/pinkyswear.js) for a better Promises/A+ integration
 - depends on [jquery-param](https://github.com/knowledgecode/jquery-param) for a better POST data building
 
