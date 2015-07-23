@@ -168,7 +168,7 @@
 })(typeof module == 'undefined' ? [window, 'pinkySwear'] : [module, 'exports']);
 
 
-/*! qwest 2.0.1 (https://github.com/pyrsmk/qwest) */
+/*! qwest 2.0.2 (https://github.com/pyrsmk/qwest) */
 
 ;(function(context, name, definition) {
 	if(typeof module!='undefined' && module.exports) {

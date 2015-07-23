@@ -1,4 +1,4 @@
-qwest 2.0.1
+qwest 2.0.2
 ============
 
 Qwest is a simple ajax library based on `promises` and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
