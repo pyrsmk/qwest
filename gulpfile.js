@@ -26,18 +26,42 @@ gulp.task('lint', function() {
 
 gulp.task('build', ['lint'], function() {
 
-	return gulp.src([
-			resolve.sync('jquery-param', {moduleDirectory: './node_modules'}),
-			resolve.sync('pinkyswear', {moduleDirectory: './node_modules'}),
-			'./src/qwest.js'
-		])
-		.pipe( concat('qwest.js') )
-		.pipe( size() )
-		.pipe( gulp.dest('./tests/') )
-		.pipe( uglify() )
-		.pipe( rename('qwest.min.js') )
-		.pipe( gulp.dest('.') )
-		.pipe( size({gzip:true}) );
+	var streams = merge();
+
+	streams.add(
+		gulp.src([
+				resolve.sync('jquery-param', {moduleDirectory: './node_modules'}),
+				resolve.sync('pinkyswear', {moduleDirectory: './node_modules'}),
+				'./src/qwest.js'
+			])
+			.pipe( concat('qwest.js') )
+			.pipe( replace(/<<PINKYSWEAR>>/, 'window.pinkySwear') )
+			.pipe( replace(/<<PARAM>>/, 'window.param') )
+			.pipe( size() )
+			.pipe( gulp.dest('./tests/') )
+			.pipe( uglify() )
+			.pipe( rename('qwest.min.js') )
+			.pipe( gulp.dest('.') )
+			.pipe( size({gzip:true}) )
+	);
+
+	streams.add(
+		gulp.src([
+				resolve.sync('jquery-param', {moduleDirectory: './node_modules'}),
+				resolve.sync('pinkyswear', {moduleDirectory: './node_modules'}),
+				'./src/qwest.js'
+			])
+			.pipe( concat('qwest.js') )
+			.pipe( replace(/<<PINKYSWEAR>>/, "require('pinkySwear')") )
+			.pipe( replace(/<<PARAM>>/, "require('jquery-param')") )
+			.pipe( size() )
+			.pipe( uglify() )
+			.pipe( rename('qwest.min.js') )
+			.pipe( gulp.dest('./build/') )
+			.pipe( size({gzip:true}) )
+	);
+
+	return streams;
 
 });
 

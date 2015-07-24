@@ -168,7 +168,7 @@
 })(typeof module == 'undefined' ? [window, 'pinkySwear'] : [module, 'exports']);
 
 
-/*! qwest 2.0.2 (https://github.com/pyrsmk/qwest) */
+/*! qwest 2.0.3 (https://github.com/pyrsmk/qwest) */
 
 ;(function(context, name, definition) {
 	if(typeof module!='undefined' && module.exports) {
@@ -237,7 +237,7 @@
 			timeout_start,
 
 		// Create the promise
-		promise = pinkySwear(function(pinky) {
+		promise = window.pinkySwear(function(pinky) {
 			pinky['catch'] = function(f) {
 				return pinky.then(null, f);
 			};

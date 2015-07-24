@@ -1,13 +1,13 @@
 {
   "name": "qwest",
   "description": "Ajax library with XHR2, promises and request limit",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "author": "Aurélien Delogu <pyrsmk@dreamysource.fr> (http://dreamysource.fr)",
   "repository": {
     "type": "git",
     "url": "https://github.com/pyrsmk/qwest.git"
   },
-  "main": "qwest.min.js",
+  "main": "build/qwest.min.js",
   "keywords": [
     "ajax",
     "request",
@@ -34,5 +34,9 @@
     "merge2": "^0.3.6",
     "pinkyswear": "^2.2.2",
     "resolve": "^1.1.6"
+  },
+  "dependencies": {
+    "jquery-param": "^0.1.2",
+    "pinkyswear": "^2.2.2"
   }
 }
