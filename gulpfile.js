@@ -1,5 +1,3 @@
-// ======================================== Prepare tasks
-
 var fs = require('fs'),
 	gulp = require('gulp'),
 	size = require('gulp-sizereport'),
@@ -11,6 +9,19 @@ var fs = require('fs'),
 	replace = require('gulp-replace'),
 	merge = require('merge2'),
 	shell = require('gulp-shell');
+
+// ======================================== Config
+
+var replacements = {
+		browser: [
+			{regex: /PINKYSWEAR/, string: 'window.pinkySwear'},
+			{regex: /PARAM/, string: 'window.param'}
+		],
+		npm: [
+			{regex: /PINKYSWEAR/, string: "require('pinkyswear')"},
+			{regex: /PARAM/, string: "require('jquery-param')"}
+		]
+	};
 
 // ======================================== gulp lint
 
@@ -26,17 +37,18 @@ gulp.task('lint', function() {
 
 gulp.task('build', ['lint'], function() {
 
-	var streams = merge();
+	var streams = merge(),
+		files = [
+			resolve.sync('jquery-param', {moduleDirectory: './node_modules'}),
+			resolve.sync('pinkyswear', {moduleDirectory: './node_modules'}),
+			'./src/qwest.js'
+		];
 
 	streams.add(
-		gulp.src([
-				resolve.sync('jquery-param', {moduleDirectory: './node_modules'}),
-				resolve.sync('pinkyswear', {moduleDirectory: './node_modules'}),
-				'./src/qwest.js'
-			])
+		gulp.src( files )
 			.pipe( concat('qwest.js') )
-			.pipe( replace(/<<PINKYSWEAR>>/, 'window.pinkySwear') )
-			.pipe( replace(/<<PARAM>>/, 'window.param') )
+			.pipe( replace(replacements.browser[0].regex, replacements.browser[0].string) )
+			.pipe( replace(replacements.browser[1].regex, replacements.browser[1].string) )
 			.pipe( size() )
 			.pipe( gulp.dest('./tests/') )
 			.pipe( uglify() )
@@ -46,14 +58,10 @@ gulp.task('build', ['lint'], function() {
 	);
 
 	streams.add(
-		gulp.src([
-				resolve.sync('jquery-param', {moduleDirectory: './node_modules'}),
-				resolve.sync('pinkyswear', {moduleDirectory: './node_modules'}),
-				'./src/qwest.js'
-			])
+		gulp.src( files )
 			.pipe( concat('qwest.js') )
-			.pipe( replace(/<<PINKYSWEAR>>/, "require('pinkySwear')") )
-			.pipe( replace(/<<PARAM>>/, "require('jquery-param')") )
+			.pipe( replace(replacements.npm[0].regex, replacements.npm[0].string) )
+			.pipe( replace(replacements.npm[1].regex, replacements.npm[1].string) )
 			.pipe( size() )
 			.pipe( uglify() )
 			.pipe( rename('qwest.min.js') )
