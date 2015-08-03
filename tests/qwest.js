@@ -168,7 +168,7 @@
 })(typeof module == 'undefined' ? [window, 'pinkySwear'] : [module, 'exports']);
 
 
-/*! qwest 2.0.4 (https://github.com/pyrsmk/qwest) */
+/*! qwest 2.0.5 (https://github.com/pyrsmk/qwest) */
 
 ;(function(context, name, definition) {
 	if(typeof module!='undefined' && module.exports) {
@@ -193,7 +193,7 @@
 		// Get XMLHttpRequest object
 		getXHR = function(){
 			return win.XMLHttpRequest?
-					new XMLHttpRequest():
+					new win.XMLHttpRequest():
 					new ActiveXObject('Microsoft.XMLHTTP');
 		},
 		// Guess XHR version
