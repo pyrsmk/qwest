@@ -23,7 +23,7 @@
 		// Get XMLHttpRequest object
 		getXHR = function(){
 			return win.XMLHttpRequest?
-					new XMLHttpRequest():
+					new win.XMLHttpRequest():
 					new ActiveXObject('Microsoft.XMLHTTP');
 		},
 		// Guess XHR version
