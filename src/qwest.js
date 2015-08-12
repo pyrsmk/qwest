@@ -339,7 +339,7 @@
 			if(vars) {
 				vars += '&';
 			}
-			vars += '__t='+(+new Date());
+			headers['Cache-Control'] = 'no-cache';
 		}
 		if(vars) {
 			url += (/\?/.test(url)?'&':'?')+vars;
