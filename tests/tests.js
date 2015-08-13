@@ -129,16 +129,17 @@ domready(function(){
 					ok(response.status=='ok');
 					if(++executed==20){
 						start();
+						qwest.limit(null);
 					}
 				 })
 				 ['catch'](function(xhr, response, e){
 					ok(false, e);
 					if(++executed==20){
 						start();
+						qwest.limit(null);
 					}
 				 });
 		}
-		qwest.limit(null);
 	});
 
 	asyncTest('Request limit (sync)',function(){
@@ -151,17 +152,18 @@ domready(function(){
 					ok(response.status=='ok');
 					if(++executed==20){
 						start();
+						qwest.limit(null);
 					}
 				 })
 				 ['catch'](function(xhr, response, e){
 					ok(false, e);
 					if(++executed==20){
 						start();
+						qwest.limit(null);
 					}
 				 })
 				 .send();
 		}
-		qwest.limit(null);
 	});
 
 	asyncTest('Timeout (async)',function(){
@@ -235,14 +237,14 @@ domready(function(){
 		expect(2);
 		var a,b,
 			phase2=function(){
-				qwest.post('tests/cache/test.php',null,{responseType:'text'})
+				qwest.get('tests/cache/test.php',null,{responseType:'text', cache:true})
 					 .then(function(xhr, response){
 						//console.log(response);
 						b=response;
-						qwest.post('tests/cache/test.php',null,{responseType: 'text'})
-							 .then(function(response){
+						qwest.get('tests/cache/test.php',null,{responseType: 'text', cache:true})
+							 .then(function(xhr, response){
 								//console.log(response);
-								ok(response==b,'POST request');
+								ok(response==b,'Cached');
 								start();
 							 })
 							 ['catch'](function(message){
@@ -262,7 +264,7 @@ domready(function(){
 				qwest.get('tests/cache/test.php',null,{responseType:'text'})
 					 .then(function(xhr, response){
 						//console.log(response);
-						ok(response!=a,'GET request');
+						ok(response!=a,'Not cached');
 						phase2();
 					 })
 					 ['catch'](function(xhr, response, e){

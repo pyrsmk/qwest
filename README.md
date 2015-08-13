@@ -1,4 +1,4 @@
-qwest 2.0.5
+qwest 2.0.6
 ============
 
 Qwest is a simple ajax library based on `promises` and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
@@ -70,7 +70,7 @@ The available `options` are :
 
 - dataType : `post` (by default), `json`, `text`, `arraybuffer`, `blob`, `document` or `formdata` (you don't need to specify XHR2 types since they're automatically detected)
 - responseType : the response type; either `auto` (default), `json`, `xml`, `text`, `arraybuffer`, `blob` or `document`
-- cache : browser caching; default is `false` for GET requests and `true` for POST requests
+- cache : browser caching; default is `false`
 - async : `true` (default) or `false`; used to make asynchronous or synchronous requests
 - user : the user to access to the URL, if needed
 - password : the password to access to the URL, if needed

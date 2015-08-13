@@ -168,7 +168,7 @@
 })(typeof module == 'undefined' ? [window, 'pinkySwear'] : [module, 'exports']);
 
 
-/*! qwest 2.0.5 (https://github.com/pyrsmk/qwest) */
+/*! qwest 2.0.6 (https://github.com/pyrsmk/qwest) */
 
 ;(function(context, name, definition) {
 	if(typeof module!='undefined' && module.exports) {
@@ -444,7 +444,7 @@
 
 		// Normalize options
 		options.async = 'async' in options?!!options.async:true;
-		options.cache = 'cache' in options?!!options.cache:(method!='GET');
+		options.cache = 'cache' in options?!!options.cache:false;
 		options.dataType = 'dataType' in options?options.dataType.toLowerCase():'post';
 		options.responseType = 'responseType' in options?options.responseType.toLowerCase():'auto';
 		options.user = options.user || '';
@@ -500,16 +500,13 @@
 		if(!crossOrigin && !headers['X-Requested-With']) { // (that header breaks in legacy browsers with CORS)
 			headers['X-Requested-With'] = 'XMLHttpRequest';
 		}
+		if(!options.cache) {
+			headers['Cache-Control'] = 'no-cache';
+		}
 
 		// Prepare URL
 		if(method=='GET' && data) {
 			vars += data;
-		}
-		if(!options.cache) {
-			if(vars) {
-				vars += '&';
-			}
-			vars += '__t='+(+new Date());
 		}
 		if(vars) {
 			url += (/\?/.test(url)?'&':'?')+vars;

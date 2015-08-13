@@ -1,3 +1,2 @@
 ExpiresActive on
-ExpiresDefault "access plus 1 year"
-Header append Cache-Control "public"
+ExpiresDefault "access plus 1 day"
