@@ -111,7 +111,7 @@
 				// Set headers
 				if(!xdr) {
 					for(var i in headers) {
-						if (headers[t] && headers[t]) {
+						if (headers[t]) {
 							xhr.setRequestHeader(i, headers[i]);
 						}
 					}
