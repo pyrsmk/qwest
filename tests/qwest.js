@@ -168,7 +168,7 @@
 })(typeof module == 'undefined' ? [window, 'pinkySwear'] : [module, 'exports']);
 
 
-/*! qwest 2.0.6 (https://github.com/pyrsmk/qwest) */
+/*! qwest 2.0.7 (https://github.com/pyrsmk/qwest) */
 
 ;(function(context, name, definition) {
 	if(typeof module!='undefined' && module.exports) {
@@ -227,7 +227,6 @@
 				xml: 'application/xml; q=1.0, text/xml; q=0.8, */*; q=0.1',
 				json: 'application/json; q=1.0, text/*; q=0.8, */*; q=0.1'
 			},
-			contentType = 'Content-Type',
 			vars = '',
 			i, j,
 			serialized,
@@ -281,7 +280,7 @@
 				// Set headers
 				if(!xdr) {
 					for(var i in headers) {
-						if (headers[t]) {
+						if(headers[i]) {
 							xhr.setRequestHeader(i, headers[i]);
 						}
 					}
@@ -372,7 +371,7 @@
 							responseType = defaultXdrResponseType;
 						}
 						else {
-							var ct = xhr.getResponseHeader(contentType) || '';
+							var ct = xhr.getResponseHeader('Content-Type') || '';
 							if(ct.indexOf(mimeTypes.json)>-1) {
 								responseType = 'json';
 							}
@@ -489,17 +488,17 @@
 				headers[i.replace(/(^|-)([^-])/g,format)] = options.headers[i];
 			}
 		}
-		if(!headers[contentType] && method!='GET') {
+		if(!('Content-Type' in headers) && method!='GET') {
 			if(options.dataType in mimeTypes) {
 				if(mimeTypes[options.dataType]) {
-					headers[contentType] = mimeTypes[options.dataType];
+					headers['Content-Type'] = mimeTypes[options.dataType];
 				}
 			}
 		}
 		if(!headers.Accept) {
 			headers.Accept = (options.responseType in accept)?accept[options.responseType]:'*/*';
 		}
-		if(!crossOrigin && !headers['X-Requested-With']) { // (that header breaks in legacy browsers with CORS)
+		if(!crossOrigin && !('X-Requested-With' in headers)) { // (that header breaks in legacy browsers with CORS)
 			headers['X-Requested-With'] = 'XMLHttpRequest';
 		}
 		if(!options.cache && !('Cache-Control' in headers)) {

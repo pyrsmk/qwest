@@ -119,7 +119,7 @@ domready(function(){
 			 });
 	});
 
-	asyncTest('Request limit (async)',function(){
+	/*asyncTest('Request limit (async)',function(){
 		expect(20);
 		qwest.limit(5);
 		var executed=0;
@@ -164,7 +164,7 @@ domready(function(){
 				 })
 				 .send();
 		}
-	});
+	});*/
 
 	asyncTest('Timeout (async)',function(){
 		expect(1);
