@@ -281,7 +281,9 @@
 				// Set headers
 				if(!xdr) {
 					for(var i in headers) {
-						xhr.setRequestHeader(i, headers[i]);
+						if (headers[t]) {
+							xhr.setRequestHeader(i, headers[i]);
+						}
 					}
 				}
 				// Verify if the response type is supported by the current browser
@@ -500,7 +502,7 @@
 		if(!crossOrigin && !headers['X-Requested-With']) { // (that header breaks in legacy browsers with CORS)
 			headers['X-Requested-With'] = 'XMLHttpRequest';
 		}
-		if(!options.cache) {
+		if(!options.cache && !('Cache-Control' in headers)) {
 			headers['Cache-Control'] = 'no-cache';
 		}
 
