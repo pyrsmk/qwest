@@ -11,8 +11,11 @@ You can pick the minified library or install it with :
 ```
 jam install qwest
 bower install qwest
-npm install qwest --save-dev
+npm install qwest
 ```
+
+For a `require()` environment like require.js, node.js or browerify, you should pick the `qwest.min.js` version.
+For the browser, it's `qwest.standalone.min.js`.
 
 What's new since 1.7?
 ---------------------
