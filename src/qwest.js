@@ -1,4 +1,4 @@
-/*! qwest 2.0.7 (https://github.com/pyrsmk/qwest) */
+/*! qwest 2.0.8 (https://github.com/pyrsmk/qwest) */
 
 ;(function(context, name, definition) {
 	if(typeof module!='undefined' && module.exports) {
@@ -12,8 +12,10 @@
 	}
 }(this, 'qwest', function() {
 
-	var win=window,
-		doc=document,
+	var win = window,
+		doc = document,
+		pinkyswear = require('pinkyswear'),
+		jparam = require('jquery-param'),
 		// Default response type for XDR in auto mode
 		defaultXdrResponseType = 'json',
 		// Variables for limit mechanism
@@ -66,7 +68,7 @@
 			timeout_start,
 
 		// Create the promise
-		promise = PINKYSWEAR(function(pinky) {
+		promise = pinkyswear(function(pinky) {
 			pinky['catch'] = function(f) {
 				return pinky.then(null, f);
 			};
@@ -306,7 +308,7 @@
 				data = JSON.stringify(data);
 				break;
 			case 'post':
-				data = PARAM(data);
+				data = jparam(data);
 		}
 
 		// Prepare headers

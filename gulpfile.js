@@ -3,25 +3,15 @@ var fs = require('fs'),
 	size = require('gulp-sizereport'),
 	jshint = require('gulp-jshint'),
 	uglify = require('gulp-uglify'),
-	concat = require('gulp-concat'),
 	resolve = require('resolve'),
 	rename = require('gulp-rename'),
 	replace = require('gulp-replace'),
 	merge = require('merge2'),
-	shell = require('gulp-shell');
-
-// ======================================== Config
-
-var replacements = {
-		browser: [
-			{regex: /PINKYSWEAR/, string: 'window.pinkySwear'},
-			{regex: /PARAM/, string: 'window.param'}
-		],
-		npm: [
-			{regex: /PINKYSWEAR/, string: "require('pinkyswear')"},
-			{regex: /PARAM/, string: "require('jquery-param')"}
-		]
-	};
+	shell = require('gulp-shell'),
+	browserify = require('browserify'),
+	resolve = require('resolve'),
+	through2 = require('through2'),
+	_ = require('lodash');
 
 // ======================================== gulp lint
 
@@ -36,40 +26,31 @@ gulp.task('lint', function() {
 // ======================================== gulp build
 
 gulp.task('build', ['lint'], function() {
-
-	var streams = merge(),
-		files = [
-			resolve.sync('jquery-param', {moduleDirectory: './node_modules'}),
-			resolve.sync('pinkyswear', {moduleDirectory: './node_modules'}),
-			'./src/qwest.js'
-		];
-
-	streams.add(
-		gulp.src( files )
-			.pipe( concat('qwest.js') )
-			.pipe( replace(replacements.browser[0].regex, replacements.browser[0].string) )
-			.pipe( replace(replacements.browser[1].regex, replacements.browser[1].string) )
-			.pipe( size() )
-			.pipe( gulp.dest('./tests/') )
-			.pipe( uglify() )
-			.pipe( rename('qwest.min.js') )
-			.pipe( gulp.dest('.') )
-			.pipe( size({gzip:true}) )
-	);
-
-	streams.add(
-		gulp.src( files )
-			.pipe( concat('qwest.js') )
-			.pipe( replace(replacements.npm[0].regex, replacements.npm[0].string) )
-			.pipe( replace(replacements.npm[1].regex, replacements.npm[1].string) )
-			.pipe( size() )
-			.pipe( uglify() )
-			.pipe( rename('qwest.min.js') )
-			.pipe( gulp.dest('./build/') )
-			.pipe( size({gzip:true}) )
-	);
-
-	return streams;
+	
+	return gulp.src( './src/qwest.js' )
+				.pipe( size() )
+				.pipe( uglify() )
+				.pipe( rename('qwest.min.js') )
+				.pipe( gulp.dest('.') )
+				.pipe( size({gzip:true}) )
+				.pipe( through2.obj(function(file, enc, next) {
+		
+					var b = browserify('./src/qwest.js', {standalone: 'qwest'});
+		
+					(_.keys(require('./package.json').dependencies) || []).forEach(function(name) {
+						b.add(resolve.sync(name, {moduleDirectory: './node_modules/'}), {expose: name});
+					});
+		
+					b.bundle(function(err, res) {
+						file.contents = res;
+						next(null, file);
+					});
+		
+				}) )
+				.pipe( uglify() )
+				.pipe( rename('qwest.standalone.min.js') )
+				.pipe( gulp.dest('.') )
+				.pipe( size({gzip:true}) );
 
 });
 
@@ -78,7 +59,7 @@ gulp.task('build', ['lint'], function() {
 gulp.task('version', function() {
 
 	var streams = merge(),
-		version=fs.readFileSync('src/qwest.js', {encoding: 'utf8'}).match(/^\/\*\! \w+ ([0-9.]+)/)[1];
+		version=fs.readFileSync('./src/qwest.js', {encoding: 'utf8'}).match(/^\/\*\! \w+ ([0-9.]+)/)[1];
 
 	streams.add(
 		gulp.src( './package.json' )

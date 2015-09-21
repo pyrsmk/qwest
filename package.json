@@ -21,19 +21,19 @@
   },
   "homepage": "http://dreamysource.fr/product/qwest",
   "devDependencies": {
+    "browserify": "^11.1.0",
     "gulp": "^3.9.0",
-    "gulp-concat": "^2.6.0",
     "gulp-jshint": "^1.11.2",
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.5.3",
     "gulp-shell": "^0.4.2",
     "gulp-sizereport": "^1.1.2",
     "gulp-uglify": "^1.2.0",
-    "jquery-param": "^0.1.2",
     "jshint-stylish": "^2.0.1",
+    "lodash": "^3.10.1",
     "merge2": "^0.3.6",
-    "pinkyswear": "^2.2.2",
-    "resolve": "^1.1.6"
+    "resolve": "^1.1.6",
+    "through2": "^2.0.0"
   },
   "dependencies": {
     "jquery-param": "^0.1.2",
