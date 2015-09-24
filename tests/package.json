@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "domready": "^1.0.8",
+    "qunitjs": "^1.19.0"
+  }
+}

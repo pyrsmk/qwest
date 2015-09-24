@@ -9,9 +9,14 @@ domready(function(){
 	var methods=['get','post','put','delete'],
 		i,j;
 
-	test('XHR2',function(){
+	test('Qwest object',function() {
 		expect(1);
-		ok(Modernizr.xhr2==qwest.xhr2);
+		ok(typeof qwest == 'object', 'is '+(typeof qwest));
+	});
+
+	test('XHR2',function() {
+		expect(1);
+		ok(Modernizr.xhr2 == qwest.xhr2);
 	});
 
 	asyncTest('Base URL',function(){
@@ -206,7 +211,7 @@ domready(function(){
 
 	asyncTest('CORS',function(){
 		expect(1);
-		qwest.get('http://sandbox.dreamysource.fr/cors/')
+		qwest.get('http://sandbox.dreamysource.fr/cors/index.php')
 			 .then(function(xhr, response){
 				ok(response.status=='ok');
 				start();
