@@ -22,7 +22,7 @@ domready(function(){
 	asyncTest('Base URL',function(){
 		expect(1);
 		qwest.base = /^.*\//.exec(window.location.href);
-		qwest.get('tests/base/test.php')
+		qwest.get('../tests/base/test.php')
 			 .then(function(xhr, response) {
 				//console.log(response.debug);
 				ok(response.status=='ok');
@@ -39,7 +39,7 @@ domready(function(){
 		expect(methods.length);
 		var executed=0;
 		for(i=0,j=methods.length;i<j;++i){
-			qwest[methods[i]]('tests/async/test.php?method='+methods[i].toUpperCase())
+			qwest[methods[i]]('../tests/async/test.php?method='+methods[i].toUpperCase())
 				 .then(function(method){
 					return function(xhr, response) {
 						//console.log(response.debug);
@@ -62,7 +62,7 @@ domready(function(){
 		expect(methods.length);
 		var executed=0;
 		for(i=0,j=methods.length;i<j;++i){
-			qwest[methods[i]]('tests/async/test.php?method='+methods[i].toUpperCase(),null,{async:false})
+			qwest[methods[i]]('../tests/async/test.php?method='+methods[i].toUpperCase(),null,{async:false})
 				 .then(function(method){
 					return function(xhr, response) {
 						//console.log(response.debug);
@@ -84,7 +84,7 @@ domready(function(){
 
 	asyncTest('Manual requests (async)',function(){
 		expect(1);
-		qwest.map('PATCH', 'tests/async/test.php?method=PATCH')
+		qwest.map('PATCH', '../tests/async/test.php?method=PATCH')
 			 .then(function(xhr, response) {
 				//console.log(response.debug);
 				ok(response.status=='ok', 'PATCH request');
@@ -98,7 +98,7 @@ domready(function(){
 
 	asyncTest('Manual requests (sync)',function(){
 		expect(1);
-		qwest.map('PATCH', 'tests/async/test.php?method=PATCH', null, {async: false})
+		qwest.map('PATCH', '../tests/async/test.php?method=PATCH', null, {async: false})
 			 .then(function(xhr, response) {
 				//console.log(response.debug);
 				ok(response.status=='ok', 'PATCH request');
@@ -124,12 +124,12 @@ domready(function(){
 			 });
 	});
 
-	/*asyncTest('Request limit (async)',function(){
+	asyncTest('Request limit (async)',function(){
 		expect(20);
 		qwest.limit(5);
 		var executed=0;
 		for(i=1,j=20;i<=j;++i){
-			qwest.get('tests/limit/test.php')
+			qwest.get('../tests/limit/test.php')
 				 .then(function(xhr, response){
 					ok(response.status=='ok');
 					if(++executed==20){
@@ -152,7 +152,7 @@ domready(function(){
 		qwest.limit(5);
 		var executed=0;
 		for(i=1,j=20;i<=j;++i){
-			qwest.get('tests/limit/test.php',null,{async:false})
+			qwest.get('../tests/limit/test.php',null,{async:false})
 				 .then(function(xhr, response){
 					ok(response.status=='ok');
 					if(++executed==20){
@@ -169,12 +169,12 @@ domready(function(){
 				 })
 				 .send();
 		}
-	});*/
+	});
 
 	asyncTest('Timeout (async)',function(){
 		expect(1);
 		var t=+new Date;
-		qwest.get('tests/timeout/test.php',null,{
+		qwest.get('../tests/timeout/test.php',null,{
 				timeout: 250,
 				attempts: 4
 			 })
@@ -192,7 +192,7 @@ domready(function(){
 	asyncTest('Timeout (sync)',function(){
 		expect(1);
 		var t=+new Date;
-		qwest.get('tests/timeout/test.php',null,{
+		qwest.get('../tests/timeout/test.php',null,{
 				timeout: 250,
 				attempts: 4,
 				async: false
@@ -224,7 +224,7 @@ domready(function(){
 
 	asyncTest('Before',function(){
 		expect(1);
-		qwest.get('tests/before/test.php', null, null, function(xhr){
+		qwest.get('../tests/before/test.php', null, null, function(xhr){
 				xhr.setRequestHeader('X-Running-Test','before');
 			 })
 			 .then(function(xhr, response){
@@ -242,11 +242,11 @@ domready(function(){
 		expect(2);
 		var a,b,
 			phase2=function(){
-				qwest.get('tests/cache/test.php',null,{responseType:'text', cache:true})
+				qwest.get('../tests/cache/test.php',null,{responseType:'text', cache:true})
 					 .then(function(xhr, response){
 						//console.log(response);
 						b=response;
-						qwest.get('tests/cache/test.php',null,{responseType: 'text', cache:true})
+						qwest.get('../tests/cache/test.php',null,{responseType: 'text', cache:true})
 							 .then(function(xhr, response){
 								//console.log(response);
 								ok(response==b,'Cached');
@@ -262,11 +262,11 @@ domready(function(){
 						start();
 					 });
 			};
-		qwest.get('tests/cache/test.php',null,{responseType:'text'})
+		qwest.get('../tests/cache/test.php',null,{responseType:'text'})
 			 .then(function(xhr, response){
 				//console.log(response);
 				a=response;
-				qwest.get('tests/cache/test.php',null,{responseType:'text'})
+				qwest.get('../tests/cache/test.php',null,{responseType:'text'})
 					 .then(function(xhr, response){
 						//console.log(response);
 						ok(response!=a,'Not cached');
@@ -285,7 +285,7 @@ domready(function(){
 
 	asyncTest('Authentication',function(){
 		expect(1);
-		qwest.get('tests/auth/test.php',null,{
+		qwest.get('../tests/auth/test.php',null,{
 				user: 'pyrsmk',
 				password: 'test'
 			 })
@@ -302,11 +302,11 @@ domready(function(){
 
 	asyncTest('Get JSON response',function(){
 		expect(2);
-		qwest.get('tests/get_json/test.php',null,{responseType:'json'})
+		qwest.get('../tests/get_json/test.php',null,{responseType:'json'})
 			 .then(function(xhr, response){
 				//console.log(response.debug);
 				ok(response.status=='ok','Manual');
-				qwest.get('tests/get_json/test.php',null,{headers:{'Accept':'application/json'}})
+				qwest.get('../tests/get_json/test.php',null,{headers:{'Accept':'application/json'}})
 					 .then(function(xhr, response){
 						//console.log(response.debug);
 						ok(response.status=='ok','Auto');
@@ -325,10 +325,10 @@ domready(function(){
 
 	asyncTest('Get DOMString response',function(){
 		expect(2);
-		qwest.get('tests/get_text/test.php',null,{responseType:'text'})
+		qwest.get('../tests/get_text/test.php',null,{responseType:'text'})
 			 .then(function(xhr, response){
 				ok(response=='ok','Manual');
-				qwest.get('tests/get_text/test.php')
+				qwest.get('../tests/get_text/test.php')
 					 .then(function(xhr, response){
 						//console.log(response.debug);
 						ok(response=='ok','Auto');
@@ -347,11 +347,11 @@ domready(function(){
 
 	asyncTest('Get XML response',function(){
 		expect(2);
-		qwest.get('tests/get_xml/test.php',null,{responseType:'xml'})
+		qwest.get('../tests/get_xml/test.php',null,{responseType:'xml'})
 			 .then(function(xhr, response){
 				//console.log(response.getElementsByTagName('status')[0]);
 				ok(response.getElementsByTagName('status')[0].textContent=='ok','Manual');
-				qwest.get('tests/get_xml/test.php')
+				qwest.get('../tests/get_xml/test.php')
 					 .then(function(xhr, response){
 						//console.log(response.debug);
 						ok(response.getElementsByTagName('status')[0].textContent=='ok','Auto');
@@ -371,7 +371,7 @@ domready(function(){
 	if('ArrayBuffer' in window){
 		asyncTest('Get ArrayBuffer response',function(){
 			expect(1);
-			qwest.get('tests/get_arraybuffer/test.php',null,{responseType:'arraybuffer'})
+			qwest.get('../tests/get_arraybuffer/test.php',null,{responseType:'arraybuffer'})
 				 .then(function(xhr, response){
 					var arrayBuffer=new Uint8Array(response),
 						length=arrayBuffer.length;
@@ -397,7 +397,7 @@ domready(function(){
 	if('Blob' in window){
 		asyncTest('Get Blob response',function(){
 			expect(1);
-			qwest.get('tests/get_blob/test.php',null,{responseType:'blob'})
+			qwest.get('../tests/get_blob/test.php',null,{responseType:'blob'})
 				 .then(function(xhr, response){
 					//console.log(response);
 					ok(response.size);
@@ -413,7 +413,7 @@ domready(function(){
 	if(qwest.xhr2 && 'querySelector' in document){
 		asyncTest('Get Document response',function(){
 			expect(1);
-			qwest.get('tests/get_document/test.php',null,{responseType:'document'})
+			qwest.get('../tests/get_document/test.php',null,{responseType:'document'})
 				 .then(function(xhr, response){
 					ok(response.querySelector('p').innerHTML=='ok');
 					start();
@@ -427,7 +427,7 @@ domready(function(){
 
 	asyncTest('Send basic POST data',function(){
 		expect(1);
-		qwest.post('tests/send_post/test.php',{
+		qwest.post('../tests/send_post/test.php',{
 				foo: 'bar',
 				bar: [{foo:'bar'}]
 			 })
@@ -444,7 +444,7 @@ domready(function(){
 
 	asyncTest('Send JSON data',function(){
 		expect(1);
-		qwest.post('tests/send_json/test.php',{
+		qwest.post('../tests/send_json/test.php',{
 				foo: 'bar',
 				bar: [{foo:'bar'}]
 			 },{
@@ -463,7 +463,7 @@ domready(function(){
 
 	asyncTest('Send DOMString data',function(){
 		expect(1);
-		qwest.post('tests/send_text/test.php','text',{dataType:'text'})
+		qwest.post('../tests/send_text/test.php','text',{dataType:'text'})
 			 .then(function(xhr, response){
 				//console.log(response.debug);
 				ok(response.status=='ok');
@@ -481,7 +481,7 @@ domready(function(){
 			var formData=new FormData();
 			formData.append('firstname','Pedro');
 			formData.append('lastname','Sanchez');
-			qwest.post('tests/send_formdata/test.php',formData)
+			qwest.post('../tests/send_formdata/test.php',formData)
 				 .then(function(xhr, response){
 					//console.log(response.debug);
 					ok(response.status=='ok');
@@ -498,7 +498,7 @@ domready(function(){
 		asyncTest('Send Blob data',function(){
 			expect(1);
 			var blob=new Blob(['test'],{type:'text/plain'});
-			qwest.post('tests/send_blob/test.php',blob)
+			qwest.post('../tests/send_blob/test.php',blob)
 				 .then(function(xhr, response){
 					//console.log(response.debug);
 					ok(response.status=='ok');
@@ -514,7 +514,7 @@ domready(function(){
 	if(qwest.xhr2){
 		asyncTest('Send Document data',function(){
 			expect(1);
-			qwest.post('tests/send_document/test.php',document)
+			qwest.post('../tests/send_document/test.php',document)
 				 .then(function(xhr, response){
 					//console.log(response.debug);
 					ok(response.status=='ok');
@@ -531,7 +531,7 @@ domready(function(){
 		asyncTest('Send ArrayBuffer data',function(){
 			expect(1);
 			var arrayBuffer=new Uint8Array([1,2,3]);
-			qwest.post('tests/send_arraybuffer/test.php',arrayBuffer)
+			qwest.post('../tests/send_arraybuffer/test.php',arrayBuffer)
 				 .then(function(xhr, response){
 					//console.log(response.debug);
 					ok(response.status=='ok');

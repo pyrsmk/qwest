@@ -1,4 +1,4 @@
-qwest 2.0.8
+qwest 2.1.0
 ============
 
 Qwest is a simple ajax library based on `promises` and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
@@ -9,23 +9,17 @@ Install
 You can pick the minified library or install it with :
 
 ```
-jam install qwest
-bower install qwest
 npm install qwest
+bower install qwest
+jam install qwest
 ```
 
-For a `require()` environment like require.js, node.js or browerify, you should pick the `qwest.min.js` version.
-For the browser, it's `qwest.standalone.min.js`.
+The `qwest.min.js` file has been bundled to work in any environment. But if you don't want to load qwest and its dependencies, you can use `src/qwest.js` which is an AMD module.
 
-What's new since 1.7?
----------------------
+What's new in 2.1?
+------------------
 
-- `map()` : define your own HTTP request
-- `sync` requests now need to call `.send()` after your promises
-- the `before` function is now a parameter of the qwest call and not a promise anymore
-- promise handlers (`then`, `catch`, `complete`) parameters have changed
-- depends on [PinkySwear](https://github.com/timjansen/pinkyswear.js) for a better Promises/A+ integration
-- depends on [jquery-param](https://github.com/knowledgecode/jquery-param) for a better POST data building
+A good effort has been made to make qwest usable in any environment, including : the browser, require.js, browserify and web workers. It should work in any other AMD loader or even Node.
 
 Quick examples
 --------------
