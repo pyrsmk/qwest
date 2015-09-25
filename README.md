@@ -19,7 +19,7 @@ The `qwest.min.js` file has been bundled to work in any environment. But if you 
 What's new in 2.1?
 ------------------
 
-A good effort has been made to make qwest usable in any environment, including : the browser, require.js, browserify and web workers. It should work in any other AMD loader or even Node.
+A good effort has been made to make qwest usable in any environment, including : the browser, require.js, browserify and web workers. It should work in any other CommonJS loader or even Node.
 
 Quick examples
 --------------
