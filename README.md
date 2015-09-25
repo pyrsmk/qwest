@@ -16,6 +16,8 @@ jam install qwest
 
 The `qwest.min.js` file has been bundled to work in any environment. But if you don't want to load qwest and its dependencies, you can use `src/qwest.js` as a CommonJS module.
 
+It should work in web workers too, but please not XML response data can't be handled since `DOMParser` is not available on the worker.
+
 What's new in 2.1?
 ------------------
 
