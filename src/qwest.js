@@ -12,8 +12,8 @@ module.exports = function() {
 		request_stack = [],
 		// Get XMLHttpRequest object
 		getXHR = function(){
-			return window.XMLHttpRequest?
-					new window.XMLHttpRequest():
+			return this.XMLHttpRequest?
+					new this.XMLHttpRequest():
 					new ActiveXObject('Microsoft.XMLHTTP');
 		},
 		// Guess XHR version
@@ -80,7 +80,7 @@ module.exports = function() {
 				// Get XHR object
 				xhr = getXHR();
 				if(crossOrigin) {
-					if(!('withCredentials' in xhr) && window.XDomainRequest) {
+					if(!('withCredentials' in xhr) && this.XDomainRequest) {
 						xhr = new XDomainRequest(); // CORS with IE8/9
 						xdr = true;
 						if(method!='GET' && method!='POST') {
@@ -208,7 +208,7 @@ module.exports = function() {
 					switch(responseType) {
 						case 'json':
 							try {
-								if('JSON' in window) {
+								if('JSON' in this) {
 									response = JSON.parse(xhr.responseText);
 								}
 								else {
@@ -223,7 +223,7 @@ module.exports = function() {
 							// Based on jQuery's parseXML() function
 							try {
 								// Standard
-								if(window.DOMParser) {
+								if(this.DOMParser) {
 									response = (new DOMParser()).parseFromString(xhr.responseText,'text/xml');
 								}
 								// IE<9
@@ -280,16 +280,16 @@ module.exports = function() {
 		crossOrigin = i && (i[1]?i[1]!=location.host:false);
 
 		// Prepare data
-		if('ArrayBuffer' in window && data instanceof ArrayBuffer) {
+		if('ArrayBuffer' in this && data instanceof ArrayBuffer) {
 			options.dataType = 'arraybuffer';
 		}
-		else if('Blob' in window && data instanceof Blob) {
+		else if('Blob' in this && data instanceof Blob) {
 			options.dataType = 'blob';
 		}
-		else if('Document' in window && data instanceof Document) {
+		else if('Document' in this && data instanceof Document) {
 			options.dataType = 'document';
 		}
-		else if('FormData' in window && data instanceof FormData) {
+		else if('FormData' in this && data instanceof FormData) {
 			options.dataType = 'formdata';
 		}
 		switch(options.dataType) {
