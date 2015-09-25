@@ -2,7 +2,8 @@
 
 module.exports = function() {
 
-	var pinkyswear = require('pinkyswear'),
+	var global = this,
+		pinkyswear = require('pinkyswear'),
 		jparam = require('jquery-param'),
 		// Default response type for XDR in auto mode
 		defaultXdrResponseType = 'json',
@@ -12,8 +13,8 @@ module.exports = function() {
 		request_stack = [],
 		// Get XMLHttpRequest object
 		getXHR = function(){
-			return this.XMLHttpRequest?
-					new this.XMLHttpRequest():
+			return global.XMLHttpRequest?
+					new global.XMLHttpRequest():
 					new ActiveXObject('Microsoft.XMLHTTP');
 		},
 		// Guess XHR version
@@ -80,7 +81,7 @@ module.exports = function() {
 				// Get XHR object
 				xhr = getXHR();
 				if(crossOrigin) {
-					if(!('withCredentials' in xhr) && this.XDomainRequest) {
+					if(!('withCredentials' in xhr) && global.XDomainRequest) {
 						xhr = new XDomainRequest(); // CORS with IE8/9
 						xdr = true;
 						if(method!='GET' && method!='POST') {
@@ -208,7 +209,7 @@ module.exports = function() {
 					switch(responseType) {
 						case 'json':
 							try {
-								if('JSON' in this) {
+								if('JSON' in global) {
 									response = JSON.parse(xhr.responseText);
 								}
 								else {
@@ -223,7 +224,7 @@ module.exports = function() {
 							// Based on jQuery's parseXML() function
 							try {
 								// Standard
-								if(this.DOMParser) {
+								if(global.DOMParser) {
 									response = (new DOMParser()).parseFromString(xhr.responseText,'text/xml');
 								}
 								// IE<9
@@ -280,16 +281,16 @@ module.exports = function() {
 		crossOrigin = i && (i[1]?i[1]!=location.host:false);
 
 		// Prepare data
-		if('ArrayBuffer' in this && data instanceof ArrayBuffer) {
+		if('ArrayBuffer' in global && data instanceof ArrayBuffer) {
 			options.dataType = 'arraybuffer';
 		}
-		else if('Blob' in this && data instanceof Blob) {
+		else if('Blob' in global && data instanceof Blob) {
 			options.dataType = 'blob';
 		}
-		else if('Document' in this && data instanceof Document) {
+		else if('Document' in global && data instanceof Document) {
 			options.dataType = 'document';
 		}
-		else if('FormData' in this && data instanceof FormData) {
+		else if('FormData' in global && data instanceof FormData) {
 			options.dataType = 'formdata';
 		}
 		switch(options.dataType) {

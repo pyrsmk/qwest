@@ -1,16 +1,16 @@
 domready(function(){
 
-	if(!String.prototype.trim){
-		String.prototype.trim=function(){
-			return this.replace(/^\s+|\s+$/g,'');
+	var global = this,
+		methods = ['get', 'post', 'put', 'delete'],
+		i, j;
+
+	if(!String.prototype.trim) {
+		String.prototype.trim = function(){
+			return global.replace(/^\s+|\s+$/g, '');
 		};
 	}
 
-	var methods=['get','post','put','delete'],
-		i,j;
-
 	QUnit.test('Qwest object',function(assert) {
-		console.log('pwet');
 		assert.expect(1);
 		assert.ok(typeof qwest == 'object', 'is '+(typeof qwest));
 	});
@@ -23,7 +23,7 @@ domready(function(){
 	QUnit.test('Base URL',function(assert){
 		var done = assert.async();
 		assert.expect(1);
-		qwest.base = /^.*\//.exec(this.location.href);
+		qwest.base = /^.*\//.exec(global.location.href);
 		qwest.get('../tests/base/test.php')
 			 .then(function(xhr, response) {
 				//console.log(response.debug);
@@ -386,7 +386,7 @@ domready(function(){
 			 });
 	});
 
-	if('ArrayBuffer' in this){
+	if('ArrayBuffer' in global){
 		QUnit.test('Get ArrayBuffer response',function(assert){
 			var done = assert.async();
 			assert.expect(1);
@@ -413,7 +413,7 @@ domready(function(){
 		});
 	}
 
-	if('Blob' in this){
+	if('Blob' in global){
 		QUnit.test('Get Blob response',function(assert){
 			var done = assert.async();
 			assert.expect(1);
@@ -430,7 +430,7 @@ domready(function(){
 		});
 	}
 
-	if(qwest.xhr2 && this.document && 'querySelector' in this.document){
+	if(qwest.xhr2 && global.document && 'querySelector' in global.document){
 		QUnit.test('Get Document response',function(assert){
 			var done = assert.async();
 			assert.expect(1);
@@ -499,7 +499,7 @@ domready(function(){
 			 });
 	});
 
-	if('FormData' in this){
+	if('FormData' in global){
 		QUnit.test('Send FormData data',function(assert){
 			var done = assert.async();
 			assert.expect(1);
@@ -519,7 +519,7 @@ domready(function(){
 		});
 	}
 
-	if('Blob' in this){
+	if('Blob' in global){
 		QUnit.test('Send Blob data',function(assert){
 			var done = assert.async();
 			assert.expect(1);
@@ -554,7 +554,7 @@ domready(function(){
 		});
 	}
 
-	if('ArrayBuffer' in this){
+	if('ArrayBuffer' in global){
 		QUnit.test('Send ArrayBuffer data',function(assert){
 			var done = assert.async();
 			assert.expect(1);
