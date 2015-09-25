@@ -1,19 +1,10 @@
-/*! qwest 2.0.7 (https://github.com/pyrsmk/qwest) */
+/*! qwest 2.1.0 (https://github.com/pyrsmk/qwest) */
 
-;(function(context, name, definition) {
-	if(typeof module!='undefined' && module.exports) {
-		module.exports = definition;
-	}
-	else if(typeof define=='function' && define.amd) {
-		define(definition);
-	}
-	else{
-		context[name] = definition;
-	}
-}(this, 'qwest', function() {
+module.exports = function() {
 
-	var win=window,
-		doc=document,
+	var global = this,
+		pinkyswear = require('pinkyswear'),
+		jparam = require('jquery-param'),
 		// Default response type for XDR in auto mode
 		defaultXdrResponseType = 'json',
 		// Variables for limit mechanism
@@ -22,8 +13,8 @@
 		request_stack = [],
 		// Get XMLHttpRequest object
 		getXHR = function(){
-			return win.XMLHttpRequest?
-					new win.XMLHttpRequest():
+			return global.XMLHttpRequest?
+					new global.XMLHttpRequest():
 					new ActiveXObject('Microsoft.XMLHTTP');
 		},
 		// Guess XHR version
@@ -66,7 +57,7 @@
 			timeout_start,
 
 		// Create the promise
-		promise = PINKYSWEAR(function(pinky) {
+		promise = pinkyswear(function(pinky) {
 			pinky['catch'] = function(f) {
 				return pinky.then(null, f);
 			};
@@ -78,18 +69,19 @@
 				if(sending) {
 					return;
 				}
-				sending = true;
 				// Reached request limit, get out!
-				if(limit && ++requests==limit) {
+				if(requests == limit) {
 					request_stack.push(pinky);
 					return;
 				}
+				++requests;
+				sending = true;
 				// Start the chrono
 				timeout_start = Date.now();
 				// Get XHR object
 				xhr = getXHR();
 				if(crossOrigin) {
-					if(!('withCredentials' in xhr) && win.XDomainRequest) {
+					if(!('withCredentials' in xhr) && global.XDomainRequest) {
 						xhr = new XDomainRequest(); // CORS with IE8/9
 						xdr = true;
 						if(method!='GET' && method!='POST') {
@@ -184,14 +176,14 @@
 					response = xhr.response;
 				}
 				else if(options.responseType == 'document') {
-					var frame = doc.createElement('iframe');
+					var frame = document.createElement('iframe');
 					frame.style.display = 'none';
-					doc.body.appendChild(frame);
+					document.body.appendChild(frame);
 					frame.contentDocument.open();
 					frame.contentDocument.write(xhr.response);
 					frame.contentDocument.close();
 					response = frame.contentDocument;
-					doc.body.removeChild(frame);
+					document.body.removeChild(frame);
 				}
 				else{
 					// Guess response type
@@ -217,7 +209,7 @@
 					switch(responseType) {
 						case 'json':
 							try {
-								if('JSON' in win) {
+								if('JSON' in global) {
 									response = JSON.parse(xhr.responseText);
 								}
 								else {
@@ -232,7 +224,7 @@
 							// Based on jQuery's parseXML() function
 							try {
 								// Standard
-								if(win.DOMParser) {
+								if(global.DOMParser) {
 									response = (new DOMParser()).parseFromString(xhr.responseText,'text/xml');
 								}
 								// IE<9
@@ -289,16 +281,16 @@
 		crossOrigin = i && (i[1]?i[1]!=location.host:false);
 
 		// Prepare data
-		if('ArrayBuffer' in win && data instanceof ArrayBuffer) {
+		if('ArrayBuffer' in global && data instanceof ArrayBuffer) {
 			options.dataType = 'arraybuffer';
 		}
-		else if('Blob' in win && data instanceof Blob) {
+		else if('Blob' in global && data instanceof Blob) {
 			options.dataType = 'blob';
 		}
-		else if('Document' in win && data instanceof Document) {
+		else if('Document' in global && data instanceof Document) {
 			options.dataType = 'document';
 		}
-		else if('FormData' in win && data instanceof FormData) {
+		else if('FormData' in global && data instanceof FormData) {
 			options.dataType = 'formdata';
 		}
 		switch(options.dataType) {
@@ -306,7 +298,7 @@
 				data = JSON.stringify(data);
 				break;
 			case 'post':
-				data = PARAM(data);
+				data = jparam(data);
 		}
 
 		// Prepare headers
@@ -372,12 +364,14 @@
 			return qwest(type.toUpperCase(), this.base+url, data, options, before);
 		},
 		xhr2: xhr2,
+		// obsolete
 		limit: function(by) {
 			limit = by;
 		},
+		// obsolete
 		setDefaultXdrResponseType: function(type) {
 			defaultXdrResponseType = type.toLowerCase();
 		}
 	};
 
-}()));
+}();

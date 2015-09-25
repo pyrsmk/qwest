@@ -1,4 +1,4 @@
-qwest 2.0.7
+qwest 2.1.0
 ============
 
 Qwest is a simple ajax library based on `promises` and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
@@ -9,20 +9,17 @@ Install
 You can pick the minified library or install it with :
 
 ```
-jam install qwest
+npm install qwest
 bower install qwest
-npm install qwest --save-dev
+jam install qwest
 ```
 
-What's new since 1.7?
----------------------
+The `qwest.min.js` file has been bundled to work in any environment. But if you don't want to load qwest and its dependencies, you can use `src/qwest.js` as a CommonJS module.
 
-- `map()` : define your own HTTP request
-- `sync` requests now need to call `.send()` after your promises
-- the `before` function is now a parameter of the qwest call and not a promise anymore
-- promise handlers (`then`, `catch`, `complete`) parameters have changed
-- depends on [PinkySwear](https://github.com/timjansen/pinkyswear.js) for a better Promises/A+ integration
-- depends on [jquery-param](https://github.com/knowledgecode/jquery-param) for a better POST data building
+What's new in 2.1?
+------------------
+
+A good effort has been made to make qwest usable in any environment, including : the browser, require.js, browserify and web workers. It should work in any other AMD loader or even Node.
 
 Quick examples
 --------------
@@ -116,9 +113,9 @@ qwest.get('/somepage')
 Request limit
 -------------
 
-One of the great qwest's functionnalities is the request limitat. It avoids browser freezes and server overloads by freeing bandwidth and memory resources when you have a whole bunch of requests to do at the same time (when you load a gallery, per example). You just need to set the request limit and when the count is reached qwest will stock all further requests and start them when a slot is free.
+One of the greatest qwest functionnalities is the request limit. It avoids browser freezes and server overloads by freeing bandwidth and memory resources when you have a whole bunch of requests to do at the same time. Set the request limit and when the count is reached qwest will stock all further requests and start them when a slot is free.
 
-Let's say we have a gallery with a lot of images to load. We don't want the browser to download all of that by himself to have a faster loading, and why not to apply some effects on the images when they are loaded? Let's see how we can do that.
+Let's say we have a gallery with a lot of images to load. We don't want the browser to download all images at the same time to have a faster loading. Let's see how we can do that.
 
 ```html
 <div class="gallery">
@@ -140,6 +137,7 @@ $('.gallery').children().forEach(function() {
 	qwest.get($this.data('src'), {responseType: 'blob'})
 		 .then(function(xhr, response) {
 			$this.attr('src', window.URL.createObjectURL(response));
+			$this.fadeIn();
 		 });
 });
 ```
