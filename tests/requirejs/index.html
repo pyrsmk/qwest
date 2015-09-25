@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>qwest</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="../node_modules/qunitjs/qunit/qunit.css">
+		<script src="../node_modules/requirejs/require.js"></script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+		<script>
+			requirejs.config({
+				baseUrl: '../',
+				paths: {
+					'ready': 'node_modules/domready/ready.min',
+					'qunit': 'node_modules/qunitjs/qunit/qunit',
+					'toast': 'node_modules/pyrsmk-toast/src/toast',
+					'qwest': '../qwest.min'
+				}
+			});
+			require(['modernizr.min', 'qwest', 'ready', 'qunit', 'toast'], function(m, qwest, domready, qunit, toast) {
+				window.qwest = qwest;
+				window.domready = domready;
+				window.QUnit = qunit;
+				toast('../tests.js');
+			});
+		</script>
+	</body>
+</html>

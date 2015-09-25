@@ -14,7 +14,7 @@ bower install qwest
 jam install qwest
 ```
 
-The `qwest.min.js` file has been bundled to work in any environment. But if you don't want to load qwest and its dependencies, you can use `src/qwest.js` which is an AMD module.
+The `qwest.min.js` file has been bundled to work in any environment. But if you don't want to load qwest and its dependencies, you can use `src/qwest.js` as a CommonJS module.
 
 What's new in 2.1?
 ------------------

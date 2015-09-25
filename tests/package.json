@@ -1,6 +1,8 @@
 {
   "devDependencies": {
     "domready": "^1.0.8",
-    "qunitjs": "^1.19.0"
+    "pyrsmk-toast": "^1.2.4",
+    "qunitjs": "^1.19.0",
+    "requirejs": "^2.1.20"
   }
 }
