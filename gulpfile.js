@@ -13,12 +13,14 @@ var fs = require('fs'),
 	through2 = require('through2'),
 	_ = require('lodash');
 
+var name = 'imagine';
+
 // ======================================== gulp version
 
 gulp.task('version', function() {
 
 	var streams = merge(),
-		version = fs.readFileSync('./src/qwest.js', {encoding: 'utf8'}).match(/^\/\*\! \w+ ([0-9.]+)/)[1];
+		version = fs.readFileSync('./src/'+name+'.js', {encoding: 'utf8'}).match(/^\/\*\! \w+ ([0-9.]+)/)[1];
 
 	streams.add(
 		gulp.src( './package.json' )
@@ -40,7 +42,7 @@ gulp.task('version', function() {
 
 gulp.task('lint', function() {
 
-	return gulp.src( './src/qwest.js' )
+	return gulp.src( './src/'+name+'.js' )
 		.pipe( jshint() )
 		.pipe( jshint.reporter('jshint-stylish') );
 
@@ -50,22 +52,17 @@ gulp.task('lint', function() {
 
 gulp.task('build', ['version', 'lint'], function() {
 	
-	/*
-		https://www.npmjs.com/package/derequire
-		https://github.com/substack/webworkify
-	*/
-	
-	return gulp.src( './src/qwest.js' )
+	return gulp.src( './src/'+name+'.js' )
 				.pipe( size() )
 				.pipe( through2.obj(function(file, enc, next) {
 		
-					var b = browserify(null, {standalone: 'qwest'});
+					var b = browserify(null, {standalone: name});
 		
 					(_.keys(require('./package.json').dependencies) || []).forEach(function(name) {
 						b.add(resolve.sync(name, {moduleDirectory: './node_modules/'}));
 					});
 		
-					b.require('./src/qwest.js', {expose: 'qwest'});
+					b.require('./src/'+name+'.js', {expose: name});
 		
 					b.bundle(function(err, res) {
 						file.contents = res;
@@ -74,7 +71,7 @@ gulp.task('build', ['version', 'lint'], function() {
 		
 				}) )
 				//.pipe( uglify() )
-				.pipe( rename('qwest.min.js') )
+				.pipe( rename(name+'.min.js') )
 				.pipe( gulp.dest('.') )
 				.pipe( size({gzip:true}) );
 
