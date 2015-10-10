@@ -8,12 +8,13 @@ var fs = require('fs'),
 	replace = require('gulp-replace'),
 	merge = require('merge2'),
 	shell = require('gulp-shell'),
+	derequire = require('gulp-derequire'),
 	browserify = require('browserify'),
 	resolve = require('resolve'),
 	through2 = require('through2'),
 	_ = require('lodash');
 
-var name = 'imagine';
+var name = 'qwest';
 
 // ======================================== gulp version
 
@@ -70,7 +71,8 @@ gulp.task('build', ['version', 'lint'], function() {
 					});
 		
 				}) )
-				//.pipe( uglify() )
+				.pipe( derequire() )
+				.pipe( uglify() )
 				.pipe( rename(name+'.min.js') )
 				.pipe( gulp.dest('.') )
 				.pipe( size({gzip:true}) );
