@@ -1,4 +1,4 @@
-/*! qwest 2.1.0 (https://github.com/pyrsmk/qwest) */
+/*! qwest 2.2.0 (https://github.com/pyrsmk/qwest) */
 
 module.exports = function() {
 
@@ -64,6 +64,12 @@ module.exports = function() {
 			pinky.complete = function(f) {
 				return pinky.then(f, f);
 			};
+			// Override
+			if('pinkyswear' in options) {
+				for(i in options.pinkyswear) {
+					pinky[i] = options.pinkyswear[i];
+				}
+			}
 			pinky.send = function() {
 				// Prevent further send() calls
 				if(sending) {

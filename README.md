@@ -1,4 +1,4 @@
-qwest 2.1.0
+qwest 2.2.0
 ============
 
 Qwest is a simple ajax library based on `promises` and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
@@ -77,6 +77,7 @@ The available `options` are :
 - withCredentials : `false` by default; sends [credentials](http://www.w3.org/TR/XMLHttpRequest2/#user-credentials) with your XHR2 request ([more info in that post](https://dev.opera.com/articles/xhr2/#xhrcredentials))
 - timeout : the timeout for the request in ms; `30000` by default
 - attempts : the total number of times to attempt the request through timeouts; 1 by default; if you want to remove the limit set it to `null`
+- pinkyswear : override promise methods (experimental)
 
 If you want to make a call with another HTTP method, you can use the `map()` function :
 
