@@ -363,6 +363,9 @@ module.exports = function() {
 		put: function(url, data, options, before) {
 			return qwest('PUT', this.base+url, data, options, before);
 		},
+		patch: function(url, data, options, before) {
+			return qwest('PATCH', this.base+url, data, options, before);
+		},
 		'delete': function(url, data, options, before) {
 			return qwest('DELETE', this.base+url, data, options, before);
 		},
