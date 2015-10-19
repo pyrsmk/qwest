@@ -1,7 +1,7 @@
 domready(function(){
 
 	var global = this,
-		methods = ['get', 'post', 'put', 'delete'],
+		methods = ['get', 'post', 'put', 'patch', 'delete'],
 		i, j;
 
 	if(!String.prototype.trim) {
