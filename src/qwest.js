@@ -1,4 +1,4 @@
-/*! qwest 2.2.0 (https://github.com/pyrsmk/qwest) */
+/*! qwest 2.2.1 (https://github.com/pyrsmk/qwest) */
 
 module.exports = function() {
 
@@ -83,7 +83,7 @@ module.exports = function() {
 				++requests;
 				sending = true;
 				// Start the chrono
-				timeout_start = Date.now();
+				timeout_start = new Date().getTime();
 				// Get XHR object
 				xhr = getXHR();
 				if(crossOrigin) {
@@ -162,7 +162,7 @@ module.exports = function() {
 			sending = false;
 			// Verify timeout state
 			// --- https://stackoverflow.com/questions/7287706/ie-9-javascript-error-c00c023f
-			if(Date.now()-timeout_start >= options.timeout) {
+			if(new Date().getTime()-timeout_start >= options.timeout) {
 				if(!options.attempts || ++attempts!=options.attempts) {
 					promise.send();
 				}

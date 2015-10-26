@@ -1,4 +1,4 @@
-qwest 2.2.0
+qwest 2.2.1
 ============
 
 Qwest is a simple ajax library based on `promises` and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
@@ -21,7 +21,7 @@ It should work in web workers too, but please not XML response data can't be han
 What's new in 2.1?
 ------------------
 
-A good effort has been made to make qwest usable in any environment, including : the browser, require.js, browserify and web workers. It should work in any other CommonJS loader or even Node.
+A good effort has been made to make qwest usable in any environment, including : the browser, require.js, browserify and web workers. It should work in any other CommonJS loader.
 
 Quick examples
 --------------
@@ -226,9 +226,10 @@ Last notes
 - if the response of your request doesn't return a valid (and recognized) `Content-Type` header, then you __must__ explicitly set the `responseType` option
 - if an error occurs in a `then()` callback, it will be caught by the `catch()` promise
 - the default `Content-Type` header is `application/x-www-form-urlencoded` for `post` and `xhr2` data types, with a `POST` request
-- if you want to set or get raw data, set the related option to `text`
+- if you want to set or get raw data, set `dataType` option to `text`
 - as stated on [StackOverflow](https://stackoverflow.com/questions/8464262/access-is-denied-error-on-xdomainrequest), XDomainRequest forbid HTTPS requests from HTTP scheme and vice versa
 - promises are asynchroneous, even with `sync` requests
+- IE8 only support basic request's methods
 
 License
 -------
