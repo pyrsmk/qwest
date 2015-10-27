@@ -2,7 +2,7 @@
 
 module.exports = function() {
 
-	var global = this,
+	var global = window || this,
 		pinkyswear = require('pinkyswear'),
 		jparam = require('jquery-param'),
 		// Default response type for XDR in auto mode
