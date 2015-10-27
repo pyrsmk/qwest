@@ -18,9 +18,8 @@
 					'qwest': '../qwest.min'
 				}
 			});
-			require(['modernizr.min', 'qwest', 'ready', 'qunit', 'toast'], function(m, qwest, domready, qunit, toast) {
+			require(['modernizr.min', 'qwest', 'qunit', 'toast'], function(m, qwest, qunit, toast) {
 				window.qwest = qwest;
-				window.domready = domready;
 				window.QUnit = qunit;
 				toast('../tests.js');
 			});
