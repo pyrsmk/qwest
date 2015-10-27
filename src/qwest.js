@@ -1,4 +1,4 @@
-/*! qwest 2.2.1 (https://github.com/pyrsmk/qwest) */
+/*! qwest 2.2.2 (https://github.com/pyrsmk/qwest) */
 
 module.exports = function() {
 
