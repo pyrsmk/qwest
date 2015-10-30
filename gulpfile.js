@@ -21,7 +21,7 @@ var name = 'qwest';
 gulp.task('version', function() {
 
 	var streams = merge(),
-		version = fs.readFileSync('./src/'+name+'.js', {encoding: 'utf8'}).match(/^\/\*\! \w+ ([0-9.]+)/)[1];
+		version = fs.readFileSync('./src/'+name+'.js', {encoding: 'utf8'}).match(/^\/\*\! [\w-]+ ([0-9.]+)/)[1];
 
 	streams.add(
 		gulp.src( './package.json' )
