@@ -1,4 +1,4 @@
-/*! qwest 2.2.2 (https://github.com/pyrsmk/qwest) */
+/*! qwest 2.2.3 (https://github.com/pyrsmk/qwest) */
 
 module.exports = function() {
 
@@ -7,6 +7,8 @@ module.exports = function() {
 		jparam = require('jquery-param'),
 		// Default response type for XDR in auto mode
 		defaultXdrResponseType = 'json',
+		// Default data type
+		defaultDataType = 'post',
 		// Variables for limit mechanism
 		limit = null,
 		requests = 0,
@@ -274,7 +276,7 @@ module.exports = function() {
 		// Normalize options
 		options.async = 'async' in options?!!options.async:true;
 		options.cache = 'cache' in options?!!options.cache:false;
-		options.dataType = 'dataType' in options?options.dataType.toLowerCase():'post';
+		options.dataType = 'dataType' in options?options.dataType.toLowerCase():defaultDataType;
 		options.responseType = 'responseType' in options?options.responseType.toLowerCase():'auto';
 		options.user = options.user || '';
 		options.password = options.password || '';
@@ -370,13 +372,14 @@ module.exports = function() {
 			return qwest(type.toUpperCase(), this.base+url, data, options, before);
 		},
 		xhr2: xhr2,
-		// obsolete
 		limit: function(by) {
 			limit = by;
 		},
-		// obsolete
 		setDefaultXdrResponseType: function(type) {
 			defaultXdrResponseType = type.toLowerCase();
+		},
+		setDefaultDataType: function(type) {
+			defaultDataType = type.toLowerCase();
 		}
 	};
 

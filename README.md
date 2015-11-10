@@ -79,6 +79,12 @@ The available `options` are :
 - attempts : the total number of times to attempt the request through timeouts; 1 by default; if you want to remove the limit set it to `null`
 - pinkyswear : override promise methods (experimental)
 
+You can change the default data type with :
+
+```js
+qwest.setDefaultDataType('json');
+```
+
 If you want to make a call with another HTTP method, you can use the `map()` function :
 
 ```js
