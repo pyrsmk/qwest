@@ -14,14 +14,14 @@ var fs = require('fs'),
 	through2 = require('through2'),
 	_ = require('lodash');
 
-var name = 'qwest';
+var name = 'qwest',
+	version = fs.readFileSync('./src/'+name+'.js', {encoding: 'utf8'}).match(/^\/\*\! [\w-]+ ([0-9.]+)/)[1];
 
 // ======================================== gulp version
 
 gulp.task('version', function() {
 
-	var streams = merge(),
-		version = fs.readFileSync('./src/'+name+'.js', {encoding: 'utf8'}).match(/^\/\*\! [\w-]+ ([0-9.]+)/)[1];
+	var streams = merge();
 
 	streams.add(
 		gulp.src( './package.json' )
