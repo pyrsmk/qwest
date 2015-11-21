@@ -160,7 +160,7 @@ If you want to apply some manual options to the `XHR` object, you can use the `b
 
 ```js
 qwest.get('example.com', null, null, function(xhr) {
-		xhr.uploadonprogress = function(e) {
+		xhr.upload.onprogress = function(e) {
 			// Upload in progress
 		};
 	 })
