@@ -227,6 +227,7 @@ qwest.setDefaultXdrResponseType('text');
 Last notes
 ----------
 
+- as stated in a [previous issue](https://github.com/pyrsmk/qwest/issues/90#issuecomment-160496242), under certain circumstances, when dealing with CORS you could need to set `cache` to `true`
 - the `catch` handler will be executed for status codes different from `2xx`; if no data has been received when `catch` is called, `response` will be `null`
 - `auto` mode is only supported for `xml`, `json` and `text` response types; for `arraybuffer`, `blob` and `document` you'll need to define explicitly the `responseType` option
 - if the response of your request doesn't return a valid (and recognized) `Content-Type` header, then you __must__ explicitly set the `responseType` option
