@@ -57,7 +57,10 @@ gulp.task('build', ['version', 'lint'], function() {
 				.pipe( size() )
 				.pipe( through2.obj(function(file, enc, next) {
 		
-					var b = browserify(null, {standalone: name});
+					var b = browserify(null, {
+						standalone: name,
+						insertGlobalVars: {process: false}
+					});
 		
 					(_.keys(require('./package.json').dependencies) || []).forEach(function(name) {
 						b.add(resolve.sync(name, {moduleDirectory: './node_modules/'}));
