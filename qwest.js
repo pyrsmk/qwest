@@ -171,7 +171,7 @@
 
 
 },{}],"qwest":[function(_dereq_,module,exports){
-/*! qwest 2.2.5 (https://github.com/pyrsmk/qwest) */
+/*! qwest 2.2.6 (https://github.com/pyrsmk/qwest) */
 
 module.exports = function() {
 
@@ -318,12 +318,17 @@ module.exports = function() {
 				}
 				// Send request
 				if(xdr) {
-					setTimeout(function(){ // https://developer.mozilla.org/en-US/docs/Web/API/XDomainRequest
-						xhr.send(method!='GET'?data:null);
+					// http://cypressnorth.com/programming/internet-explorer-aborting-ajax-requests-fixed/
+					xhr.onprogress = function(){};
+					xhr.ontimeout = function(){};
+					xhr.onerror = function(){};
+					// https://developer.mozilla.org/en-US/docs/Web/API/XDomainRequest
+					setTimeout(function() {
+						xhr.send(method != 'GET'? data : null);
 					},0);
 				}
 				else {
-					xhr.send(method!='GET'?data:null);
+					xhr.send(method != 'GET' ? data : null);
 				}
 			};
 			return pinky;
