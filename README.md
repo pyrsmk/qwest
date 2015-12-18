@@ -227,6 +227,7 @@ qwest.setDefaultXdrResponseType('text');
 Last notes
 ----------
 
+- Blackberry 10.2.0 (and maybe others) can [log an error saying json is not supported](https://github.com/pyrsmk/qwest/issues/94) : set `responseType` to `auto` to avoid the issue
 - as stated in a [previous issue](https://github.com/pyrsmk/qwest/issues/90#issuecomment-160496242), under certain circumstances, when dealing with CORS you could need to set `cache` to `true`
 - the `catch` handler will be executed for status codes different from `2xx`; if no data has been received when `catch` is called, `response` will be `null`
 - `auto` mode is only supported for `xml`, `json` and `text` response types; for `arraybuffer`, `blob` and `document` you'll need to define explicitly the `responseType` option
