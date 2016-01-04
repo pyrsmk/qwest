@@ -75,7 +75,6 @@ gulp.task('build', ['version', 'lint'], function() {
 		
 				}) )
 				.pipe( derequire() )
-				.pipe( gulp.dest('.') )
 				.pipe( uglify() )
 				.pipe( rename(name+'.min.js') )
 				.pipe( gulp.dest('.') )
