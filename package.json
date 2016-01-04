@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/pyrsmk/qwest.git"
   },
-  "main": "qwest.js",
+  "main": "src/qwest.js",
   "keywords": [
     "ajax",
     "request",
