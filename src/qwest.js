@@ -1,4 +1,4 @@
-/*! qwest 2.2.8 (https://github.com/pyrsmk/qwest) */
+/*! qwest 2.2.9 (https://github.com/pyrsmk/qwest) */
 
 module.exports = function() {
 
@@ -307,7 +307,7 @@ module.exports = function() {
 		}
 		switch(options.dataType) {
 			case 'json':
-				data = JSON.stringify(data);
+				data = (data !== null ? JSON.stringify(data) : data);
 				break;
 			case 'post':
 				data = jparam(data);
