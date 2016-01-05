@@ -254,11 +254,11 @@ QUnit.test('Cache',function(assert){
 	assert.expect(2);
 	var a,b,
 		phase2=function(){
-			qwest.get('../tests/cache/test.php',null,{responseType:'text', cache:true})
+			qwest.get('../tests/cache/test.php', null, {responseType: 'text', cache: true})
 				 .then(function(xhr, response){
 					//console.log(response);
 					b=response;
-					qwest.get('../tests/cache/test.php',null,{responseType: 'text', cache:true})
+					qwest.get('../tests/cache/test.php', null, {responseType: 'text', cache: true})
 						 .then(function(xhr, response){
 							//console.log(response);
 							assert.ok(response==b,'Cached');

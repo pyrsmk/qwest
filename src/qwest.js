@@ -1,4 +1,4 @@
-/*! qwest 2.2.7 (https://github.com/pyrsmk/qwest) */
+/*! qwest 2.2.8 (https://github.com/pyrsmk/qwest) */
 
 module.exports = function() {
 
@@ -50,7 +50,6 @@ module.exports = function() {
 				xml: 'application/xml; q=1.0, text/xml; q=0.8, */*; q=0.1',
 				json: 'application/json; q=1.0, text/*; q=0.8, */*; q=0.1'
 			},
-			vars = '',
 			i, j,
 			serialized,
 			response,
@@ -341,11 +340,8 @@ module.exports = function() {
 		}
 
 		// Prepare URL
-		if(method=='GET' && data) {
-			vars += data;
-		}
-		if(vars) {
-			url += (/\?/.test(url)?'&':'?')+vars;
+		if(method == 'GET' && data && typeof data == 'string') {
+			url += (/\?/.test(url)?'&':'?') + data;
 		}
 
 		// Start the request
