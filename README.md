@@ -1,4 +1,4 @@
-qwest 2.2.9
+qwest 3.0.0
 ============
 
 Qwest is a simple ajax library based on `promises` and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
@@ -6,22 +6,16 @@ Qwest is a simple ajax library based on `promises` and that supports `XmlHttpReq
 Install
 -------
 
-You can pick the minified library or install it with :
-
 ```
 npm install qwest
 bower install qwest
 jam install qwest
 ```
 
-The `qwest.min.js` file has been bundled to work in any environment. But if you don't want to load qwest and its dependencies, you can use `src/qwest.js` as a CommonJS module.
-
-It should work in web workers too, but please not XML response data can't be handled since `DOMParser` is not available on the worker.
-
-What's new in 2.1?
+What's new in 3.0?
 ------------------
 
-A good effort has been made to make qwest usable in any environment, including : the browser, require.js, browserify and web workers. It should work in any other CommonJS loader.
+Not much, but according to the #100 issue, the `error` parameter of the `catch` callback is now the first parameter. We've also updated the documentation about CORS and preflight requests since some users have encounter problems with `OPTIONS` requests. Please read it carefully.
 
 Quick examples
 --------------
@@ -42,7 +36,7 @@ qwest.post('example.com', {
 	 .then(function(xhr, response) {
 		// Make some useful actions
 	 })
-	 .catch(function(xhr, response, e) {
+	 .catch(function(e, xhr, response) {
 		// Process the error
 	 });
 ```
@@ -55,7 +49,7 @@ qwest.`method`(`url`, `data`, `options`, `before`)
 	 .then(function(xhr, response) {
 		// Run when the request is successful
 	 })
-	 .catch(function(xhr, response, e) {
+	 .catch(function(e, xhr, response) {
 		// Process the error
 	 })
 	 .complete(function(xhr, response) {
@@ -153,6 +147,11 @@ $('.gallery').children().forEach(function() {
 
 If you want to remove the limit, set it to `null`.
 
+CORS and preflight requests
+---------------------------
+
+According to #90 and #99, a CORS request will send a preflight `OPTIONS` request to the server to know what is allowed and what's not. It's because we're adding a `Cache-Control` header to handle caching of requests. The simplest way to avoid this `OPTIONS` request is to set `cache` option to `true`. If you want to know more about preflight requests and how to really handle them, read this : https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
+
 Set options to the XHR object
 -----------------------------
 
@@ -228,16 +227,13 @@ Last notes
 ----------
 
 - Blackberry 10.2.0 (and maybe others) can [log an error saying json is not supported](https://github.com/pyrsmk/qwest/issues/94) : set `responseType` to `auto` to avoid the issue
-- as stated in a [previous issue](https://github.com/pyrsmk/qwest/issues/90#issuecomment-160496242), under certain circumstances, when dealing with CORS you could need to set `cache` to `true`
 - the `catch` handler will be executed for status codes different from `2xx`; if no data has been received when `catch` is called, `response` will be `null`
 - `auto` mode is only supported for `xml`, `json` and `text` response types; for `arraybuffer`, `blob` and `document` you'll need to define explicitly the `responseType` option
 - if the response of your request doesn't return a valid (and recognized) `Content-Type` header, then you __must__ explicitly set the `responseType` option
-- if an error occurs in a `then()` callback, it will be caught by the `catch()` promise
-- the default `Content-Type` header is `application/x-www-form-urlencoded` for `post` and `xhr2` data types, with a `POST` request
+- the default `Content-Type` header for a `POST` request is `application/x-www-form-urlencoded`, for `post` and `xhr2` data types
 - if you want to set or get raw data, set `dataType` option to `text`
 - as stated on [StackOverflow](https://stackoverflow.com/questions/8464262/access-is-denied-error-on-xdomainrequest), XDomainRequest forbid HTTPS requests from HTTP scheme and vice versa
-- promises are asynchroneous, even with `sync` requests
-- IE8 only support basic request's methods
+- IE8 only supports basic request methods
 
 License
 -------

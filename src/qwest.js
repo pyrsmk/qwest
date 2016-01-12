@@ -1,4 +1,4 @@
-/*! qwest 2.2.9 (https://github.com/pyrsmk/qwest) */
+/*! qwest 3.0.0 (https://github.com/pyrsmk/qwest) */
 
 module.exports = function() {
 
@@ -173,7 +173,7 @@ module.exports = function() {
 					promise.send();
 				}
 				else {
-					promise(false, [xhr,response,new Error('Timeout ('+url+')')]);
+					promise(false, [new Error('Timeout ('+url+')'), xhr, response]);
 				}
 				return;
 			}
@@ -263,18 +263,18 @@ module.exports = function() {
 					throw xhr.status+' ('+xhr.statusText+')';
 				}
 				// Fulfilled
-				promise(true, [xhr,response]);
+				promise(true, [xhr, response]);
 			}
 			catch(e) {
 				// Rejected
-				promise(false, [xhr,response,e]);
+				promise(false, [e, xhr, response]);
 			}
 		},
 
 		// Handle errors
 		handleError = function(e) {
 			--requests;
-			promise(false, [xhr,null,new Error('Connection aborted')]);
+			promise(false, [new Error('Connection aborted'), xhr, null]);
 		};
 
 		// Normalize options

@@ -28,7 +28,7 @@ QUnit.test('Base URL',function(assert){
 			assert.ok(response.status=='ok');
 			done();
 		 })
-		 ['catch'](function(xhr, response, e){
+		 ['catch'](function(e, xhr, response){
 			assert.ok(false, e);
 			done();
 		 });
@@ -50,7 +50,7 @@ QUnit.test('REST requests (async)',function(assert){
 					}
 				};
 			 }(methods[i].toUpperCase()))
-			 ['catch'](function(xhr, response, e){
+			 ['catch'](function(e, xhr, response){
 				assert.ok(false, e);
 				if(++executed==methods.length){
 					done();
@@ -74,7 +74,7 @@ QUnit.test('REST requests (sync)',function(assert){
 					}
 				};
 			 }(methods[i].toUpperCase()))
-			 ['catch'](function(xhr, response, e){
+			 ['catch'](function(e, xhr, response){
 				assert.ok(false, e);
 				if(++executed==methods.length){
 					done();
@@ -93,7 +93,7 @@ QUnit.test('Map PATCH request (async)',function(assert){
 			assert.ok(response.status=='ok', 'PATCH request');
 			done();
 		 })
-		 ['catch'](function(xhr, response, e){
+		 ['catch'](function(e, xhr, response){
 			assert.ok(false, e);
 			done();
 		 });
@@ -108,7 +108,7 @@ QUnit.test('Map PATCH request (sync)',function(assert){
 			assert.ok(response.status=='ok', 'PATCH request');
 			done();
 		 })
-		 ['catch'](function(xhr, response, e){
+		 ['catch'](function(e, xhr, response){
 			assert.ok(false, e);
 			done();
 		 })
@@ -123,7 +123,7 @@ QUnit.test('Invalid URL', function(assert) {
 			assert.ok(false);
 			done();
 		 })
-		 ['catch'](function(xhr, response, e) {
+		 ['catch'](function(e, xhr, response) {
 			assert.ok(true);
 			done();
 		 });
@@ -143,7 +143,7 @@ QUnit.test('Request limit (async)',function(assert){
 					qwest.limit(null);
 				}
 			 })
-			 ['catch'](function(xhr, response, e){
+			 ['catch'](function(e, xhr, response){
 				assert.ok(false, e);
 				if(++executed==20){
 					done();
@@ -167,7 +167,7 @@ QUnit.test('Request limit (sync)',function(assert){
 					qwest.limit(null);
 				}
 			 })
-			 ['catch'](function(xhr, response, e){
+			 ['catch'](function(e, xhr, response){
 				assert.ok(false, e);
 				if(++executed==20){
 					done();
@@ -190,7 +190,7 @@ QUnit.test('Timeout (async)',function(assert){
 			assert.ok(false,(+new Date-t)+'ms');
 			done();
 		 })
-		 ['catch'](function(xhr, response, e){
+		 ['catch'](function(e, xhr, response){
 			//console.log(message);
 			assert.ok((+new Date-t)>=1000,(+new Date-t)+'ms');
 			done();
@@ -210,7 +210,7 @@ QUnit.test('Timeout (sync)',function(assert){
 			assert.ok(false,(+new Date-t)+'ms');
 			done();
 		 })
-		 ['catch'](function(xhr, response, e){
+		 ['catch'](function(e, xhr, response){
 			//console.log(response);
 			assert.ok((+new Date-t)>=1000,(+new Date-t)+'ms');
 			done();
@@ -226,7 +226,7 @@ QUnit.test('CORS',function(assert){
 			assert.ok(response.status=='ok');
 			done();
 		 })
-		 ['catch'](function(xhr, response, e){
+		 ['catch'](function(e, xhr, response){
 			assert.ok(false, e);
 			done();
 		 });
@@ -243,7 +243,7 @@ QUnit.test('Before',function(assert){
 			assert.ok(response.status=='ok');
 			done();
 		 })
-		 ['catch'](function(xhr, response, e){
+		 ['catch'](function(e, xhr, response){
 			assert.ok(false, e);
 			done();
 		 });
@@ -269,7 +269,7 @@ QUnit.test('Cache',function(assert){
 							done();
 						 });
 				 })
-				 ['catch'](function(xhr, response, e){
+				 ['catch'](function(e, xhr, response){
 					assert.ok(false, e);
 					done();
 				 });
@@ -284,12 +284,12 @@ QUnit.test('Cache',function(assert){
 					assert.ok(response!=a,'Not cached');
 					phase2();
 				 })
-				 ['catch'](function(xhr, response, e){
+				 ['catch'](function(e, xhr, response){
 					assert.ok(false, e);
 					phase2();
 				 });
 		 })
-		 ['catch'](function(xhr, response, e){
+		 ['catch'](function(e, xhr, response){
 			assert.ok(false, e);
 			phase2();
 		 });
@@ -307,7 +307,7 @@ QUnit.test('Authentication',function(assert){
 			assert.ok(response.status=='ok');
 			done();
 		 })
-		 ['catch'](function(xhr, response, e){
+		 ['catch'](function(e, xhr, response){
 			assert.ok(false, e);
 			done();
 		 });
@@ -326,12 +326,12 @@ QUnit.test('Get JSON response',function(assert){
 					assert.ok(response.status=='ok','Auto');
 					done();
 				 })
-				 ['catch'](function(xhr, response, e){
+				 ['catch'](function(e, xhr, response){
 					assert.ok(false, e);
 					done();
 				 });
 		 })
-		 ['catch'](function(xhr, response, e){
+		 ['catch'](function(e, xhr, response){
 			assert.ok(false, e);
 			done();
 		 });
@@ -349,12 +349,12 @@ QUnit.test('Get DOMString response',function(assert){
 					assert.ok(response=='ok','Auto');
 					done();
 				 })
-				 ['catch'](function(xhr, response, e){
+				 ['catch'](function(e, xhr, response){
 					assert.ok(false, e);
 					done();
 				 });
 		 })
-		 ['catch'](function(xhr, response, e){
+		 ['catch'](function(e, xhr, response){
 			assert.ok(false, e);
 			done();
 		 });
@@ -375,12 +375,12 @@ QUnit.test('Get XML response',function(assert){
 					assert.ok((status.textContent || status.text)=='ok','Auto');
 					done();
 				 })
-				 ['catch'](function(xhr, response, e){
+				 ['catch'](function(e, xhr, response){
 					assert.ok(false, e);
 					done();
 				 });
 		 })
-		 ['catch'](function(xhr, response, e){
+		 ['catch'](function(e, xhr, response){
 			assert.ok(false, e);
 			done();
 		 });
@@ -406,7 +406,7 @@ if('ArrayBuffer' in global){
 				);
 				done();
 			 })
-			 ['catch'](function(xhr, response, e){
+			 ['catch'](function(e, xhr, response){
 				assert.ok(false, e);
 				done();
 			 });
@@ -423,7 +423,7 @@ if('Blob' in global){
 				assert.ok(response.size);
 				done();
 			 })
-			 ['catch'](function(xhr, response, e){
+			 ['catch'](function(e, xhr, response){
 				assert.ok(false, e);
 				done();
 			 });
@@ -439,7 +439,7 @@ if(qwest.xhr2 && global.document && 'querySelector' in global.document){
 				assert.ok(response.querySelector('p').innerHTML=='ok');
 				done();
 			 })
-			 ['catch'](function(xhr, response, e){
+			 ['catch'](function(e, xhr, response){
 				assert.ok(false, e);
 				done();
 			 });
@@ -458,7 +458,7 @@ QUnit.test('Send basic POST data',function(assert){
 			assert.ok(response.status=='ok');
 			done();
 		 })
-		 ['catch'](function(xhr, response, e){
+		 ['catch'](function(e, xhr, response){
 			assert.ok(false, e);
 			done();
 		 });
@@ -478,7 +478,7 @@ QUnit.test('Send JSON data',function(assert){
 			assert.ok(response.status=='ok');
 			done();
 		 })
-		 ['catch'](function(xhr, response, e){
+		 ['catch'](function(e, xhr, response){
 			assert.ok(false, e);
 			done();
 		 });
@@ -493,7 +493,7 @@ QUnit.test('Send DOMString data',function(assert){
 			assert.ok(response.status=='ok');
 			done();
 		 })
-		 ['catch'](function(xhr, response, e){
+		 ['catch'](function(e, xhr, response){
 			assert.ok(false, e);
 			done();
 		 });
@@ -512,7 +512,7 @@ if('FormData' in global){
 				assert.ok(response.status=='ok');
 				done();
 			 })
-			 ['catch'](function(xhr, response, e){
+			 ['catch'](function(e, xhr, response){
 				assert.ok(false, e);
 				done();
 			 });
@@ -530,7 +530,7 @@ if('Blob' in global){
 				assert.ok(response.status=='ok');
 				done();
 			 })
-			 ['catch'](function(xhr, response, e){
+			 ['catch'](function(e, xhr, response){
 				assert.ok(false, e);
 				done();
 			 });
@@ -547,7 +547,7 @@ if(qwest.xhr2){
 				assert.ok(response.status=='ok');
 				done();
 			 })
-			 ['catch'](function(xhr, response, e){
+			 ['catch'](function(e, xhr, response){
 				assert.ok(false, e);
 				done();
 			 });
@@ -565,7 +565,7 @@ if('ArrayBuffer' in global){
 				assert.ok(response.status=='ok');
 				done();
 			 })
-			 ['catch'](function(xhr, response, e){
+			 ['catch'](function(e, xhr, response){
 				assert.ok(false, e);
 				done();
 			 });
