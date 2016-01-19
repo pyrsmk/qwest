@@ -15,7 +15,7 @@ jam install qwest
 What's new in 3.0?
 ------------------
 
-Not much, but according to the #100 issue, the `error` parameter of the `catch` callback is now the first parameter. We've also updated the documentation about CORS and preflight requests since some users have encounter problems with `OPTIONS` requests. Please read it carefully.
+Not much, but according to the [#100](https://github.com/pyrsmk/qwest/issues/100) issue, the `error` parameter of the `catch` callback is now the first parameter. We've also updated the documentation about CORS and preflight requests since some users have encounter problems with `OPTIONS` requests. Please read it carefully.
 
 Quick examples
 --------------
@@ -150,7 +150,7 @@ If you want to remove the limit, set it to `null`.
 CORS and preflight requests
 ---------------------------
 
-According to #90 and #99, a CORS request will send a preflight `OPTIONS` request to the server to know what is allowed and what's not. It's because we're adding a `Cache-Control` header to handle caching of requests. The simplest way to avoid this `OPTIONS` request is to set `cache` option to `true`. If you want to know more about preflight requests and how to really handle them, read this : https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
+According to [#90](https://github.com/pyrsmk/qwest/issues/90) and [#99](https://github.com/pyrsmk/qwest/issues/99), a CORS request will send a preflight `OPTIONS` request to the server to know what is allowed and what's not. It's because we're adding a `Cache-Control` header to handle caching of requests. The simplest way to avoid this `OPTIONS` request is to set `cache` option to `true`. If you want to know more about preflight requests and how to really handle them, read this : https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
 
 Set options to the XHR object
 -----------------------------
