@@ -1,9 +1,3 @@
-/*
-	- validation globale (desktop + mobiles)
-	- documentation
-		- on ne peut pas stopper une requete sync puisque c'est du sync
-*/
-
 var global = this,
 	methods = ['get', 'post', 'put', 'delete'],
 	i, j;
