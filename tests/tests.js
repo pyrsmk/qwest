@@ -1,8 +1,7 @@
 /*
-	- abort()
-	- promise.all()
 	- validation globale (desktop + mobiles)
 	- documentation
+		- on ne peut pas stopper une requete sync puisque c'est du sync
 */
 
 var global = this,
@@ -33,7 +32,7 @@ QUnit.test('204 No Content',function(assert) {
 			assert.ok(true);
 			done();
 		 })
-		 .catch(function(e, xhr, response) {
+		 ['catch'](function(e, xhr, response) {
 			assert.ok(false, e);
 			done();
 		 });
@@ -54,6 +53,35 @@ QUnit.test('Base URL',function(assert){
 			done();
 		 });
 	qwest.base = '';
+});
+
+QUnit.test('Aborting a request (async)',function(assert) {
+	var done = assert.async();
+	assert.expect(0);
+	qwest.get('../tests/base/test.php')
+		 .then(function() {
+			assert.ok(false, 'then called');
+			done();
+		 })
+		 ['catch'](function() {
+			assert.ok(false, 'catch called');
+			done();
+		 })
+		 .abort();
+	done();
+});
+
+QUnit.test('Promises.all() implementation',function(assert) {
+	var done = assert.async();
+	assert.expect(1);
+	qwest.get('../tests/promises/test.php')
+		 .post('../tests/promises/test.php')
+		 .put('../tests/promises/test.php')
+		 ['delete']('../tests/promises/test.php')
+		 .then(function(values) {
+			assert.ok(values.length == 4, values.length + ' value stack passed');
+			done();
+		 });
 });
 
 QUnit.test('REST requests (async)',function(assert){
@@ -88,7 +116,6 @@ QUnit.test('REST requests (sync)',function(assert){
 		qwest[methods[i]]('../tests/async/test.php?method='+methods[i].toUpperCase(),null,{async:false})
 			 .then(function(method){
 				return function(xhr, response) {
-					console.log('pwet');
 					//console.log(response.debug);
 					assert.ok(response.status=='ok', method+' request');
 					if(++executed==methods.length){

@@ -58,6 +58,13 @@ module.exports = function() {
 
 		// Create the promise
 		promise = pinkyswear(function(pinky) {
+			pinky.abort = function() {
+				if(xhr) {
+					xhr.abort();
+					--requests;
+					aborted = true;
+				}
+			};
 			pinky.send = function() {
 				// Prevent further send() calls
 				if(sending) {
@@ -355,10 +362,10 @@ module.exports = function() {
 				var createMethod = function(method) {
 					return function(url, data, options, before) {
 						++loading;
-						promises.push(qwest(method, pinky.base + url, data, options, before).then(function() {
+						promises.push(qwest(method, pinky.base + url, data, options, before).then(function(xhr, response) {
 							values.push(arguments);
 							if(!--loading) {
-								pinky(true, values.length == 1 ? values[0] : values);
+								pinky(true, values.length == 1 ? values[0] : [values]);
 							}
 						}, function() {
 							pinky(false, arguments);
@@ -385,6 +392,12 @@ module.exports = function() {
 				pinky.send = function() {
 					for(var i=0, j=promises.length; i<j; ++i) {
 						promises[i].send();
+					}
+					return pinky;
+				};
+				pinky.abort = function() {
+					for(var i=0, j=promises.length; i<j; ++i) {
+						promises[i].abort();
 					}
 					return pinky;
 				};
