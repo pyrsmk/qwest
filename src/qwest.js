@@ -71,6 +71,16 @@ module.exports = function() {
 					pinky[i] = options.pinkyswear[i];
 				}
 			}
+
+			pinky.abort = function () {
+				if (xhr) {
+					xhr.abort();
+					requests -= 1;
+					aborted = true;
+					return true;
+				}
+			};
+
 			pinky.send = function() {
 				// Prevent further send() calls
 				if(sending) {
