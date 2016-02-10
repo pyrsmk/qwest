@@ -51,9 +51,6 @@ qwest.`method`(`url`, `data`, `options`, `before`)
 	 })
 	 .catch(function(e, xhr, response) {
 		// Process the error
-	 })
-	 .complete(function(xhr, response) {
-		// Always run
 	 });
 ```
 

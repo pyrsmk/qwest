@@ -1,4 +1,4 @@
-/*! qwest 3.0.0 (https://github.com/pyrsmk/qwest) */
+/*! qwest 4.0.0 (https://github.com/pyrsmk/qwest) */
 
 module.exports = function() {
 
@@ -62,8 +62,13 @@ module.exports = function() {
 			pinky['catch'] = function(f) {
 				return pinky.then(null, f);
 			};
-			pinky.complete = function(f) {
-				return pinky.then(f, f);
+			pinky.abort = function () {
+				if(xhr) {
+					xhr.abort();
+					requests -= 1;
+					aborted = true;
+					return true;
+				}
 			};
 			// Override
 			if('pinkyswear' in options) {
@@ -71,16 +76,6 @@ module.exports = function() {
 					pinky[i] = options.pinkyswear[i];
 				}
 			}
-
-			pinky.abort = function () {
-				if (xhr) {
-					xhr.abort();
-					requests -= 1;
-					aborted = true;
-					return true;
-				}
-			};
-
 			pinky.send = function() {
 				// Prevent further send() calls
 				if(sending) {
