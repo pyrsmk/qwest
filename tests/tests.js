@@ -1,3 +1,10 @@
+/*
+	- abort()
+	- promise.all()
+	- validation globale (desktop + mobiles)
+	- documentation
+*/
+
 var global = this,
 	methods = ['get', 'post', 'put', 'delete'],
 	i, j;
@@ -16,6 +23,20 @@ QUnit.test('Qwest object',function(assert) {
 QUnit.test('XHR2',function(assert) {
 	assert.expect(1);
 	assert.ok(Modernizr.xhr2 == qwest.xhr2);
+});
+
+QUnit.test('204 No Content',function(assert) {
+	var done = assert.async();
+	assert.expect(1);
+	qwest.get('../tests/204/test.php')
+		 .then(function(xhr, response) {
+			assert.ok(true);
+			done();
+		 })
+		 .catch(function(e, xhr, response) {
+			assert.ok(false, e);
+			done();
+		 });
 });
 
 QUnit.test('Base URL',function(assert){
@@ -67,6 +88,7 @@ QUnit.test('REST requests (sync)',function(assert){
 		qwest[methods[i]]('../tests/async/test.php?method='+methods[i].toUpperCase(),null,{async:false})
 			 .then(function(method){
 				return function(xhr, response) {
+					console.log('pwet');
 					//console.log(response.debug);
 					assert.ok(response.status=='ok', method+' request');
 					if(++executed==methods.length){
