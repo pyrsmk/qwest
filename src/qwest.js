@@ -434,7 +434,7 @@ module.exports = function() {
 				defaultDataType = type.toLowerCase();
 				return q;
 			},
-			openRequests: function() {
+			getOpenRequests: function() {
 				return requests;
 			}
 		};
