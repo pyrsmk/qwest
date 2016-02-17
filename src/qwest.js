@@ -433,6 +433,9 @@ module.exports = function() {
 			setDefaultDataType: function(type) {
 				defaultDataType = type.toLowerCase();
 				return q;
+			},
+			getOpenRequests: function() {
+				return requests;
 			}
 		};
 	
