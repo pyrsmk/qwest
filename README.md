@@ -1,4 +1,4 @@
-qwest 4.1.1
+qwest 4.2.0
 ============
 
 Qwest is a simple ajax library based on `promises` and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
@@ -94,6 +94,18 @@ qwest.get('example.com', {async: false})
 	 	// Blah blah
 	 })
 	 .send();
+```
+
+Since service APIs often need the same type of request, you can set default options for all of your requests with :
+
+```js
+qwest.setDefaultOptions({
+	dataType: 'arraybuffer',
+	responseType: 'json',
+	headers: {
+		'My-Header': 'Some-Value'
+	}
+});
 ```
 
 Group requests

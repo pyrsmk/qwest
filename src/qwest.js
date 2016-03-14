@@ -1,10 +1,11 @@
-/*! qwest 4.1.1 (https://github.com/pyrsmk/qwest) */
+/*! qwest 4.2.0 (https://github.com/pyrsmk/qwest) */
 
 module.exports = function() {
 
 	var global = window || this,
 		pinkyswear = require('pinkyswear'),
 		jparam = require('jquery-param'),
+		defaultOptions = {},
 		// Default response type for XDR in auto mode
 		defaultXdrResponseType = 'json',
 		// Default data type
@@ -28,6 +29,11 @@ module.exports = function() {
 		method = method.toUpperCase();
 		data = data || null;
 		options = options || {};
+		for(var name in defaultOptions) {
+			if(!(name in options)) {
+				options[name] = defaultOptions[name];
+			}
+		}
 
 		// Define variables
 		var nativeResponseParsing = false,
@@ -421,6 +427,10 @@ module.exports = function() {
 			xhr2: xhr2,
 			limit: function(by) {
 				limit = by;
+				return q;
+			},
+			setDefaultOptions: function(options) {
+				defaultOptions = options;
 				return q;
 			},
 			setDefaultXdrResponseType: function(type) {
