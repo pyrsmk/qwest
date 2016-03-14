@@ -42,7 +42,8 @@ module.exports = function() {
 				text: '*/*',
 				xml: 'text/xml',
 				json: 'application/json',
-				post: 'application/x-www-form-urlencoded'
+				post: 'application/x-www-form-urlencoded',
+				document: 'text/html'
 			},
 			accept = {
 				text: '*/*',
@@ -109,10 +110,10 @@ module.exports = function() {
 					}
 				}
 				// Verify if the response type is supported by the current browser
-				if(xhr2 && options.responseType != 'document' && options.responseType!='auto') { // Don't verify for 'document' since we're using an internal routine
+				if(xhr2 && options.responseType!='auto') {
 					try {
 						xhr.responseType = options.responseType;
-						nativeResponseParsing = (xhr.responseType==options.responseType);
+						nativeResponseParsing = (xhr.responseType == options.responseType);
 					}
 					catch(e){}
 				}
@@ -180,16 +181,6 @@ module.exports = function() {
 				// Process response
 				if(nativeResponseParsing && 'response' in xhr && xhr.response!==null) {
 					response = xhr.response;
-				}
-				else if(options.responseType == 'document') {
-					var frame = document.createElement('iframe');
-					frame.style.display = 'none';
-					document.body.appendChild(frame);
-					frame.contentDocument.open();
-					frame.contentDocument.write(xhr.response);
-					frame.contentDocument.close();
-					response = frame.contentDocument;
-					document.body.removeChild(frame);
 				}
 				else{
 					// Guess response type
@@ -301,12 +292,14 @@ module.exports = function() {
 		else if('FormData' in global && data instanceof FormData) {
 			options.dataType = 'formdata';
 		}
-		switch(options.dataType) {
-			case 'json':
-				data = (data !== null ? JSON.stringify(data) : data);
-				break;
-			case 'post':
-				data = jparam(data);
+		if(data !== null) {
+			switch(options.dataType) {
+				case 'json':
+					data = JSON.stringify(data);
+					break;
+				case 'post':
+					data = jparam(data);
+			}
 		}
 
 		// Prepare headers
