@@ -359,20 +359,22 @@ module.exports = function() {
 			// Create a new promise to handle all requests
 			return pinkyswear(function(pinky) {
 				// Basic request method
-				var createMethod = function(method) {
-					return function(url, data, options, before) {
-						++loading;
-						promises.push(qwest(method, pinky.base + url, data, options, before).then(function(xhr, response) {
-							values.push(arguments);
-							if(!--loading) {
-								pinky(true, values.length == 1 ? values[0] : [values]);
-							}
-						}, function() {
-							pinky(false, arguments);
-						}));
-						return pinky;
+				var method_index = -1,
+					createMethod = function(method) {
+						return function(url, data, options, before) {
+							var index = ++method_index;
+							++loading;
+							promises.push(qwest(method, pinky.base + url, data, options, before).then(function(xhr, response) {
+								values[index] = arguments;
+								if(!--loading) {
+									pinky(true, values.length == 1 ? values[0] : [values]);
+								}
+							}, function() {
+								pinky(false, arguments);
+							}));
+							return pinky;
+						};
 					};
-				};
 				// Define external API
 				pinky.get = createMethod('GET');
 				pinky.post = createMethod('POST');
@@ -384,11 +386,13 @@ module.exports = function() {
 				pinky.map = function(type, url, data, options, before) {
 					return createMethod(type.toUpperCase()).call(this, url, data, options, before);
 				};
+				// Populate methods from external object
 				for(var prop in q) {
 					if(!(prop in pinky)) {
 						pinky[prop] = q[prop];
 					}
 				}
+				// Set last methods
 				pinky.send = function() {
 					for(var i=0, j=promises.length; i<j; ++i) {
 						promises[i].send();

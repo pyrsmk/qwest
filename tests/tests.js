@@ -67,13 +67,14 @@ QUnit.test('Aborting a request (async)',function(assert) {
 
 QUnit.test('Promises.all() implementation',function(assert) {
 	var done = assert.async();
-	assert.expect(1);
+	assert.expect(2);
 	qwest.get('../tests/promises/test.php')
 		 .post('../tests/promises/test.php')
 		 .put('../tests/promises/test.php')
 		 ['delete']('../tests/promises/test.php')
 		 .then(function(values) {
 			assert.ok(values.length == 4, values.length + ' value stack passed');
+			assert.ok(values[0][1].response == 'GET' && values[1][1].response == 'POST' && values[2][1].response == 'PUT' && values[3][1].response == 'DELETE', 'ordered values');
 			done();
 		 });
 });
