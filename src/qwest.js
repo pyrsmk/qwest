@@ -1,4 +1,4 @@
-/*! qwest 4.2.0 (https://github.com/pyrsmk/qwest) */
+/*! qwest 4.2.1 (https://github.com/pyrsmk/qwest) */
 
 module.exports = function() {
 
@@ -31,7 +31,14 @@ module.exports = function() {
 		options = options || {};
 		for(var name in defaultOptions) {
 			if(!(name in options)) {
-				options[name] = defaultOptions[name];
+				if(typeof defaultOptions[name] == 'object' && typeof options[name] == 'object') {
+					for(var name2 in defaultOptions[name]) {
+						options[name][name2] = defaultOptions[name][name2];
+					}
+				}
+				else {
+					options[name] = defaultOptions[name];
+				}
 			}
 		}
 
