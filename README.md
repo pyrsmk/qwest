@@ -18,6 +18,7 @@ What's new in 4.0?
 - call `abort()` to abort an async request
 - group requests
 - `complete()` has been removed
+- add `setDefaultOptions()`
 
 Quick examples
 --------------
