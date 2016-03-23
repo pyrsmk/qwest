@@ -1,4 +1,4 @@
-qwest 4.2.1
+qwest 4.3.0
 ============
 
 Qwest is a simple ajax library based on `promises` and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
@@ -19,6 +19,7 @@ What's new in 4.0?
 - group requests
 - `complete()` has been removed
 - add `setDefaultOptions()`
+- restore `complete()` promise
 
 Quick examples
 --------------
@@ -54,6 +55,9 @@ qwest.`method`(`url`, `data`, `options`, `before`)
 	 })
 	 .catch(function(e, xhr, response) {
 		// Process the error
+	 })
+	 .complete(function() {
+	 	// Always run
 	 });
 ```
 

@@ -1,4 +1,4 @@
-/*! qwest 4.2.1 (https://github.com/pyrsmk/qwest) */
+/*! qwest 4.3.0 (https://github.com/pyrsmk/qwest) */
 
 module.exports = function() {
 
@@ -388,6 +388,12 @@ module.exports = function() {
 				pinky['delete'] = createMethod('DELETE');
 				pinky['catch'] = function(f) {
 					return pinky.then(null, f);
+				};
+				pinky.complete = function(f) {
+					var func = function() {
+						f(); // otherwise arguments will be passed to the callback
+					};
+					return pinky.then(func, func);
 				};
 				pinky.map = function(type, url, data, options, before) {
 					return createMethod(type.toUpperCase()).call(this, url, data, options, before);

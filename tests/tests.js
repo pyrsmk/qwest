@@ -32,6 +32,17 @@ QUnit.test('204 No Content',function(assert) {
 		 });
 });
 
+QUnit.test('Complete() promise',function(assert) {
+	var done = assert.async();
+	assert.expect(2);
+	qwest.get('../tests/base/test.php')
+		 .complete(function() {
+			assert.ok(true, 'complete called');
+			assert.ok(!arguments.length, 'no argument passed');
+			done();
+		});
+});
+
 QUnit.test('Base URL',function(assert){
 	var done = assert.async();
 	assert.expect(1);
