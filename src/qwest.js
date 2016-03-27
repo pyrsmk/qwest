@@ -1,4 +1,4 @@
-/*! qwest 4.3.0 (https://github.com/pyrsmk/qwest) */
+/*! qwest 4.3.1 (https://github.com/pyrsmk/qwest) */
 
 module.exports = function() {
 
@@ -89,6 +89,14 @@ module.exports = function() {
 					request_stack.push(pinky);
 					return;
 				}
+				// Verify if the request has not been previously aborted
+				if(aborted) {
+					if(request_stack.length) {
+						request_stack.shift().send();
+					}
+					return;
+				}
+				// The sending is running
 				++requests;
 				sending = true;
 				// Start the chrono
