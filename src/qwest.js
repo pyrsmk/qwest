@@ -1,4 +1,4 @@
-/*! qwest 4.3.1 (https://github.com/pyrsmk/qwest) */
+/*! qwest 4.3.2 (https://github.com/pyrsmk/qwest) */
 
 module.exports = function() {
 
@@ -75,8 +75,8 @@ module.exports = function() {
 			pinky.abort = function() {
 				if(xhr) {
 					xhr.abort();
-					--requests;
 					aborted = true;
+					--requests;
 				}
 			};
 			pinky.send = function() {
@@ -180,8 +180,17 @@ module.exports = function() {
 		handleResponse = function() {
 			// Prepare
 			var i, responseType;
-			--requests;
 			sending = false;
+			// Launch next stacked request
+			if(request_stack.length) {
+				request_stack.shift().send();
+			}
+			// Verify if the request has not been previously aborted
+			if(aborted) {
+				return;
+			}
+			// Decrease number of requests
+			--requests;
 			// Verify timeout state
 			// --- https://stackoverflow.com/questions/7287706/ie-9-javascript-error-c00c023f
 			if(new Date().getTime()-timeout_start >= options.timeout) {
@@ -192,10 +201,6 @@ module.exports = function() {
 					promise(false, [new Error('Timeout ('+url+')'), xhr, response]);
 				}
 				return;
-			}
-			// Launch next stacked request
-			if(request_stack.length) {
-				request_stack.shift().send();
 			}
 			// Handle response
 			try{
@@ -281,8 +286,10 @@ module.exports = function() {
 
 		// Handle errors
 		handleError = function(e) {
-			--requests;
-			promise(false, [new Error('Connection aborted'), xhr, null]);
+			if(!aborted) {
+				--requests;
+				promise(false, [new Error('Connection aborted'), xhr, null]);
+			}
 		};
 
 		// Normalize options
