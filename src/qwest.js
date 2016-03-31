@@ -112,6 +112,10 @@ module.exports = function() {
 						}
 					}
 				}
+				// Set timeout 
+				if(xhr2 || xdr) {
+					xhr.timeout = options.timeout;
+				}
 				// Open connection
 				if(xdr) {
 					xhr.open(method, url);
@@ -142,10 +146,16 @@ module.exports = function() {
 				if(xhr2 || xdr) {
 					xhr.onload = handleResponse;
 					xhr.onerror = handleError;
+					xhr.ontimeout = handleError;
 				}
 				else {
+					var timeout = setTimeout(function() {
+						xmlhttp.abort();
+						handleError(new Error('Timeout ('+url+')'));
+					}, options.timeout);
 					xhr.onreadystatechange = function() {
 						if(xhr.readyState == 4) {
+							clearTimeout(timeout);
 							handleResponse();
 						}
 					};
