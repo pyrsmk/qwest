@@ -150,7 +150,7 @@ module.exports = function() {
 				}
 				else {
 					var timeout = setTimeout(function() {
-						xmlhttp.abort();
+						xhr.abort();
 						handleError(new Error('Timeout ('+url+')'));
 					}, options.timeout);
 					xhr.onreadystatechange = function() {
