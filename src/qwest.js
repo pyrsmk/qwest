@@ -151,7 +151,7 @@ module.exports = function() {
 				else {
 					var timeout = setTimeout(function() {
 						xhr.abort();
-						handleError(new Error('Timeout ('+url+')'));
+						handleError(new Error('Timeout (' + url + ')'));
 					}, options.timeout);
 					xhr.onreadystatechange = function() {
 						if(xhr.readyState == 4) {
@@ -247,7 +247,7 @@ module.exports = function() {
 										response = JSON.parse(xhr.responseText);
 									}
 									else {
-										response = eval('('+xhr.responseText+')');
+										response = new Function('return (' + xhr.responseText + ')')();
 									}
 								}
 								catch(e) {
