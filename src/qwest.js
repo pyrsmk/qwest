@@ -47,7 +47,6 @@ module.exports = function() {
 			crossOrigin,
 			xhr,
 			xdr = false,
-			timeoutInterval,
 			aborted = false,
 			attempts = 0,
 			headers = {},
@@ -64,11 +63,8 @@ module.exports = function() {
 				json: 'application/json; q=1.0, text/*; q=0.8, */*; q=0.1'
 			},
 			i, j,
-			serialized,
 			response,
 			sending = false,
-			delayed = false,
-			timeout_start,
 
 		// Create the promise
 		promise = pinkyswear(function(pinky) {
@@ -99,22 +95,16 @@ module.exports = function() {
 				// The sending is running
 				++requests;
 				sending = true;
-				// Start the chrono
-				timeout_start = new Date().getTime();
 				// Get XHR object
 				xhr = getXHR();
 				if(crossOrigin) {
 					if(!('withCredentials' in xhr) && global.XDomainRequest) {
 						xhr = new XDomainRequest(); // CORS with IE8/9
 						xdr = true;
-						if(method!='GET' && method!='POST') {
+						if(method != 'GET' && method != 'POST') {
 							method = 'POST';
 						}
 					}
-				}
-				// Set timeout 
-				if(xhr2 || xdr) {
-					xhr.timeout = options.timeout;
 				}
 				// Open connection
 				if(xdr) {
@@ -135,24 +125,24 @@ module.exports = function() {
 					}
 				}
 				// Verify if the response type is supported by the current browser
-				if(xhr2 && options.responseType!='auto') {
+				if(xhr2 && options.responseType != 'auto') {
 					try {
 						xhr.responseType = options.responseType;
 						nativeResponseParsing = (xhr.responseType == options.responseType);
 					}
-					catch(e){}
+					catch(e) {}
 				}
 				// Plug response handler
 				if(xhr2 || xdr) {
 					xhr.onload = handleResponse;
 					xhr.onerror = handleError;
-					xhr.ontimeout = handleError;
+					if(options.async) {
+						xhr.timeout = options.timeout;
+						xhr.ontimeout = handleTimeout;
+					}
 				}
 				else {
-					var timeout = setTimeout(function() {
-						xhr.abort();
-						handleError(new Error('Timeout (' + url + ')'));
-					}, options.timeout);
+					var timeout = setTimeout(handleTimeout, options.timeout);
 					xhr.onreadystatechange = function() {
 						if(xhr.readyState == 4) {
 							clearTimeout(timeout);
@@ -171,9 +161,9 @@ module.exports = function() {
 				// Send request
 				if(xdr) {
 					// http://cypressnorth.com/programming/internet-explorer-aborting-ajax-requests-fixed/
-					xhr.onprogress = function(){};
-					xhr.ontimeout = function(){};
-					xhr.onerror = function(){};
+					xhr.onprogress = function() {};
+					xhr.ontimeout = function() {};
+					xhr.onerror = function() {};
 					// https://developer.mozilla.org/en-US/docs/Web/API/XDomainRequest
 					setTimeout(function() {
 						xhr.send(method != 'GET'? data : null);
@@ -199,23 +189,12 @@ module.exports = function() {
 			if(aborted) {
 				return;
 			}
-			// Decrease number of requests
+			// Decrease the number of requests
 			--requests;
-			// Verify timeout state
-			// --- https://stackoverflow.com/questions/7287706/ie-9-javascript-error-c00c023f
-			if(new Date().getTime()-timeout_start >= options.timeout) {
-				if(!options.attempts || ++attempts!=options.attempts) {
-					promise.send();
-				}
-				else {
-					promise(false, [new Error('Timeout ('+url+')'), xhr, response]);
-				}
-				return;
-			}
 			// Handle response
 			try{
 				// Process response
-				if(nativeResponseParsing && 'response' in xhr && xhr.response!==null) {
+				if(nativeResponseParsing && 'response' in xhr && xhr.response !== null) {
 					response = xhr.response;
 				}
 				else{
@@ -230,7 +209,7 @@ module.exports = function() {
 							if(ct.indexOf(mimeTypes.json)>-1) {
 								responseType = 'json';
 							}
-							else if(ct.indexOf(mimeTypes.xml)>-1) {
+							else if(ct.indexOf(mimeTypes.xml) > -1) {
 								responseType = 'xml';
 							}
 							else {
@@ -283,7 +262,7 @@ module.exports = function() {
 				// Late status code verification to allow passing data when, per example, a 409 is returned
 				// --- https://stackoverflow.com/questions/10046972/msie-returns-status-code-of-1223-for-ajax-request
 				if('status' in xhr && !/^2|1223/.test(xhr.status)) {
-					throw xhr.status+' ('+xhr.statusText+')';
+					throw xhr.status + ' (' + xhr.statusText + ')';
 				}
 				// Fulfilled
 				promise(true, [xhr, response]);
@@ -295,27 +274,38 @@ module.exports = function() {
 		},
 
 		// Handle errors
-		handleError = function(e) {
-			if(!aborted) {
-				--requests;
-				promise(false, [new Error('Connection aborted'), xhr, null]);
+		handleError = function(message) {
+			message = typeof message == 'string' ? message : 'Connection aborted';
+			promise.abort();
+			promise(false, [new Error(message), xhr, null]);
+		},
+			
+		// Handle timeouts
+		handleTimeout = function() {
+			if(!options.attempts || ++attempts != options.attempts) {
+				xhr.abort();
+				sending = false;
+				promise.send();
+			}
+			else {
+				handleError('Timeout (' + url + ')');
 			}
 		};
 
 		// Normalize options
-		options.async = 'async' in options?!!options.async:true;
-		options.cache = 'cache' in options?!!options.cache:false;
-		options.dataType = 'dataType' in options?options.dataType.toLowerCase():defaultDataType;
-		options.responseType = 'responseType' in options?options.responseType.toLowerCase():'auto';
+		options.async = 'async' in options ? !!options.async : true;
+		options.cache = 'cache' in options ? !!options.cache : false;
+		options.dataType = 'dataType' in options ? options.dataType.toLowerCase() : defaultDataType;
+		options.responseType = 'responseType' in options ? options.responseType.toLowerCase() : 'auto';
 		options.user = options.user || '';
 		options.password = options.password || '';
 		options.withCredentials = !!options.withCredentials;
-		options.timeout = 'timeout' in options?parseInt(options.timeout,10):30000;
-		options.attempts = 'attempts' in options?parseInt(options.attempts,10):1;
+		options.timeout = 'timeout' in options ? parseInt(options.timeout, 10) : 30000;
+		options.attempts = 'attempts' in options ? parseInt(options.attempts, 10) : 1;
 
 		// Guess if we're dealing with a cross-origin request
 		i = url.match(/\/\/(.+?)\//);
-		crossOrigin = i && (i[1]?i[1]!=location.host:false);
+		crossOrigin = i && (i[1] ? i[1] != location.host : false);
 
 		// Prepare data
 		if('ArrayBuffer' in global && data instanceof ArrayBuffer) {
@@ -357,7 +347,7 @@ module.exports = function() {
 			}
 		}
 		if(!headers.Accept) {
-			headers.Accept = (options.responseType in accept)?accept[options.responseType]:'*/*';
+			headers.Accept = (options.responseType in accept) ? accept[options.responseType] : '*/*';
 		}
 		if(!crossOrigin && !('X-Requested-With' in headers)) { // (that header breaks in legacy browsers with CORS)
 			headers['X-Requested-With'] = 'XMLHttpRequest';

@@ -2,11 +2,11 @@ var global = this,
 	methods = ['get', 'post', 'put', 'delete'],
 	i, j;
 
-if(!String.prototype.trim) {
+/*if(!String.prototype.trim) {
 	String.prototype.trim = function(){
 		return global.replace(/^\s+|\s+$/g, '');
 	};
-}
+}*/
 
 QUnit.test('Qwest object',function(assert) {
 	assert.expect(1);
@@ -238,7 +238,7 @@ QUnit.test('Timeout (async)',function(assert){
 	assert.expect(1);
 	var t=+new Date;
 	qwest.get('../tests/timeout/test.php',null,{
-			timeout: 250,
+			timeout: 260,
 			attempts: 4
 		 })
 		 .then(function(xhr, response){
@@ -250,27 +250,6 @@ QUnit.test('Timeout (async)',function(assert){
 			assert.ok((+new Date-t)>=1000,(+new Date-t)+'ms');
 			done();
 		 });
-});
-
-QUnit.test('Timeout (sync)',function(assert){
-	var done = assert.async();
-	assert.expect(1);
-	var t=+new Date;
-	qwest.get('../tests/timeout/test.php',null,{
-			timeout: 250,
-			attempts: 4,
-			async: false
-		 })
-		 .then(function(xhr, response){
-			assert.ok(false,(+new Date-t)+'ms');
-			done();
-		 })
-		 ['catch'](function(e, xhr, response){
-			//console.log(response);
-			assert.ok((+new Date-t)>=1000,(+new Date-t)+'ms');
-			done();
-		 })
-		 .send();
 });
 
 QUnit.test('CORS',function(assert){

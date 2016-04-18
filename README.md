@@ -73,7 +73,7 @@ The available `options` are :
 - password : the password to access to the URL, if needed
 - headers : javascript object containing headers to be sent
 - withCredentials : `false` by default; sends [credentials](http://www.w3.org/TR/XMLHttpRequest2/#user-credentials) with your XHR2 request ([more info in that post](https://dev.opera.com/articles/xhr2/#xhrcredentials))
-- timeout : the timeout for the request in ms; `30000` by default
+- timeout : the timeout for the request in ms; `30000` by default (allowed only in async mode)
 - attempts : the total number of times to attempt the request through timeouts; 1 by default; if you want to remove the limit set it to `null`
 
 You can change the default data type with :
