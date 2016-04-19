@@ -1,4 +1,4 @@
-/*! qwest 4.3.2 (https://github.com/pyrsmk/qwest) */
+/*! qwest 4.4.0 (https://github.com/pyrsmk/qwest) */
 
 module.exports = function() {
 
@@ -47,6 +47,7 @@ module.exports = function() {
 			crossOrigin,
 			xhr,
 			xdr = false,
+			timeout,
 			aborted = false,
 			attempts = 0,
 			headers = {},
@@ -69,11 +70,12 @@ module.exports = function() {
 		// Create the promise
 		promise = pinkyswear(function(pinky) {
 			pinky.abort = function() {
-				if(xhr) {
+				if(!sending) { // https://stackoverflow.com/questions/7287706/ie-9-javascript-error-c00c023f
 					xhr.abort();
-					aborted = true;
-					--requests;
 				}
+				aborted = true;
+				sending = false;
+				--requests;
 			};
 			pinky.send = function() {
 				// Prevent further send() calls
@@ -136,19 +138,31 @@ module.exports = function() {
 				if(xhr2 || xdr) {
 					xhr.onload = handleResponse;
 					xhr.onerror = handleError;
-					if(options.async) {
-						xhr.timeout = options.timeout;
-						xhr.ontimeout = handleTimeout;
+					// http://cypressnorth.com/programming/internet-explorer-aborting-ajax-requests-fixed/
+					if(xdr) {
+						xhr.onprogress = function() {};
 					}
 				}
 				else {
-					var timeout = setTimeout(handleTimeout, options.timeout);
 					xhr.onreadystatechange = function() {
 						if(xhr.readyState == 4) {
-							clearTimeout(timeout);
 							handleResponse();
 						}
 					};
+				}
+				// Plug timeout
+				if(options.async) {
+					if('timeout' in xhr) {
+						xhr.timeout = options.timeout;
+						xhr.ontimeout = handleTimeout;
+					}
+					else {
+						timeout = setTimeout(handleTimeout, options.timeout);
+					}
+				}
+				// http://cypressnorth.com/programming/internet-explorer-aborting-ajax-requests-fixed/
+				else if(xdr) {
+					xhr.ontimeout = function() {};
 				}
 				// Override mime type to ensure the response is well parsed
 				if(options.responseType != 'auto' && 'overrideMimeType' in xhr) {
@@ -160,10 +174,6 @@ module.exports = function() {
 				}
 				// Send request
 				if(xdr) {
-					// http://cypressnorth.com/programming/internet-explorer-aborting-ajax-requests-fixed/
-					xhr.onprogress = function() {};
-					xhr.ontimeout = function() {};
-					xhr.onerror = function() {};
 					// https://developer.mozilla.org/en-US/docs/Web/API/XDomainRequest
 					setTimeout(function() {
 						xhr.send(method != 'GET'? data : null);
@@ -178,9 +188,10 @@ module.exports = function() {
 
 		// Handle the response
 		handleResponse = function() {
-			// Prepare
 			var i, responseType;
+			// Stop sending state
 			sending = false;
+			clearTimeout(timeout);
 			// Launch next stacked request
 			if(request_stack.length) {
 				request_stack.shift().send();
@@ -275,20 +286,24 @@ module.exports = function() {
 
 		// Handle errors
 		handleError = function(message) {
-			message = typeof message == 'string' ? message : 'Connection aborted';
-			promise.abort();
-			promise(false, [new Error(message), xhr, null]);
+			if(!aborted) {
+				message = typeof message == 'string' ? message : 'Connection aborted';
+				promise.abort();
+				promise(false, [new Error(message), xhr, null]);
+			}
 		},
 			
 		// Handle timeouts
 		handleTimeout = function() {
-			if(!options.attempts || ++attempts != options.attempts) {
-				xhr.abort();
-				sending = false;
-				promise.send();
-			}
-			else {
-				handleError('Timeout (' + url + ')');
+			if(!aborted) {
+				if(!options.attempts || ++attempts != options.attempts) {
+					xhr.abort();
+					sending = false;
+					promise.send();
+				}
+				else {
+					handleError('Timeout (' + url + ')');
+				}
 			}
 		};
 

@@ -2,12 +2,6 @@ var global = this,
 	methods = ['get', 'post', 'put', 'delete'],
 	i, j;
 
-/*if(!String.prototype.trim) {
-	String.prototype.trim = function(){
-		return global.replace(/^\s+|\s+$/g, '');
-	};
-}*/
-
 QUnit.test('Qwest object',function(assert) {
 	assert.expect(1);
 	assert.ok(typeof qwest == 'object', 'is '+(typeof qwest));
@@ -64,11 +58,13 @@ QUnit.test('Aborting a request (async)',function(assert) {
 	var done = assert.async();
 	assert.expect(0);
 	qwest.get('../tests/base/test.php')
-		 .then(function() {
+		 .then(function(xhr, response) {
+			console.log(response);
 			assert.ok(false, 'then called');
 			done();
 		 })
-		 ['catch'](function() {
+		 ['catch'](function(e, xhr, response) {
+			console.log(e.message);
 			assert.ok(false, 'catch called');
 			done();
 		 })
@@ -242,7 +238,7 @@ QUnit.test('Timeout (async)',function(assert){
 			attempts: 4
 		 })
 		 .then(function(xhr, response){
-			assert.ok(false,(+new Date-t)+'ms');
+			assert.ok(false,'then called');
 			done();
 		 })
 		 ['catch'](function(e, xhr, response){
@@ -291,11 +287,11 @@ QUnit.test('Cache',function(assert){
 			qwest.get('../tests/cache/test.php', null, {responseType: 'text', cache: true})
 				 .then(function(xhr, response){
 					//console.log(response);
-					b=response;
+					b=response*1000;
 					qwest.get('../tests/cache/test.php', null, {responseType: 'text', cache: true})
 						 .then(function(xhr, response){
 							//console.log(response);
-							assert.ok(response==b,'Cached');
+							assert.ok(response==(b*1000),'Cached');
 							done();
 						 })
 						 ['catch'](function(message){
@@ -311,11 +307,11 @@ QUnit.test('Cache',function(assert){
 	qwest.get('../tests/cache/test.php',null,{responseType:'text'})
 		 .then(function(xhr, response){
 			//console.log(response);
-			a=response;
+			a=response*1000;
 			qwest.get('../tests/cache/test.php',null,{responseType:'text'})
 				 .then(function(xhr, response){
 					//console.log(response);
-					assert.ok(response!=a,'Not cached');
+					assert.ok(response!=(a*1000),'Not cached');
 					phase2();
 				 })
 				 ['catch'](function(e, xhr, response){
