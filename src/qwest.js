@@ -1,4 +1,4 @@
-/*! qwest 4.4.0 (https://github.com/pyrsmk/qwest) */
+/*! qwest 4.4.1 (https://github.com/pyrsmk/qwest) */
 
 module.exports = function() {
 
@@ -70,12 +70,14 @@ module.exports = function() {
 		// Create the promise
 		promise = pinkyswear(function(pinky) {
 			pinky.abort = function() {
-				if(!sending) { // https://stackoverflow.com/questions/7287706/ie-9-javascript-error-c00c023f
-					xhr.abort();
+				if(!aborted) {
+					if(xhr && xhr.readyState != 4) { // https://stackoverflow.com/questions/7287706/ie-9-javascript-error-c00c023f
+						xhr.abort();
+					}
+					aborted = true;
+					sending = false;
+					--requests;
 				}
-				aborted = true;
-				sending = false;
-				--requests;
 			};
 			pinky.send = function() {
 				// Prevent further send() calls
