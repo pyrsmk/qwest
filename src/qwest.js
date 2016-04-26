@@ -1,8 +1,8 @@
-/*! qwest 4.4.1 (https://github.com/pyrsmk/qwest) */
+/*! qwest 4.4.2 (https://github.com/pyrsmk/qwest) */
 
 module.exports = function() {
 
-	var global = window || this,
+	var global = this,
 		pinkyswear = require('pinkyswear'),
 		jparam = require('jquery-param'),
 		defaultOptions = {},
@@ -74,9 +74,11 @@ module.exports = function() {
 					if(xhr && xhr.readyState != 4) { // https://stackoverflow.com/questions/7287706/ie-9-javascript-error-c00c023f
 						xhr.abort();
 					}
+					if(sending) {
+						--requests;
+						sending = false;
+					}
 					aborted = true;
-					sending = false;
-					--requests;
 				}
 			};
 			pinky.send = function() {
