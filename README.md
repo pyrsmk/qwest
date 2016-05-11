@@ -12,6 +12,8 @@ bower install qwest
 jam install qwest
 ```
 
+Qwest is also available via CDNJS : https://cdnjs.com/libraries/qwest
+
 Quick examples
 --------------
 
