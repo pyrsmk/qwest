@@ -17,7 +17,7 @@
   "bugs": {
     "url": "https://github.com/pyrsmk/qwest/issues"
   },
-  "homepage": "http://dreamysource.fr/product/qwest",
+  "homepage": "http://dreamysource.io/project/qwest",
   "ignore": [
     ".git/",
     ".gitignore",

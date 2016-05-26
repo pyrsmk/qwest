@@ -1,7 +1,7 @@
 {
   "name": "qwest",
   "description": "Ajax library with XHR2, promises and request limit",
-  "version": "4.4.2",
+  "version": "4.4.3",
   "author": "Aurélien Delogu <pyrsmk@dreamysource.fr> (http://dreamysource.fr)",
   "repository": {
     "type": "git",
@@ -19,7 +19,7 @@
     "url": "https://github.com/pyrsmk/qwest/issues",
     "email": "dev@dreamysource.fr"
   },
-  "homepage": "http://dreamysource.fr/product/qwest",
+  "homepage": "http://dreamysource.io/project/qwest",
   "devDependencies": {
     "browserify": "^11.1.0",
     "gulp": "^3.9.0",
