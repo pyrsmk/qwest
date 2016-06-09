@@ -1,8 +1,8 @@
-/*! qwest 4.4.3 (https://github.com/pyrsmk/qwest) */
+/*! qwest 4.4.4 (https://github.com/pyrsmk/qwest) */
 
 module.exports = function() {
 
-	var global = this,
+	var global = typeof window != 'undefined' ? window : self,
 		pinkyswear = require('pinkyswear'),
 		jparam = require('jquery-param'),
 		defaultOptions = {},
