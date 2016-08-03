@@ -1,4 +1,4 @@
-/*! qwest 4.4.4 (https://github.com/pyrsmk/qwest) */
+/*! qwest 4.4.5 (https://github.com/pyrsmk/qwest) */
 
 module.exports = function() {
 
@@ -209,10 +209,13 @@ module.exports = function() {
 			// Handle response
 			try{
 				// Process response
-				if(nativeResponseParsing && 'response' in xhr && xhr.response !== null) {
+				if(nativeResponseParsing) {
+					if('response' in xhr && xhr.response === null) {
+						throw 'The request response is empty';
+					}
 					response = xhr.response;
 				}
-				else{
+				else {
 					// Guess response type
 					responseType = options.responseType;
 					if(responseType == 'auto') {
