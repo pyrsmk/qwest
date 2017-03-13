@@ -1,6 +1,8 @@
 qwest 4.4.5
 ============
 
+__/!\ A complete rewrite of qwest in ES6 with many improvements is planned soon. Keep in touch! /!\__
+
 Qwest is a simple ajax library based on `promises` and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
 
 Install
