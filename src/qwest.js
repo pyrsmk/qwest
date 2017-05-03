@@ -27,7 +27,7 @@ module.exports = function() {
 	qwest = function(method, url, data, options, before) {
 		// Format
 		method = method.toUpperCase();
-		data = data || null;
+		data = data === undefined ? data : null;
 		options = options || {};
 		for(var name in defaultOptions) {
 			if(!(name in options)) {
@@ -299,7 +299,7 @@ module.exports = function() {
 				promise(false, [new Error(message), xhr, null]);
 			}
 		},
-			
+
 		// Handle timeouts
 		handleTimeout = function() {
 			if(!aborted) {
@@ -392,7 +392,7 @@ module.exports = function() {
 		return promise;
 
 	};
-	
+
 	// Define external qwest object
 	var getNewPromise = function(q) {
 			// Prepare
@@ -495,7 +495,7 @@ module.exports = function() {
 				return requests;
 			}
 		};
-	
+
 	return q;
 
 }();
