@@ -11,10 +11,15 @@ Install
 ```
 npm install qwest
 bower install qwest
-jam install qwest
 ```
 
 Qwest is also available via CDNJS : https://cdnjs.com/libraries/qwest
+
+If you need to import qwest in TypeScript, do :
+
+```js
+import * as qwest from 'qwest';
+```
 
 Quick examples
 --------------
