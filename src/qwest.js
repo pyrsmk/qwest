@@ -1,4 +1,4 @@
-/*! qwest 4.4.6 (https://github.com/pyrsmk/qwest) */
+/*! qwest 4.5.0 (https://github.com/pyrsmk/qwest) */
 
 module.exports = function() {
 
@@ -348,6 +348,7 @@ module.exports = function() {
                     data = JSON.stringify(data);
                     break;
                 case 'post':
+                case 'queryString':
                     data = jparam(data);
             }
         }
@@ -379,7 +380,7 @@ module.exports = function() {
         }
 
         // Prepare URL
-        if(method == 'GET' && data && typeof data == 'string') {
+        if((method == 'GET' || options.dataType == 'queryString') && data && typeof data == 'string') {
             url += (/\?/.test(url)?'&':'?') + data;
         }
 

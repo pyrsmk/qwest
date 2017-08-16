@@ -1,5 +1,5 @@
-qwest 4.4.6
-============
+qwest 4.5.0
+===========
 
 __A complete rewrite of qwest in ES6 with many improvements is planned soon. Keep in touch!__
 
@@ -26,23 +26,23 @@ Quick examples
 
 ```js
 qwest.get('example.com')
-	 .then(function(xhr, response) {
-		alert(response);
-	 });
+     .then(function(xhr, response) {
+        alert(response);
+     });
 ```
 
 ```js
 qwest.post('example.com', {
-		firstname: 'Pedro',
-		lastname: 'Sanchez',
-		age: 30
-	 })
-	 .then(function(xhr, response) {
-		// Make some useful actions
-	 })
-	 .catch(function(e, xhr, response) {
-		// Process the error
-	 });
+        firstname: 'Pedro',
+        lastname: 'Sanchez',
+        age: 30
+     })
+     .then(function(xhr, response) {
+        // Make some useful actions
+     })
+     .catch(function(e, xhr, response) {
+        // Process the error
+     });
 ```
 
 Basics
@@ -50,22 +50,22 @@ Basics
 
 ```js
 qwest.`method`(`url`, `data`, `options`, `before`)
-	 .then(function(xhr, response) {
-		// Run when the request is successful
-	 })
-	 .catch(function(e, xhr, response) {
-		// Process the error
-	 })
-	 .complete(function() {
-	 	// Always run
-	 });
+     .then(function(xhr, response) {
+        // Run when the request is successful
+     })
+     .catch(function(e, xhr, response) {
+        // Process the error
+     })
+     .complete(function() {
+         // Always run
+     });
 ```
 
 The method is either `get`, `post`, `put` or `delete`. The `data` parameter can be a multi-dimensional array or object, a string, an ArrayBuffer, a Blob, etc... If you don't want to pass any data but specify some options, set data to `null`.
 
 The available `options` are :
 
-- dataType : `post` (by default), `json`, `text`, `arraybuffer`, `blob`, `document` or `formdata` (you don't need to specify XHR2 types since they're automatically detected)
+- dataType : `post` (by default), `queryString`, `json`, `text`, `arraybuffer`, `blob`, `document` or `formdata` (you shouldn't need to specify XHR2 types since they're automatically detected)
 - responseType : the response type; either `auto` (default), `json`, `xml`, `text`, `arraybuffer`, `blob` or `document`
 - cache : browser caching; default is `false`
 - async : `true` (default) or `false`; used to make asynchronous or synchronous requests
@@ -86,32 +86,34 @@ If you want to make a call with another HTTP method, you can use the `map()` fun
 
 ```js
 qwest.map('PATCH', 'example.com')
-	 .then(function() {
-	 	// Blah blah
-	 });
+     .then(function() {
+         // Blah blah
+     });
 ```
 
 If you need to do a `sync` request, you must call `send()` at the end of your promise :
 
 ```js
 qwest.get('example.com', {async: false})
-	 .then(function() {
-	 	// Blah blah
-	 })
-	 .send();
+     .then(function() {
+         // Blah blah
+     })
+     .send();
 ```
 
 Since service APIs often need the same type of request, you can set default options for all of your requests with :
 
 ```js
 qwest.setDefaultOptions({
-	dataType: 'arraybuffer',
-	responseType: 'json',
-	headers: {
-		'My-Header': 'Some-Value'
-	}
+    dataType: 'arraybuffer',
+    responseType: 'json',
+    headers: {
+        'My-Header': 'Some-Value'
+    }
 });
 ```
+
+Note : if you want to send your data as a query string parameter chain, pass `queryString` to the `dataType` option.
 
 Group requests
 --------------
@@ -120,14 +122,14 @@ Sometimes we need to call several requests and execute some tasks after all of t
 
 ```js
 qwest.get('example.com/articles')
-	 .get('example.com/users')
-	 .post('example.com/login', auth_data)
-	 .then(function(values) {
-	 	/*
-			Prints [ [xhr, response], [xhr, response], [xhr, response] ]
-		*/
-	 	console.log(values);
-	 });
+     .get('example.com/users')
+     .post('example.com/login', auth_data)
+     .then(function(values) {
+         /*
+            Prints [ [xhr, response], [xhr, response], [xhr, response] ]
+        */
+         console.log(values);
+     });
 ```
 
 If an error is encountered then `catch()` will be called and all requests will be aborted.
@@ -142,9 +144,9 @@ qwest.base = 'http://example.com';
 
 // Will make a request to 'http://example.com/somepage'
 qwest.get('/somepage')
-	 .then(function() {
-	 	// Blah blah
-	 });
+     .then(function() {
+         // Blah blah
+     });
 ```
 
 Request limit
@@ -156,12 +158,12 @@ Let's say we have a gallery with a lot of images to load. We don't want the brow
 
 ```html
 <div class="gallery">
-	<img data-src="images/image1.jpg" alt="">
-	<img data-src="images/image2.jpg" alt="">
-	<img data-src="images/image3.jpg" alt="">
-	<img data-src="images/image4.jpg" alt="">
-	<img data-src="images/image5.jpg" alt="">
-	...
+    <img data-src="images/image1.jpg" alt="">
+    <img data-src="images/image2.jpg" alt="">
+    <img data-src="images/image3.jpg" alt="">
+    <img data-src="images/image4.jpg" alt="">
+    <img data-src="images/image5.jpg" alt="">
+    ...
 </div>
 ```
 
@@ -170,12 +172,12 @@ Let's say we have a gallery with a lot of images to load. We don't want the brow
 qwest.limit(4);
 
 $('.gallery').children().forEach(function() {
-	var $this = $(this);
-	qwest.get($this.data('src'), {responseType: 'blob'})
-		 .then(function(xhr, response) {
-			$this.attr('src', window.URL.createObjectURL(response));
-			$this.fadeIn();
-		 });
+    var $this = $(this);
+    qwest.get($this.data('src'), {responseType: 'blob'})
+         .then(function(xhr, response) {
+            $this.attr('src', window.URL.createObjectURL(response));
+            $this.fadeIn();
+         });
 });
 ```
 
@@ -192,12 +194,12 @@ Aborting a request
 ```js
 // Start the request
 var request = qwest.get('example.com')
-				   .then(function(xhr, response) {
-				 	  // Won't be called
-				   })
-				   .catch(function(xhr, response) {
-				 	  // Won't be called either
-				   });
+                   .then(function(xhr, response) {
+                       // Won't be called
+                   })
+                   .catch(function(xhr, response) {
+                       // Won't be called either
+                   });
 
 // Some code
 
@@ -213,13 +215,13 @@ If you want to apply some manual options to the `XHR` object, you can use the `b
 
 ```js
 qwest.get('example.com', null, null, function(xhr) {
-		xhr.upload.onprogress = function(e) {
-			// Upload in progress
-		};
-	 })
-	 .then(function(xhr, response) {
-		// Blah blah blah
-	 });
+        xhr.upload.onprogress = function(e) {
+            // Upload in progress
+        };
+     })
+     .then(function(xhr, response) {
+        // Blah blah blah
+     });
 ```
 
 Handling fallbacks
@@ -229,10 +231,10 @@ XHR2 is not available on every browser, so, if needed, you can simply verify the
 
 ```js
 if(qwest.xhr2) {
-	// Actions for XHR2
+    // Actions for XHR2
 }
 else {
-	// Actions for XHR1
+    // Actions for XHR1
 }
 ```
 
@@ -243,11 +245,11 @@ Getting binary data in legacy browsers needs a trick, as we can read it on [MDN]
 
 ```js
 qwest.get('example.com/file', null, null, function(xhr) {
-		xhr.overrideMimeType('text\/plain; charset=x-user-defined');
-	 })
-	 .then(function(response) {
-	 	// response is now a binary string
-	 });
+        xhr.overrideMimeType('text\/plain; charset=x-user-defined');
+     })
+     .then(function(response) {
+         // response is now a binary string
+     });
 ```
 
 Compatibility notes
@@ -257,16 +259,16 @@ According to this [compatibility table](https://kangax.github.io/compat-table/es
 
 ```js
 qwest.delete('example.com')
-	 .then(function(){})
-	 .catch(function(){});
+     .then(function(){})
+     .catch(function(){});
 ```
 
 Like this :
 
 ```js
 qwest['delete']('example.com')
-	 .then(function(){})
-	 ['catch'](function(){});
+     .then(function(){})
+     ['catch'](function(){});
 ```
 
 XHR2 does not support `arraybuffer`, `blob` and `document` response types in synchroneous mode.
