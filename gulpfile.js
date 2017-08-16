@@ -87,8 +87,7 @@ gulp.task('build', ['version', 'lint'], function() {
 gulp.task('publish', shell.task([
     "git tag -a "+version+" -m '"+version+"'",
     'git push --tags',
-    'npm publish',
-    'jam publish'
+    'npm publish'
 ]));
 
 // ======================================== gulp
