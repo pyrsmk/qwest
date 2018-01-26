@@ -375,7 +375,8 @@ module.exports = function() {
         if(!crossOrigin && !('X-Requested-With' in headers)) { // (that header breaks in legacy browsers with CORS)
             headers['X-Requested-With'] = 'XMLHttpRequest';
         }
-        if(!options.cache && !('Cache-Control' in headers)) {
+        //to avoid the cross origin header check action， when you try get request
+        if(!options.cache && !('Cache-Control' in headers) && method == 'GET' && crossOrigin) { 
             headers['Cache-Control'] = 'no-cache';
         }
 
