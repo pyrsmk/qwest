@@ -1,7 +1,7 @@
 qwest 4.5.0
 ===========
 
-I finally decided to archive this repository.
+⚠ I finally decided to archive this repository. ⚠
 
 At first, I developed Qwest because at the time other libraries were lacking of a proper XHR2 support, concurrent requests, IE8+ support, with a small footprint. The Qwest adventure was a great one but with the emergence of the `Fetch` API, the `Axios.js` library and the fact that I do not have much time to maintain it since a few years, I came to the conclusion that the project needed an end.
 
