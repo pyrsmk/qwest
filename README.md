@@ -1,7 +1,15 @@
 qwest 4.5.0
 ===========
 
-__A complete rewrite of qwest in ES6 with many improvements is planned soon. Keep in touch!__
+I finally decided to archive this repository.
+
+At first, I developed Qwest because at the time other libraries were lacking of a proper XHR2 support, concurrent requests, IE8+ support, with a small footprint. The Qwest adventure was a great one but with the emergence of the `Fetch` API, the `Axios.js` library and the fact that I do not have much time to maintain it since a few years, I came to the conclusion that the project needed an end.
+
+I advice you to stop using this library as it won't be maintained anymore and use [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) with [p-limit](https://github.com/sindresorhus/p-limit) to achieve concurrent requests with an elegant and native API. Fetch is still a work in progress but has [good support amongst browsers](https://www.caniuse.com/fetch) and can be [extended with many libraries](https://www.npmjs.com/search?q=fetch).
+
+That's all folks!
+
+---
 
 Qwest is a simple ajax library based on `promises` and that supports `XmlHttpRequest2` special data like `ArrayBuffer`, `Blob` and `FormData`.
 
